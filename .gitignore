@@ -1,0 +1,36 @@
+# Auth - TRÈS IMPORTANT
+auth2/
+auth/
+baileys_auth/
+
+# Database
+black_db.json
+*.json
+!package.json
+
+# Modules
+node_modules/
+package-lock.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pino-*
+
+# Images menu (garde les si tu veux mais pas obligé)
+menu.jpg
+goku.jpg
+kaio.jpg
+
+# Env
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Render / Vercel
+.render/
+.vercel/
