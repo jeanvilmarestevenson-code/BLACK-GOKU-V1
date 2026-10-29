@@ -107,9 +107,76 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒑𝒓𝒊𝒗𝒂𝒕𝒆 𝒐𝒏/𝒐𝒇𝒇
 ┗━━━━━━━━━━━━━━┛
 *₩𝑪𝑹ÉÉ 𝑷𝑨𝑹 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼₩*`;
-const R = { 
-  noPerm:"꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂\n\n😈 𝑴𝑶𝑹𝑻𝑬𝑳 𝑰𝑵𝑺𝑶𝑳𝑬𝑵𝑻...\n𝑻𝒖 𝒐𝒔𝒆𝒔 𝒊𝒏𝒗𝒐𝒒𝒖𝒆𝒓 𝒍𝒆 𝑫𝑰𝑬𝑼 𝑫𝑬 𝑳𝑨 𝑫𝑬𝑺𝑻𝑹𝑼𝑪𝑻𝑰𝑶𝑵 𝒔𝒂𝒏𝒔 𝒎𝒐𝒏 𝒔𝒄𝒆𝒂𝒖?\n\n👑 𝑺𝒆𝒖𝒍𝒔 𝒎𝒆𝒔 É𝑳𝑼𝑺 𝒑𝒆𝒖𝒗𝒆𝒏𝒕 𝒑𝒓𝒐𝒏𝒐𝒏𝒄𝒆𝒓 𝒍𝒆 ₩.\n💀 𝑨𝒈𝒆𝒏𝒐𝒖𝒊𝒍𝒍𝒆-𝒕𝒐𝒊, 𝒂𝒕𝒕𝒆𝒏𝒅𝒔 𝒒𝒖𝒆 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝒕𝒆 𝒋𝒖𝒈𝒆 𝒅𝒊𝒈𝒏𝒆.",
-  needTag:"😈 𝑻𝑨𝑮 𝑼𝑵 𝑴𝑶𝑹𝑻𝑬𝑳!", creatorProtect:"👑🔥 𝑰𝑴𝑷𝑶𝑺𝑺𝑰𝑩𝑳𝑬 𝑫𝑬 𝑻𝑶𝑼𝑪𝑯𝑬𝑹 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼!", ban:(j)=>`💀 𝑯𝑨𝑲𝑨𝑰! @${j.split('@')[0]} 𝒆𝒇𝒇𝒂𝒄é!`, promote:(j)=>`👑 @${j.split('@')[0]} é𝒍𝒆𝒗é 𝑫𝒊𝒆𝒖!`, demote:(j)=>`💔 @${j.split('@')[0]} 𝒅é𝒄𝒉𝒖!`, mute:"🤫 𝑺𝑰𝑳𝑬𝑵𝑪𝑬 𝑨𝑩𝑺𝑶𝑳𝑼!", unmute:"🔊 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝒗𝒐𝒖𝒔 𝒂𝒖𝒕𝒐𝒓𝒊𝒔𝒆!", chut:(j)=>`🔇 @${j.split('@')[0]} 𝒄𝒐𝒏𝒅𝒂𝒎𝒏é!`, unchut:(j)=>`🔓 @${j.split('@')[0]} 𝒔𝒆𝒄𝒐𝒏𝒅𝒆 𝒄𝒉𝒂𝒏𝒄𝒆!`, blockadminOn:"⛓️ 𝑩𝑳𝑶𝑪𝑲𝑨𝑫𝑴𝑰𝑵 𝑶𝑵!", blockadminOff:"🔓 𝑶𝑭𝑭", curseOn:(j)=>`☬ @${j.split('@')[0]} 𝒎𝒂𝒖𝒅𝒊𝒕!`, curseOff:(j)=>`𝑳𝒆𝒗é𝒆 @${j.split('@')[0]}`, reiniOk:(j)=>`♻️ @${j.split('@')[0]} 𝒓é𝒊𝒏𝒊𝒕𝒊𝒂𝒍𝒊𝒔é!`, neantStart:(c)=>`💀 ${c} 𝒎𝒔𝒈𝒔 𝒆𝒇𝒇𝒂𝒄é𝒔!`, goatStart:(n)=>`🔥 ${n} 𝑭𝑨𝑰𝑩𝑳𝑬𝑺!`, goatEnd:(n)=>`💀 ${n} 𝑬𝑭𝑭𝑨𝑪É𝑺!`, save:(j)=>`🛡️ @${j.split('@')[0]} 𝒎𝒂𝒓𝒒𝒖é!`, unsave:(j)=>`🛡️ 𝑴𝒂𝒓𝒒𝒖𝒆 𝒓𝒆𝒕𝒊𝒓é𝒆 @${j.split('@')[0]}.`, protec:(j)=>`👑🔥 𝑷𝑹𝑶𝑻𝑬𝑪 @${j.split('@')[0]}!`, unprotec:(j)=>`💀 𝑷𝑹𝑶𝑻𝑬𝑪 𝒓𝒆𝒕𝒊𝒓é𝒆 @${j.split('@')[0]}.`, zenkai:(j)=>`⚡ @${j.split('@')[0]} 𝒁𝑬𝑵𝑲𝑨𝑰.`, nozenkai:(j)=>`𝒁𝑬𝑵𝑲𝑨𝑰 𝒓𝒆𝒕𝒊𝒓é.`, zenkaiOn:"⚡ 𝒁𝑬𝑵𝑲𝑨𝑰 𝑶𝑵", zenkaiOff:"𝒁𝑬𝑵𝑲𝑨𝑰 𝑶𝑭𝑭", antilink:"🔗 𝑨𝑵𝑻𝑰𝑳𝑰𝑵𝑲 𝑶𝑵", antilinkoff:"𝑶𝑭𝑭", antibodOn:(m)=>`𝑨𝑵𝑻𝑰𝑩𝑶𝑫 ${m} 𝑶𝑵`, antibodOff:"𝑶𝑭𝑭", antilock:"𝑨𝑵𝑻𝑰𝑳𝑶𝑪𝑲 𝑶𝑵", antilockoff:"𝑶𝑭𝑭", antidemote:"𝑨𝑵𝑻𝑰𝑫𝑬𝑴𝑶𝑻𝑬 𝑶𝑵", antidemoteoff:"𝑶𝑭𝑭", antisticker:"🖼️ 𝑨𝑵𝑻𝑰𝑺𝑻𝑰𝑪𝑲𝑬𝑹 𝑶𝑵", antistickeroff:"𝑶𝑭𝑭", antistatus:"👁️ 𝑨𝑵𝑻𝑰𝑺𝑻𝑨𝑻𝑼𝑺 𝑶𝑵", antistatusoff:"𝑶𝑭𝑭", welcome:"👋 𝑾𝑬𝑳𝑪𝑶𝑴𝑬 𝑶𝑵", welcomeoff:"𝑶𝑭𝑭", ghost:"👻 𝑮𝑯𝑶𝑺𝑻 𝑶𝑵", ghostoff:"𝑶𝑭𝑭", boyOn:"💀 𝑩𝑶𝒀 𝑶𝑵", boyOff:"𝑶𝑭𝑭", amis:(j)=>`✅ 𝑨𝑴𝑰 @${j.split('@')[0]}!`, noami:(j)=>`❌ 𝑩𝑨𝑵𝑵𝑰 @${j.split('@')[0]}!`, botOffMsg:"💤 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑺'𝑬𝑵𝑫𝑶𝑹𝑻...", botOnMsg:"🤖🔥 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑺𝑬 𝑹É𝑽𝑬𝑰𝑳𝑳𝑬!", privateOn:"🔒 𝑷𝑹𝑰𝑽É 𝑶𝑵", privateOff:"𝑶𝑭𝑭", gokuMsg:"👑 𝑪'𝒆𝒔𝒕 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼, 𝒗𝒐𝒕𝒓𝒆 𝑫𝒊𝒆𝒖.", kaioMsg:"🔥 𝑪'𝒆𝒔𝒕 𝑲𝑨𝑰𝑶.", kaioOn:"🔥 𝑲𝑨𝑰𝑶 𝑶𝑵 - Je vois tout!", kaioOff:"𝑲𝑨𝑰𝑶 𝑶𝑭𝑭", vqOk:"👁️🔥 𝑽𝑼𝑬 𝑫É𝑽𝑶𝑰𝑳É𝑬!", vqNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 à 𝒖𝒏𝒆 𝒗𝒖𝒆 𝒖𝒏𝒊𝒒𝒖𝒆!", sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆!", stNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒔𝒕𝒂𝒕𝒖𝒕!", stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é", rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`, timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!", timEnd:"⏰ 𝑻𝑰𝑴 𝑭𝑰𝑵𝑰!", onlyOwner:"👑🔥 𝑺𝑬𝑼𝑳 𝑳𝑬 𝑫𝑰𝑬𝑼 𝑺𝑼𝑷𝑹Ê𝑴𝑬!", protecTriggered:(prot, att)=>`☯️🔥 𝑷𝑹𝑶𝑻𝑬𝑪! @${att.split('@')[0]} 𝒂 𝒃𝒂𝒏𝒏𝒊 @${prot.split('@')[0]}!`, protecDemote:(prot, att)=>`☯️ 𝑨𝑵𝑻𝑰-𝑫𝑬𝑴𝑶𝑻𝑬! @${att.split('@')[0]} 𝒂 𝒅𝒆𝒎𝒐𝒕𝒆 @${prot.split('@')[0]}!`, protecFail:"⚠️ 𝑴𝑬𝑻𝑻𝑬𝒁 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑨𝑫𝑴𝑰𝑵!", godmode:"☯️ 𝑮𝑶𝑫𝑴𝑶𝑫𝑬 𝑶𝑵", godmodeoff:"𝑶𝑭𝑭", welcomeMsg:(j, g)=>`꧁༒☬ 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 ☬༒꧂\n👑 @${j.split('@')[0]} 𝒅𝒂𝒏𝒔 *${g}*.\n*𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼* 💀🔥`,
+const R = {
+noPerm:"😈 𝑺𝑬𝑼𝑳 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑷𝑬𝑼𝑻 𝑼𝑻𝑰𝑳𝑰𝑺𝑬𝑹 𝑪𝑬 𝑩𝑶𝑻 𝑻𝑶𝑰 𝑴𝑰𝑺𝑬𝑹𝑨𝑩𝑳𝑬 𝑴𝑶𝑹𝑻𝑬𝑳 𝑻𝑼 𝑹𝑬𝑮𝑨𝑹𝑫𝑬 𝑬𝑻 𝑻𝑼 𝑶𝑩𝑬𝑰𝑺 😈😈",
+needTag:"😈 𝑻𝑨𝑮 𝑼𝑵 𝑴𝑶𝑹𝑻𝑬𝑳!",
+creatorProtect:"👑🔥 𝑰𝑴𝑷𝑶𝑺𝑺𝑰𝑩𝑳𝑬 𝑫𝑬 𝑻𝑶𝑼𝑪𝑯𝑬𝑹 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼!",
+ban:(j)=>`💀 𝑯𝑨𝑲𝑨𝑰! @${j.split('@')[0]} 𝒆𝒇𝒇𝒂𝒄é!`,
+promote:(j)=>`👑 @${j.split('@')[0]} é𝒍𝒆𝒗é 𝑫𝒊𝒆𝒖!`,
+demote:(j)=>`💔 @${j.split('@')[0]} 𝒅é𝒄𝒉𝒖!`,
+mute:"🤫 𝑺𝑰𝑳𝑬𝑵𝑪𝑬 𝑨𝑩𝑺𝑶𝑳𝑼!",
+unmute:"🔊 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝒗𝒐𝒖𝒔 𝒂𝒖𝒕𝒐𝒓𝒊𝒔𝒆!",
+chut:(j)=>`🔇 @${j.split('@')[0]} 𝒄𝒐𝒏𝒅𝒂𝒎𝒏é!`,
+unchut:(j)=>`🔓 @${j.split('@')[0]} 𝒔𝒆𝒄𝒐𝒏𝒅𝒆 𝒄𝒉𝒂𝒏𝒄𝒆!`,
+blockadminOn:"⛓️ 𝑩𝑳𝑶𝑪𝑲𝑨𝑫𝑴𝑰𝑵 𝑶𝑵!",
+blockadminOff:"🔓 𝑶𝑭𝑭",
+curseOn:(j)=>`☬ @${j.split('@')[0]} 𝒎𝒂𝒖𝒅𝒊𝒕!`,
+curseOff:(j)=>`𝑳𝒆𝒗é𝒆 @${j.split('@')[0]}`,
+reiniOk:(j)=>`♻️ @${j.split('@')[0]} 𝒓é𝒊𝒏𝒊𝒕𝒊𝒂𝒍𝒊𝒔é!`,
+neantStart:(c)=>`💀 ${c} 𝒎𝒔𝒈𝒔 𝒆𝒇𝒇𝒂𝒄é𝒔!`,
+goatStart:(n)=>`🔥 ${n} 𝑭𝑨𝑰𝑩𝑳𝑬𝑺!`,
+goatEnd:(n)=>`💀 ${n} 𝑬𝑭𝑭𝑨𝑪É𝑺!`,
+save:(j)=>`🛡️ @${j.split('@')[0]} 𝒎𝒂𝒓𝒒𝒖é!`,
+unsave:(j)=>`🛡️ 𝑴𝒂𝒓𝒒𝒖𝒆 𝒓𝒆𝒕𝒊𝒓é𝒆 @${j.split('@')[0]}.`,
+protec:(j)=>`👑🔥 𝑷𝑹𝑶𝑻𝑬𝑪 @${j.split('@')[0]}!`,
+unprotec:(j)=>`💀 𝑷𝑹𝑶𝑻𝑬𝑪 𝒓𝒆𝒕𝒊𝒓é𝒆 @${j.split('@')[0]}.`,
+zenkai:(j)=>`⚡ @${j.split('@')[0]} 𝒁𝑬𝑵𝑲𝑨𝑰.`,
+nozenkai:(j)=>`𝒁𝑬𝑵𝑲𝑨𝑰 𝒓𝒆𝒕𝒊𝒓é.`,
+zenkaiOn:"⚡ 𝒁𝑬𝑵𝑲𝑨𝑰 𝑶𝑵",
+zenkaiOff:"𝒁𝑬𝑵𝑲𝑨𝑰 𝑶𝑭𝑭",
+antilink:"🔗 𝑨𝑵𝑻𝑰𝑳𝑰𝑵𝑲 𝑶𝑵",
+antilinkoff:"𝑶𝑭𝑭",
+antibodOn:(m)=>`𝑨𝑵𝑻𝑰𝑩𝑶𝑫 ${m} 𝑶𝑵`,
+antibodOff:"𝑶𝑭𝑭",
+antilock:"𝑨𝑵𝑻𝑰𝑳𝑶𝑪𝑲 𝑶𝑵",
+antilockoff:"𝑶𝑭𝑭",
+antidemote:"𝑨𝑵𝑻𝑰𝑫𝑬𝑴𝑶𝑻𝑬 𝑶𝑵",
+antidemoteoff:"𝑶𝑭𝑭",
+antisticker:"🖼️ 𝑨𝑵𝑻𝑰𝑺𝑻𝑰𝑪𝑲𝑬𝑹 𝑶𝑵",
+antistickeroff:"𝑶𝑭𝑭",
+antistatus:"👁️ 𝑨𝑵𝑻𝑰𝑺𝑻𝑨𝑻𝑼𝑺 𝑶𝑵",
+antistatusoff:"𝑶𝑭𝑭",
+welcome:"👋 𝑾𝑬𝑳𝑪𝑶𝑴𝑬 𝑶𝑵",
+welcomeoff:"𝑶𝑭𝑭",
+ghost:"👻 𝑮𝑯𝑶𝑺𝑻 𝑶𝑵",
+ghostoff:"𝑶𝑭𝑭",
+boyOn:"💀 𝑩𝑶𝒀 𝑶𝑵",
+boyOff:"𝑶𝑭𝑭",
+amis:(j)=>`✅ 𝑨𝑴𝑰 @${j.split('@')[0]}!`,
+noami:(j)=>`❌ 𝑩𝑨𝑵𝑵𝑰 @${j.split('@')[0]}!`,
+botOffMsg:"💤 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑺'𝑬𝑵𝑫𝑶𝑹𝑻...",
+botOnMsg:"🤖🔥 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑺𝑬 𝑹É𝑽𝑬𝑰𝑳𝑳𝑬!",
+privateOn:"🔒 𝑷𝑹𝑰𝑽É 𝑶𝑵",
+privateOff:"𝑶𝑭𝑭",
+gokuMsg:"👑 𝑪'𝒆𝒔𝒕 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼, 𝒗𝒐𝒕𝒓𝒆 𝑫𝒊𝒆𝒖.",
+kaioMsg:"🔥 𝑪'𝒆𝒔𝒕 𝑲𝑨𝑰𝑶.",
+kaioOn:"🔥 𝑲𝑨𝑰𝑶 𝑶𝑵 - Je vois tout!",
+kaioOff:"𝑲𝑨𝑰𝑶 𝑶𝑭𝑭",
+vqOk:"👁️🔥 𝑽𝑼𝑬 𝑫É𝑽𝑶𝑰𝑳É𝑬!",
+vqNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 à 𝒖𝒏𝒆 𝒗𝒖𝒆 𝒖𝒏𝒊𝒒𝒖𝒆!",
+sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆!",
+stNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒔𝒕𝒂𝒕𝒖𝒕!",
+stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é",
+rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`,
+timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!",
+timEnd:"⏰ 𝑻𝑰𝑴 𝑭𝑰𝑵𝑰!",
+onlyOwner:"👑🔥 𝑺𝑬𝑼𝑳 𝑳𝑬 𝑫𝑰𝑬𝑼 𝑺𝑼𝑷𝑹Ê𝑴𝑬!",
+protecTriggered:(prot, att)=>`☯️🔥 𝑷𝑹𝑶𝑻𝑬𝑪! @${att.split('@')[0]} 𝒂 𝒃𝒂𝒏𝒏𝒊 @${prot.split('@')[0]}!`,
+protecDemote:(prot, att)=>`☯️ 𝑨𝑵𝑻𝑰-𝑫𝑬𝑴𝑶𝑻𝑬! @${att.split('@')[0]} 𝒂 𝒅𝒆𝒎𝒐𝒕𝒆 @${prot.split('@')[0]}!`,
+protecFail:"⚠️ 𝑴𝑬𝑻𝑻𝑬𝒁 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑨𝑫𝑴𝑰𝑵!",
+godmode:"☯️ 𝑮𝑶𝑫𝑴𝑶𝑫𝑬 𝑶𝑵",
+godmodeoff:"𝑶𝑭𝑭",
+welcomeMsg:(j, g)=>`꧁༒☬ 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 ☬༒꧂\n👑 @${j.split('@')[0]} 𝒅𝒂𝒏𝒔 *${g}*.\n*😁`,
 }
 function normalizeJid(jid){ return jid? jid.split(':')[0].split('@')[0].replace(/[^0-9]/g,'') : "" }
 function isCreator(jid){ return normalizeJid(jid)===OWNER_NUMBER }
@@ -182,7 +249,6 @@ async function startBot(){
     if(cmd==="rdm"){ let all=meta?.participants.filter(p=>!isProtectedForKick(p.id)).map(p=>p.id)||[]; let r=all[Math.floor(Math.random()*all.length)]; if(r) await sock.sendMessage(from,{text:R.rdmOk(r),mentions:[r]},{quoted:m}); return }
     if(cmd==="iscom"){ let cache=fullMessageStore[from]||[]; let toDel=Math.min(cache.length,50); await sock.sendMessage(from,{text:`💀 ISCOM ${toDel} msgs...`},{quoted:m}); let ok=0; for(let i=cache.length-1;i>=0&&ok<toDel;i--){ try{ await sock.sendMessage(from,{delete:cache[i].key}); ok++; await new Promise(r=>setTimeout(r,500)) }catch{} } fullMessageStore[from]=[]; await sock.sendMessage(from,{text:`💀 ISCOM FINI ${ok}`},{quoted:m}); return }
     if(["time","tim"].includes(cmd)){ let t=parseInt(txt)||10; await sock.sendMessage(from,{text:`⏳ ${t}s`},{quoted:m}); setTimeout(async()=>{ await sock.sendMessage(from,{text:cmd==="time"?R.timeEnd:R.timEnd},{quoted:m}) },t*1000); return }
-    // COMMANDE 2 - INACTIFS - SEUL LE BOT PEUT FAIRE
     if(cmd==="inactifs"||cmd==="fantomes"||cmd==="ghostlist"){
       if(!isGroup) return
       let act=db.activity[from]||{}
@@ -193,10 +259,8 @@ async function startBot(){
       await sock.sendMessage(from,{text,mentions:inactifs.map(u=>u.id)},{quoted:m})
       return
     }
-    // COMMANDE 5 - TRAD - TRADUCTION INSTANT
     if(cmd==="trad"||cmd==="translate"){
       let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage
-      let toTrad=q? (q.conversation||q.extendedTextMessage?.text||"") : txt
       let lang=args[0]?.length==2? args[0] : 'fr'
       let realText = q? (q.conversation||q.extendedTextMessage?.text||"") : args.slice(lang.length==2?1:0).join(' ')
       if(!realText){ await sock.sendMessage(from,{text:"😈 Réponds à un message avec ₩trad fr / en / pt / es"},{quoted:m}); return }
