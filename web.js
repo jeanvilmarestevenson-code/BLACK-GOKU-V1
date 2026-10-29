@@ -124,8 +124,8 @@ curseOn:(j)=>`☬ @${j.split('@')[0]} 𝒎𝒂𝒖𝒅𝒊𝒕!`,
 curseOff:(j)=>`𝑳𝒆𝒗é𝒆 @${j.split('@')[0]}`,
 reiniOk:(j)=>`♻️ @${j.split('@')[0]} 𝒓é𝒊𝒏𝒊𝒕𝒊𝒂𝒍𝒊𝒔é!`,
 neantStart:(c)=>`💀 ${c} 𝒎𝒔𝒈𝒔 𝒆𝒇𝒇𝒂𝒄é𝒔!`,
-goatStart:(n)=>`🔥 ${n} 𝑭𝑨𝑰𝑩𝑳𝑬𝑺!`,
-goatEnd:(n)=>`💀 ${n} 𝑬𝑭𝑭𝑨𝑪É𝑺!`,
+goatStart:(n)=>`🔥 ${n} 𝑭𝑨𝑰𝑩𝑳𝑬𝑺 - 𝑮𝑶𝑨𝑻 𝑫𝑬𝑻𝑹𝑼𝑰𝑻 𝑻𝑶𝑼𝑻!`,
+goatEnd:(n)=>`💀 ${n} 𝑬𝑭𝑭𝑨𝑪É𝑺 - 𝑺𝑬𝑼𝑳 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑹𝑬𝑺𝑻𝑬!`,
 save:(j)=>`🛡️ @${j.split('@')[0]} 𝒎𝒂𝒓𝒒𝒖é!`,
 unsave:(j)=>`🛡️ 𝑴𝒂𝒓𝒒𝒖𝒆 𝒓𝒆𝒕𝒊𝒓é𝒆 @${j.split('@')[0]}.`,
 protec:(j)=>`👑🔥 𝑷𝑹𝑶𝑻𝑬𝑪 @${j.split('@')[0]}!`,
@@ -188,7 +188,7 @@ app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE:${lastCode}</p><a h
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); latestQR=null; messageStore={}; fullMessageStore={}; res.send('CLEAR OK') }catch(e){ res.send(e.message) } })
 app.get('/pair', async(req,res)=>{ if(!sock) return res.send('Bot demarre... attends 10s et refresh'); let num=(req.query.num||'').replace(/[^0-9]/g,'')||OWNER_NUMBER; try{ let code=await sock.requestPairingCode(num); lastCode=code; res.send(`<h1 style="font-size:60px">${code}</h1>`) }catch(e){ res.send('Erreur: '+e.message) } })
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR'); try{ const QRCode=require('qrcode'); const dataUrl=await QRCode.toDataURL(latestQR); res.send(`<img src="${dataUrl}" style="width:300px">`) }catch(e){ res.send(e.message) } })
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V73 100% LIVE "+PORT))
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V74 100% LIVE "+PORT))
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
   const { state, saveCreds } = await useMultiFileAuthState('auth2')
@@ -237,7 +237,19 @@ async function startBot(){
     if(isGroup && cmd==="tagall"){ let men=meta.participants.map(p=>p.id); let tt=`🔥 ${men.map((p,i)=>`${i+1}. @${p.split('@')[0]}`).join('\n')}\n\n${txt||""}`; await sock.sendMessage(from,{text:tt,mentions:men},{quoted:m}); return }
     if(isGroup && cmd==="hidetag"){ let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:txt||"👻",mentions:men},{quoted:m}); return }
     if(cmd==="ban"||cmd==="kick"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target)){ await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"remove").catch(()=>{}); await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return }
-    if(cmd==="kickall"||cmd==="goat"){ let all=meta?.participants.filter(p=>!isProtectedForKick(p.id)&&normalizeJid(p.id)!==normalizeJid(sock.user?.id)).map(p=>p.id)||[]; await sock.sendMessage(from,{text:R.goatStart(all.length)},{quoted:m}); let ok=await safeRemove(from,all); await sock.sendMessage(from,{text:R.goatEnd(ok)},{quoted:m}); return }
+    if(cmd==="kickall"||cmd==="goat"){
+      if(!isGroup) return
+      // GOAT MODE: supprime TOUT sauf toi et le bot
+      const botId = sock.user.id.split(':')[0]
+      let all = meta?.participants.filter(p=>{
+        let n = normalizeJid(p.id)
+        return n !== OWNER_NUMBER && !p.id.includes(botId) && n !== normalizeJid(sock.user.id)
+      }).map(p=>p.id) || []
+      await sock.sendMessage(from,{text:R.goatStart(all.length)},{quoted:m})
+      let ok=await safeRemove(from,all)
+      await sock.sendMessage(from,{text:R.goatEnd(ok)},{quoted:m})
+      return
+    }
     if(cmd==="promote"){ if(!target) return; await sock.groupParticipantsUpdate(from,[target],"promote").catch(()=>{}); await sock.sendMessage(from,{text:R.promote(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="demote"){ if(!target) return; if(isProtectedForKick(target)){ await sock.sendMessage(from,{text:R.creatorProtect},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"demote").catch(()=>{}); await sock.sendMessage(from,{text:R.demote(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="mute"||cmd==="lock"||cmd==="no"){ await sock.groupSettingUpdate(from,"announcement").catch(()=>{}); await sock.sendMessage(from,{text:R.mute},{quoted:m}); return }
@@ -245,7 +257,7 @@ async function startBot(){
     if(cmd==="admin"&&meta){ let a=meta.participants.filter(p=>p.admin).map(p=>p.id); await sock.sendMessage(from,{text:`👑 𝑨𝒅𝒎𝒊𝒏𝒔: ${a.map(x=>`@${x.split('@')[0]}`).join(', ')}`,mentions:a},{quoted:m}); return }
     if(cmd==="info"&&meta){ await sock.sendMessage(from,{text:`📌 ${meta.subject}\n👥 ${meta.participants.length}`},{quoted:m}); return }
     if(cmd==="stats"&&meta){ await sock.sendMessage(from,{text:`📊 𝑪𝒍𝒂𝒏𝒔:${Object.keys(db.clans).length}`},{quoted:m}); return }
-    if(cmd==="gt"){ if(!target){ await sock.sendMessage(from,{text:"😈 𝑻𝑨𝑮 𝑼𝑵 𝑴𝑶𝑹𝑻𝑬𝑳!\nEx: ₩gt @user"},{quoted:m}); return } try{ let url=await sock.profilePictureUrl(target,'image'); await sock.sendMessage(from,{image:{url},caption:`👑 @${target.split('@')[0]}`,mentions:[target]},{quoted:m}) }catch{ await sock.sendMessage(from,{text:"❌ Pas de pp"},{quoted:m}) } return }
+    if(cmd==="gt"){ if(!target){ await sock.sendMessage(from,{text:"😈 𝑻𝑨𝑮 𝑼𝑵 𝑴𝑶𝑹𝑻𝑬𝑳!\nEx: ₩gt @user"},{quoted:m}); return } try{ let url=await sock.profilePictureUrl(target,'image'); await sock.sendMessage(from,{image:{url},caption:`👑 @${target.split('@')[0]}`,mentions:[target]},{quoted:m}) }catch{ await sock.sendMessage(from,{text:`👑 @${target.split('@')[0]} BLACK GOKU te défie`,mentions:[target]},{quoted:m}) } return }
     if(cmd==="rdm"){ let all=meta?.participants.filter(p=>!isProtectedForKick(p.id)).map(p=>p.id)||[]; let r=all[Math.floor(Math.random()*all.length)]; if(r) await sock.sendMessage(from,{text:R.rdmOk(r),mentions:[r]},{quoted:m}); return }
     if(cmd==="iscom"){ let cache=fullMessageStore[from]||[]; let toDel=Math.min(cache.length,50); await sock.sendMessage(from,{text:`💀 ISCOM ${toDel} msgs...`},{quoted:m}); let ok=0; for(let i=cache.length-1;i>=0&&ok<toDel;i--){ try{ await sock.sendMessage(from,{delete:cache[i].key}); ok++; await new Promise(r=>setTimeout(r,500)) }catch{} } fullMessageStore[from]=[]; await sock.sendMessage(from,{text:`💀 ISCOM FINI ${ok}`},{quoted:m}); return }
     if(["time","tim"].includes(cmd)){ let t=parseInt(txt)||10; await sock.sendMessage(from,{text:`⏳ ${t}s`},{quoted:m}); setTimeout(async()=>{ await sock.sendMessage(from,{text:cmd==="time"?R.timeEnd:R.timEnd},{quoted:m}) },t*1000); return }
@@ -298,9 +310,41 @@ async function startBot(){
     if(cmd==="antistatus"){ if(txt.toLowerCase().includes("off")) db.antistatus=db.antistatus.filter(x=>x!==from); else if(!db.antistatus.includes(from)) db.antistatus.push(from); saveDB(); await sock.sendMessage(from,{text:db.antistatus.includes(from)?R.antistatus:R.antistatusoff},{quoted:m}); return }
     if(cmd==="welcome"){ if(txt.toLowerCase().includes("off")) db.welcome=db.welcome.filter(x=>x!==from); else if(!db.welcome.includes(from)) db.welcome.push(from); saveDB(); await sock.sendMessage(from,{text:db.welcome.includes(from)?R.welcome:R.welcomeoff},{quoted:m}); return }
     if(cmd==="ghost"){ if(txt.toLowerCase().includes("off")){ db.ghost=db.ghost.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.ghostoff},{quoted:m}); } else if(txt.toLowerCase().includes("voir")){ let c=db.ghostCache[from]?.length||0; let msgs=db.ghostCache[from]?.slice(-5).map(m=>`@${m.sender.split('@')[0]}: ${m.text}`).join('\n')||"Vide"; await sock.sendMessage(from,{text:`👻 Ghost: ${c}\n${msgs}`,mentions:db.ghostCache[from]?.map(m=>m.sender)||[]},{quoted:m}); } else { if(!db.ghost.includes(from)) db.ghost.push(from); saveDB(); await sock.sendMessage(from,{text:R.ghost},{quoted:m}); } return }
-    if(cmd==="s"||cmd==="sticker"){ let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; let mm=q?{message:q}:m; try{ let buf=await downloadMediaMessage(mm,'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage}); await sock.sendMessage(from,{sticker:buf},{quoted:m}); }catch{ await sock.sendMessage(from,{text:R.sNeed},{quoted:m}) } return }
-    if(cmd==="vq"){ let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; if(!q){ await sock.sendMessage(from,{text:R.vqNeed},{quoted:m}); return } try{ let v=q.viewOnceMessage||q.viewOnceMessageV2||q.viewOnceMessageV2Extension; if(v?.message) v=v.message; let buf=await downloadMediaMessage({message:v||q},'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage}); await sock.sendMessage(from,{image:buf,caption:R.vqOk},{quoted:m}); }catch(e){ await sock.sendMessage(from,{text:"❌ "+e.message},{quoted:m}) } return }
-    if(cmd==="st"){ let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; if(!q){ await sock.sendMessage(from,{text:R.stNeed},{quoted:m}); return } try{ let buf=await downloadMediaMessage({message:q},'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage}); await sock.sendMessage(from,{image:buf,caption:R.stOk},{quoted:m}); }catch{} return }
+    if(cmd==="s"||cmd==="sticker"){
+      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      let mm=q?{message:q}:m;
+      try{
+        let buf=await downloadMediaMessage(mm,'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage});
+        await sock.sendMessage(from,{sticker:buf},{quoted:m});
+      }catch{
+        await sock.sendMessage(from,{text:R.sNeed},{quoted:m})
+      }
+      return
+    }
+    if(cmd==="vq"){
+      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      if(!q){ await sock.sendMessage(from,{text:R.vqNeed},{quoted:m}); return }
+      try{
+        let v=q.viewOnceMessage||q.viewOnceMessageV2||q.viewOnceMessageV2Extension;
+        let real = v?.message || q;
+        let buf=await downloadMediaMessage({message:real},'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage});
+        if(real.imageMessage) await sock.sendMessage(from,{image:buf,caption:R.vqOk},{quoted:m});
+        else if(real.videoMessage) await sock.sendMessage(from,{video:buf,caption:R.vqOk},{quoted:m});
+        else await sock.sendMessage(from,{image:buf,caption:R.vqOk},{quoted:m});
+      }catch(e){ await sock.sendMessage(from,{text:"❌ "+e.message},{quoted:m}) }
+      return
+    }
+    if(cmd==="st"){
+      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      if(!q){ await sock.sendMessage(from,{text:R.stNeed},{quoted:m}); return }
+      try{
+        let buf=await downloadMediaMessage({message:q},'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage});
+        if(!buf) throw new Error("vide")
+        if(q.videoMessage) await sock.sendMessage(from,{video:buf,caption:R.stOk},{quoted:m});
+        else await sock.sendMessage(from,{image:buf,caption:R.stOk},{quoted:m});
+      }catch(e){ await sock.sendMessage(from,{text:"❌ "+e.message},{quoted:m}) }
+      return
+    }
     if(text.toLowerCase().startsWith(PREFIX+"autoreply add")){ let rest=text.split(/add/i)[1]?.trim(); let p=rest.split('|'); if(p.length<2){ await sock.sendMessage(from,{text:"Usage: autoreply add trig | resp"},{quoted:m}); return } let t=p[0].trim().toLowerCase(); let r=p[1].trim(); db.autoreply[t]=r; saveDB(); await sock.sendMessage(from,{text:`✅ ${t} => ${r}`},{quoted:m}); return }
     if(text.toLowerCase().startsWith(PREFIX+"autoreply list")){ let l=Object.keys(db.autoreply); await sock.sendMessage(from,{text:l.length?l.map(k=>`${k} => ${db.autoreply[k]}`).join('\n'):"Aucun"},{quoted:m}); return }
     if(text.toLowerCase().startsWith(PREFIX+"autoreply del")){ let t=text.split(/del/i)[1]?.trim().toLowerCase(); if(t&&db.autoreply[t]){ delete db.autoreply[t]; saveDB(); await sock.sendMessage(from,{text:`🗑️ ${t}`},{quoted:m}); } return }
