@@ -5,13 +5,12 @@ baileys_auth/
 auth_info/
 session/
 
-# Database - contient tous tes amis/protec
+# Database
 black_db.json
 black_db.json.bak
 
 # Modules
 node_modules/
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
@@ -19,25 +18,10 @@ pnpm-lock.yaml
 logs/
 *.log
 npm-debug.log*
-pino-*
 
-# Env - ton token si tu en mets
+# Env
 .env
-.env.local
-.env.production
-
-# Images - GARDE LES pour ton menu (enleve si tu veux pas les push)
-# Si tu veux les push, commente ces 3 lignes
-# menu.jpg
-# goku.jpg
-# kaio.jpg
 
 # OS
 .DS_Store
 Thumbs.db
-desktop.ini
-
-# Render
-.render/
-.vercel/
-dist/
