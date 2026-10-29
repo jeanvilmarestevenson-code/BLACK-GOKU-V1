@@ -1,16 +1,19 @@
-# Auth - TRÈS IMPORTANT
+# Auth - TRÈS IMPORTANT - NE JAMAIS PUSH
 auth2/
 auth/
 baileys_auth/
+auth_info/
+session/
 
-# Database
+# Database - contient tous tes amis/protec
 black_db.json
-*.json
-!package.json
+black_db.json.bak
 
 # Modules
 node_modules/
 package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # Logs
 logs/
@@ -18,19 +21,23 @@ logs/
 npm-debug.log*
 pino-*
 
-# Images menu (garde les si tu veux mais pas obligé)
-menu.jpg
-goku.jpg
-kaio.jpg
-
-# Env
+# Env - ton token si tu en mets
 .env
 .env.local
+.env.production
+
+# Images - GARDE LES pour ton menu (enleve si tu veux pas les push)
+# Si tu veux les push, commente ces 3 lignes
+# menu.jpg
+# goku.jpg
+# kaio.jpg
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Render / Vercel
+# Render
 .render/
 .vercel/
+dist/
