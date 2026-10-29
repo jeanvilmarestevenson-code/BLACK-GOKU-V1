@@ -1,9 +1,9 @@
 {
   "name": "black-goku-v71",
   "version": "71.0.0",
-  "main": "index.js",
+  "main": "web.js",
   "scripts": {
-    "start": "web.js"
+    "start": "node web.js"
   },
   "engines": {
     "node": "20.x"
