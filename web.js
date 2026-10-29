@@ -10,6 +10,11 @@ const OWNER_NUMBER = "5551982215198"
 const PREFIX = "₩"
 const DB_FILE = './black_db.json'
 const msgRetryCounterCache = new NodeCache()
+
+// ANTI-CRASH RENDER - NE PAS ENLEVER
+process.on('uncaughtException', e => console.log('uncaught', e.message))
+process.on('unhandledRejection', e => console.log('unhandled', e))
+
 let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], antistatus:[], welcome:[], pt:[], ghost:[], muted:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, autoreply:{}, autoreplyOn:[], autoreplyAll:[], zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], privateMode:false, botOff:false }
 if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o} }catch{} }
 const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
@@ -111,10 +116,19 @@ function isCreator(jid){ return normalizeJid(jid)===OWNER_NUMBER }
 function isProtectedForKick(jid){ return isCreator(jid) || db.saved.includes(jid) || db.protec.includes(jid) || db.pro.includes(jid) || db.godmode.includes(jid) || db.saved.includes(normalizeJid(jid)) || db.protec.includes(normalizeJid(jid)); }
 async function askHyper(q){ try{ let r=await axios.get(`https://text.pollinations.ai/${encodeURIComponent(q)}`,{timeout:20000}); return typeof r.data==='string'?r.data.trim():JSON.stringify(r.data) }catch{ return "𝑰𝑨 𝒊𝒏𝒅𝒊𝒔𝒑𝒐𝒏𝒊𝒃𝒍𝒆" } }
 async function safeRemove(gid, jids){ let ok=0; for(let j of jids){ try{ await sock.groupParticipantsUpdate(gid,[j],"remove"); ok++; await new Promise(r=>setTimeout(r,1200)); }catch{} } return ok; }
+
 app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE:${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); latestQR=null; messageStore={}; res.send('CLEAR OK') }catch(e){ res.send(e.message) } })
-app.get('/pair', async(req,res)=>{ let num=(req.query.num||'').replace(/[^0-9]/g,'')||OWNER_NUMBER; try{ let code=await sock.requestPairingCode(num); lastCode=code; res.send(`<h1 style="font-size:60px">${code}</h1>`) }catch(e){ res.send('Erreur: '+e.message) } })
+app.get('/pair', async(req,res)=>{
+  if(!sock) return res.send('Bot demarre... attends 10s et refresh')
+  let num=(req.query.num||'').replace(/[^0-9]/g,'')||OWNER_NUMBER
+  try{ let code=await sock.requestPairingCode(num); lastCode=code; res.send(`<h1 style="font-size:60px">${code}</h1>`) }catch(e){ res.send('Erreur: '+e.message) }
+})
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR'); try{ const QRCode=require('qrcode'); const dataUrl=await QRCode.toDataURL(latestQR); res.send(`<img src="${dataUrl}" style="width:300px">`) }catch(e){ res.send(e.message) } })
+
+// FIX 502: ON ECOUTE LE PORT AVANT DE LANCER LE BOT
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V71 FINAL 100% LIVE "+PORT))
+
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
   const { state, saveCreds } = await useMultiFileAuthState('auth2')
@@ -133,17 +147,12 @@ async function startBot(){
     if(from.endsWith('@g.us') && txtForCache){
       if(db.kaio.includes(from)) messageStore[m.key.id]={text:txtForCache,sender,from,id:m.key.id}
       if(db.ghost.includes(from)){ if(!db.ghostCache[from]) db.ghostCache[from]=[]; db.ghostCache[from].push({sender,text:txtForCache,time:Date.now()}); if(db.ghostCache[from].length>500) db.ghostCache[from].shift(); saveDB(); }
-      // AUTOREPLY REEL - MAINTENANT MARCHE
       if(!textAll.startsWith(PREFIX)){
         let en = db.autoreplyOn.includes(from) || db.autoreplyAll.includes(from) || db.autoreplyAll.includes('all')
         if(en){ let low=textAll.toLowerCase(); for(let k in db.autoreply){ if(low.includes(k.toLowerCase())){ await sock.sendMessage(from,{text:db.autoreply[k]}); break; } } }
       }
     }
-
-    // PRIVATE MODE REEL
     if(db.privateMode && from.endsWith('@g.us') && !isOwner && !isCreator(sender)) return
-
-    // === FIX REEL V71 FINAL - TOUS LES ANTIS MARCHENT ===
     if(from.endsWith('@g.us') && !isCreator(sender) && !isProtectedForKick(sender) && !isOwner){
       let low = txtForCache.toLowerCase()
       if(db.chut[sender] || db.curse[sender] || db.boy.includes(sender) || db.boyUsers.includes(sender)){ try{ await sock.sendMessage(from,{delete:m.key}) }catch{} return }
@@ -152,7 +161,6 @@ async function startBot(){
       if(db.antistatus.includes(from) && (low.includes("status") || m.message.protocolMessage)){ try{ await sock.sendMessage(from,{delete:m.key}) }catch{} return }
       if(db.antibod[from] && (low.includes("bot") || m.message.listResponseMessage || m.message.buttonsResponseMessage || low.startsWith("/") || low.startsWith("!") || low.startsWith("."))){ try{ await sock.sendMessage(from,{delete:m.key}) }catch{} return }
     }
-
     let text=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
     if(!text.startsWith(PREFIX)) return
     if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
@@ -160,10 +168,7 @@ async function startBot(){
     const args=text.slice(1).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' ')
     const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0]
     const isGroup=from.endsWith('@g.us'); const meta=isGroup? await sock.groupMetadata(from).catch(()=>null): null
-
-    // BLOCKADMIN REEL
     if(isGroup && db.blockadmin.includes(from) && (cmd==="promote"||cmd==="demote") && !isCreator(sender) && !isMe){ await sock.sendMessage(from,{text:"⛓️ 𝑩𝑳𝑶𝑪𝑲𝑨𝑫𝑴𝑰𝑵 - Bloqué!"},{quoted:m}); return }
-
     if(["black","menu","b"].includes(cmd)){ const t=getMenu(); if(fs.existsSync('./menu.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./menu.jpg'),caption:t},{quoted:m}); else await sock.sendMessage(from,{text:t},{quoted:m}); return }
     if(cmd==="goku"){ if(fs.existsSync('./goku.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./goku.jpg'),caption:R.gokuMsg},{quoted:m}); else await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return }
     if(cmd==="kaio"){
@@ -242,4 +247,3 @@ async function startBot(){
   sock.ev.on('groups.update', async(updates)=>{ for(let u of updates){ try{ if(u.announce!==undefined && db.antilock.includes(u.id)){ if(u.announce==="true"){ await sock.groupSettingUpdate(u.id,"not_announcement"); await sock.sendMessage(u.id,{text:"🔓 𝑨𝑵𝑻𝑰𝑳𝑶𝑪𝑲 - Groupe réouvert!"}) } } if(db.godmode.includes(u.id) && u.announce==="true"){ await sock.groupSettingUpdate(u.id,"not_announcement") } }catch{} } })
 }
 startBot()
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V71 FINAL 100% LIVE "+PORT))
