@@ -34,6 +34,10 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒔𝒕𝒂𝒕𝒔
 ┃ ₩𝒈𝒐𝒌𝒖
 ┃ ₩𝒌𝒂𝒊𝒐
+┃ ₩𝒘𝒂𝒊𝒇𝒖1
+┃ ₩𝒘𝒂𝒊𝒇𝒖2
+┃ ₩𝒘𝒂𝒊𝒇𝒖3
+┃ ₩𝒘𝒂𝒊𝒇𝒖4
 ┃ ₩𝒊𝒔𝒄𝒐𝒎
 ┃ ₩𝒕𝒊𝒎𝒆
 ┃ ₩𝒕𝒊𝒎
@@ -164,13 +168,13 @@ kaioOn:"🔥 𝑲𝑨𝑰𝑶 𝑶𝑵 - Je vois tout!",
 kaioOff:"𝑲𝑨𝑰𝑶 𝑶𝑭𝑭",
 vqOk:"👁️🔥 𝑽𝑼𝑬 𝑫É𝑽𝑶𝑰𝑳É𝑬!",
 vqNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 à 𝒖𝒏𝒆 𝒗𝒖𝒆 𝒖𝒏𝒊𝒒𝒖𝒆!",
-sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆!",
+sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆! Envoie une image avec ₩s en légende ou réponds à une image",
 stNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒔𝒕𝒂𝒕𝒖𝒕!",
 stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é",
 rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`,
 timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!",
 timEnd:"⏰ 𝑻𝑰𝑴 𝑭𝑰𝑵𝑰!",
-onlyOwner:"👑🔥 𝑺𝑬𝑼𝑳 𝑳𝑬 𝑫𝑰𝑬𝑼 𝑺𝑼𝑷𝑹Ê𝑴𝑬!",
+onlyOwner:"👑🔥 𝑺𝑬𝑼𝑳 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 !",
 protecTriggered:(prot, att)=>`☯️🔥 𝑷𝑹𝑶𝑻𝑬𝑪! @${att.split('@')[0]} 𝒂 𝒃𝒂𝒏𝒏𝒊 @${prot.split('@')[0]}!`,
 protecDemote:(prot, att)=>`☯️ 𝑨𝑵𝑻𝑰-𝑫𝑬𝑴𝑶𝑻𝑬! @${att.split('@')[0]} 𝒂 𝒅𝒆𝒎𝒐𝒕𝒆 @${prot.split('@')[0]}!`,
 protecFail:"⚠️ 𝑴𝑬𝑻𝑻𝑬𝒁 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑨𝑫𝑴𝑰𝑵!",
@@ -183,12 +187,18 @@ function isCreator(jid){ return normalizeJid(jid)===OWNER_NUMBER }
 function isProtectedForKick(jid){ return isCreator(jid) || db.saved.includes(jid) || db.protec.includes(jid) || db.pro.includes(jid) || db.godmode.includes(jid) || db.saved.includes(normalizeJid(jid)) || db.protec.includes(normalizeJid(jid)); }
 async function askHyper(q){ try{ let r=await axios.get(`https://text.pollinations.ai/${encodeURIComponent(q)}`,{timeout:20000}); return typeof r.data==='string'?r.data.trim():JSON.stringify(r.data) }catch{ return "𝑰𝑨 𝒊𝒏𝒅𝒊𝒔𝒑𝒐𝒏𝒊𝒃𝒍𝒆" } }
 async function safeRemove(gid, jids){ let ok=0; for(let j of jids){ try{ await sock.groupParticipantsUpdate(gid,[j],"remove"); ok++; await new Promise(r=>setTimeout(r,1200)); }catch{} } return ok; }
-async function translateText(text, to='fr'){ try{ let r=await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${to}`,{timeout:8000}); return r.data.responseData.translatedText||text }catch{ return text } }
+async function translateText(text, to='fr'){
+  try{
+    let r=await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${to}`,{timeout:10000});
+    if(r.data.responseData && r.data.responseData.translatedText) return r.data.responseData.translatedText
+    return text
+  }catch{ return text }
+}
 app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE:${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); latestQR=null; messageStore={}; fullMessageStore={}; res.send('CLEAR OK') }catch(e){ res.send(e.message) } })
 app.get('/pair', async(req,res)=>{ if(!sock) return res.send('Bot demarre... attends 10s et refresh'); let num=(req.query.num||'').replace(/[^0-9]/g,'')||OWNER_NUMBER; try{ let code=await sock.requestPairingCode(num); lastCode=code; res.send(`<h1 style="font-size:60px">${code}</h1>`) }catch(e){ res.send('Erreur: '+e.message) } })
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR'); try{ const QRCode=require('qrcode'); const dataUrl=await QRCode.toDataURL(latestQR); res.send(`<img src="${dataUrl}" style="width:300px">`) }catch(e){ res.send(e.message) } })
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V74 100% LIVE "+PORT))
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V78 LIVE "+PORT))
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
   const { state, saveCreds } = await useMultiFileAuthState('auth2')
@@ -233,66 +243,119 @@ async function startBot(){
     if(isGroup && db.blockadmin.includes(from) && (cmd==="promote"||cmd==="demote") && !isCreator(sender) && !isMe){ await sock.sendMessage(from,{text:"⛓️ 𝑩𝑳𝑶𝑪𝑲𝑨𝑫𝑴𝑰𝑵 - Bloqué!"},{quoted:m}); return }
     if(["black","menu","b"].includes(cmd)){ const t=getMenu(); if(fs.existsSync('./menu.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./menu.jpg'),caption:t},{quoted:m}); else await sock.sendMessage(from,{text:t},{quoted:m}); return }
     if(cmd==="goku"){ if(fs.existsSync('./goku.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./goku.jpg'),caption:R.gokuMsg},{quoted:m}); else await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return }
+    if(cmd.startsWith("waifu")){
+      let num = cmd.replace('waifu','') || '1'
+      let files = [`./waifu${num}.jpg`, `./waifu-${num}.jpg`, `./Waifu.jpg`, `./waifu.jpg`]
+      let found = files.find(f=>fs.existsSync(f))
+      if(found){
+        await sock.sendMessage(from,{image:fs.readFileSync(found),caption:`💜 Waifu ${num} - BLACK GOKU`},{quoted:m})
+      } else {
+        try{
+          let r = await axios.get('https://api.waifu.pics/sfw/waifu',{timeout:8000})
+          if(r.data.url) await sock.sendMessage(from,{image:{url:r.data.url},caption:`💜 Waifu ${num}`},{quoted:m})
+          else throw new Error()
+        }catch{
+          await sock.sendMessage(from,{text:`❌ Mets waifu${num}.jpg dans ton dossier`},{quoted:m})
+        }
+      }
+      return
+    }
     if(cmd==="kaio"){ if(txt.toLowerCase().includes("on")){ if(!db.kaio.includes(from)) db.kaio.push(from); saveDB(); await sock.sendMessage(from,{text:R.kaioOn},{quoted:m}); return } if(txt.toLowerCase().includes("off")){ db.kaio=db.kaio.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.kaioOff},{quoted:m}); return } if(fs.existsSync('./kaio.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./kaio.jpg'),caption:R.kaioMsg},{quoted:m}); else await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m}); return }
-    if(isGroup && cmd==="tagall"){ let men=meta.participants.map(p=>p.id); let tt=`🔥 ${men.map((p,i)=>`${i+1}. @${p.split('@')[0]}`).join('\n')}\n\n${txt||""}`; await sock.sendMessage(from,{text:tt,mentions:men},{quoted:m}); return }
-    if(isGroup && cmd==="hidetag"){ let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:txt||"👻",mentions:men},{quoted:m}); return }
-    if(cmd==="ban"||cmd==="kick"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target)){ await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"remove").catch(()=>{}); await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return }
+    if(isGroup && cmd==="tagall"){ 
+      if(!meta) return
+      let men=meta.participants.map(p=>p.id); 
+      let tt=`🔥 TAGALL ${men.length} MEMBRES\n${men.map((p,i)=>`${i+1}. @${p.split('@')[0]}`).join('\n')}\n\n${txt||""}`; 
+      await sock.sendMessage(from,{text:tt,mentions:men},{quoted:m}); return 
+    }
+    if(isGroup && cmd==="hidetag"){ 
+      if(!meta) return
+      let men=meta.participants.map(p=>p.id); 
+      await sock.sendMessage(from,{text:txt||"👻 BLACK GOKU",mentions:men},{quoted:m}); return 
+    }
+    if(cmd==="ban"||cmd==="kick"){ 
+      if(!isGroup) return await sock.sendMessage(from,{text:"Groupe seulement"},{quoted:m})
+      if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); 
+      if(isProtectedForKick(target)){ await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); return } 
+      await sock.groupParticipantsUpdate(from,[target],"remove").catch(()=>{}); 
+      await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return 
+    }
     if(cmd==="kickall"||cmd==="goat"){
-      if(!isGroup) return
-      // GOAT MODE: supprime TOUT sauf toi et le bot
-      const botId = sock.user.id.split(':')[0]
-      let all = meta?.participants.filter(p=>{
+      if(!isGroup||!meta) return
+      const botNumber = normalizeJid(sock.user.id)
+      const botIdShort = sock.user.id.split(':')[0]
+      let all = meta.participants.filter(p=>{
         let n = normalizeJid(p.id)
-        return n !== OWNER_NUMBER && !p.id.includes(botId) && n !== normalizeJid(sock.user.id)
-      }).map(p=>p.id) || []
+        return n !== OWNER_NUMBER && n !== botNumber && !p.id.includes(botIdShort)
+      }).map(p=>p.id)
+      if(all.length===0) return await sock.sendMessage(from,{text:"Personne à kick"},{quoted:m})
       await sock.sendMessage(from,{text:R.goatStart(all.length)},{quoted:m})
       let ok=await safeRemove(from,all)
       await sock.sendMessage(from,{text:R.goatEnd(ok)},{quoted:m})
       return
     }
-    if(cmd==="promote"){ if(!target) return; await sock.groupParticipantsUpdate(from,[target],"promote").catch(()=>{}); await sock.sendMessage(from,{text:R.promote(target),mentions:[target]},{quoted:m}); return }
-    if(cmd==="demote"){ if(!target) return; if(isProtectedForKick(target)){ await sock.sendMessage(from,{text:R.creatorProtect},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"demote").catch(()=>{}); await sock.sendMessage(from,{text:R.demote(target),mentions:[target]},{quoted:m}); return }
-    if(cmd==="mute"||cmd==="lock"||cmd==="no"){ await sock.groupSettingUpdate(from,"announcement").catch(()=>{}); await sock.sendMessage(from,{text:R.mute},{quoted:m}); return }
-    if(cmd==="unmute"||cmd==="unlock"||cmd==="groupe"){ await sock.groupSettingUpdate(from,"not_announcement").catch(()=>{}); await sock.sendMessage(from,{text:R.unmute},{quoted:m}); return }
-    if(cmd==="admin"&&meta){ let a=meta.participants.filter(p=>p.admin).map(p=>p.id); await sock.sendMessage(from,{text:`👑 𝑨𝒅𝒎𝒊𝒏𝒔: ${a.map(x=>`@${x.split('@')[0]}`).join(', ')}`,mentions:a},{quoted:m}); return }
-    if(cmd==="info"&&meta){ await sock.sendMessage(from,{text:`📌 ${meta.subject}\n👥 ${meta.participants.length}`},{quoted:m}); return }
-    if(cmd==="stats"&&meta){ await sock.sendMessage(from,{text:`📊 𝑪𝒍𝒂𝒏𝒔:${Object.keys(db.clans).length}`},{quoted:m}); return }
-    if(cmd==="gt"){ if(!target){ await sock.sendMessage(from,{text:"😈 𝑻𝑨𝑮 𝑼𝑵 𝑴𝑶𝑹𝑻𝑬𝑳!\nEx: ₩gt @user"},{quoted:m}); return } try{ let url=await sock.profilePictureUrl(target,'image'); await sock.sendMessage(from,{image:{url},caption:`👑 @${target.split('@')[0]}`,mentions:[target]},{quoted:m}) }catch{ await sock.sendMessage(from,{text:`👑 @${target.split('@')[0]} BLACK GOKU te défie`,mentions:[target]},{quoted:m}) } return }
-    if(cmd==="rdm"){ let all=meta?.participants.filter(p=>!isProtectedForKick(p.id)).map(p=>p.id)||[]; let r=all[Math.floor(Math.random()*all.length)]; if(r) await sock.sendMessage(from,{text:R.rdmOk(r),mentions:[r]},{quoted:m}); return }
-    if(cmd==="iscom"){ let cache=fullMessageStore[from]||[]; let toDel=Math.min(cache.length,50); await sock.sendMessage(from,{text:`💀 ISCOM ${toDel} msgs...`},{quoted:m}); let ok=0; for(let i=cache.length-1;i>=0&&ok<toDel;i--){ try{ await sock.sendMessage(from,{delete:cache[i].key}); ok++; await new Promise(r=>setTimeout(r,500)) }catch{} } fullMessageStore[from]=[]; await sock.sendMessage(from,{text:`💀 ISCOM FINI ${ok}`},{quoted:m}); return }
-    if(["time","tim"].includes(cmd)){ let t=parseInt(txt)||10; await sock.sendMessage(from,{text:`⏳ ${t}s`},{quoted:m}); setTimeout(async()=>{ await sock.sendMessage(from,{text:cmd==="time"?R.timeEnd:R.timEnd},{quoted:m}) },t*1000); return }
-    if(cmd==="inactifs"||cmd==="fantomes"||cmd==="ghostlist"){
-      if(!isGroup) return
-      let act=db.activity[from]||{}
-      let members=meta.participants.map(p=>p.id)
-      let sorted=members.map(id=>({id, count:act[id]||0})).sort((a,b)=>a.count-b.count)
-      let inactifs=sorted.slice(0,10)
-      let text=`👻 𝑭𝑨𝑵𝑻Ô𝑴𝑬𝑺 𝑫𝑼 𝑮𝑹𝑶𝑼𝑷𝑬 👻\n\nLes 10 qui ne parlent JAMAIS:\n\n${inactifs.map((u,i)=>`${i+1}. @${u.id.split('@')[0]} - ${u.count} msgs`).join('\n')}\n\n💀 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝒂 𝒕𝒐𝒖𝒕 𝒗𝒖!`
-      await sock.sendMessage(from,{text,mentions:inactifs.map(u=>u.id)},{quoted:m})
+    if(cmd==="promote"){ if(!isGroup||!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); await sock.groupParticipantsUpdate(from,[target],"promote").catch(()=>{}); await sock.sendMessage(from,{text:R.promote(target),mentions:[target]},{quoted:m}); return }
+    if(cmd==="demote"){ if(!isGroup||!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target)){ await sock.sendMessage(from,{text:R.creatorProtect},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"demote").catch(()=>{}); await sock.sendMessage(from,{text:R.demote(target),mentions:[target]},{quoted:m}); return }
+    if(cmd==="mute"||cmd==="lock"||cmd==="no"){ if(!isGroup) return; await sock.groupSettingUpdate(from,"announcement").catch(()=>{}); await sock.sendMessage(from,{text:R.mute},{quoted:m}); return }
+    if(cmd==="unmute"||cmd==="unlock"||cmd==="groupe"){ if(!isGroup) return; await sock.groupSettingUpdate(from,"not_announcement").catch(()=>{}); await sock.sendMessage(from,{text:R.unmute},{quoted:m}); return }
+    if(cmd==="admin"){ if(!isGroup||!meta) return; let a=meta.participants.filter(p=>p.admin).map(p=>p.id); await sock.sendMessage(from,{text:`👑 𝑨𝒅𝒎𝒊𝒏𝒔 (${a.length}/${meta.participants.length}):\n${a.map(x=>`@${x.split('@')[0]}`).join(', ')}`,mentions:a},{quoted:m}); return }
+    if(cmd==="info"){
+      if(!isGroup){ await sock.sendMessage(from,{text:`👑 INFO PV\nID: ${from}\nOwner: ${OWNER_NUMBER}`},{quoted:m}); return }
+      try{
+        let admins = meta.participants.filter(p=>p.admin)
+        let owner = meta.participants.find(p=>p.admin==='superadmin') || admins[0]
+        let invite = await sock.groupInviteCode(from).catch(()=>null)
+        let link = invite ? `https://chat.whatsapp.com/${invite}` : "Lien privé (bot pas admin)"
+        let t=`꧁༒☬ INFO GROUPE ☬༒꧂\n\n📌 Nom: ${meta.subject}\n🆔 ID: ${meta.id.split('@')[0]}\n👥 Membres: ${meta.participants.length}\n👑 Admins: ${admins.length}\n👑 Owner: @${owner ? owner.id.split('@')[0] : "inconnu"}\n\n📅 Créé: ${meta.creation ? new Date(meta.creation*1000).toLocaleDateString('fr-FR') : "Inconnu"}\n📝 Desc: ${meta.desc ? meta.desc.slice(0,200) : "Pas de description"}\n\n🔗 Lien: ${link}\n\n👑 LISTE ADMINS (${admins.length}):\n${admins.map((a,i)=>`${i+1}. @${a.id.split('@')[0]} ${a.admin==='superadmin'?'(SUPER)':''}`).join('\n')}\n\n💀 BY BLACK GOKU`
+        await sock.sendMessage(from,{text:t,mentions:[...admins.map(a=>a.id), owner?.id].filter(Boolean)},{quoted:m})
+      }catch(e){ await sock.sendMessage(from,{text:`📌 ${meta.subject}\n👥 ${meta.participants.length} membres | 👑 ${meta.participants.filter(p=>p.admin).length} admins`},{quoted:m}) }
       return
     }
-    if(cmd==="trad"||cmd==="translate"){
-      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage
-      let lang=args[0]?.length==2? args[0] : 'fr'
-      let realText = q? (q.conversation||q.extendedTextMessage?.text||"") : args.slice(lang.length==2?1:0).join(' ')
-      if(!realText){ await sock.sendMessage(from,{text:"😈 Réponds à un message avec ₩trad fr / en / pt / es"},{quoted:m}); return }
-      let translated=await translateText(realText, lang)
-      await sock.sendMessage(from,{text:`🌐 𝑻𝑹𝑨𝑫 [${lang.toUpperCase()}]:\n\n${translated}`},{quoted:m})
+    if(cmd==="stats"||cmd==="pt"){
+      if(!isGroup){ await sock.sendMessage(from,{text:`📊 GLOBAL\nClans: ${Object.keys(db.clans).length} | Protec: ${db.protec.length}`},{quoted:m}); return }
+      let act=db.activity[from]||{}; let total=Object.values(act).reduce((a,b)=>a+b,0); let top=Object.entries(act).sort((a,b)=>b[1]-a[1]).slice(0,5)
+      let prots=[]; if(db.antilink.includes(from)) prots.push("antilink"); if(db.antisticker.includes(from)) prots.push("antisticker"); if(db.antistatus.includes(from)) prots.push("antistatus"); if(db.antibod[from]) prots.push("antibod"); if(db.antilock.includes(from)) prots.push("antilock"); if(db.antidemote.includes(from)) prots.push("antidemote"); if(db.welcome.includes(from)) prots.push("welcome"); if(db.ghost.includes(from)) prots.push("ghost"); if(db.kaio.includes(from)) prots.push("kaio"); if(db.zenkai.includes(from)) prots.push("zenkai"); if(db.godmode.includes(from)) prots.push("godmode"); if(db.boy.includes(from)) prots.push("boy"); if(db.blockadmin.includes(from)) prots.push("blockadmin")
+      let t=`꧁༒☬ STATS GROUPE ☬༒꧂\n\n📌 ${meta.subject}\n👥 ${meta.participants.length} membres | 👑 ${meta.participants.filter(p=>p.admin).length} admins\n💬 ${total} msgs enregistrés\n👻 ${db.ghostCache[from]?.length||0} msgs ghost\n\n🔥 TOP 5 ACTIFS:\n${top.length?top.map(([jid,c],i)=>`${i+1}. @${jid.split('@')[0]} - ${c} msgs`).join('\n'):"Aucune activité"}\n\n🛡️ PROTECTIONS (${prots.length}):\n${prots.join(' | ')||"Aucune - groupe nu 💀"}\n\n👑 GLOBAL: Clans ${Object.keys(db.clans).length} | Protec ${db.protec.length} | Saved ${db.saved.length}\n\n💀 BY BLACK GOKU`
+      await sock.sendMessage(from,{text:t,mentions:top.map(([jid])=>jid)},{quoted:m}); return
+    }
+    if(cmd==="gt"){
+      let who=target||m.message.extendedTextMessage?.contextInfo?.participant||(isGroup?null:from)
+      if(!who) return await sock.sendMessage(from,{text:"😈 TAG UN MORTEL!\nEx: ₩gt @user ou réponds"},{quoted:m})
+      try{ let pp=await sock.profilePictureUrl(who,'image'); await sock.sendMessage(from,{image:{url:pp},caption:`👑 @${who.split('@')[0]} BLACK GOKU te voit`,mentions:[who]},{quoted:m}) }catch{ await sock.sendMessage(from,{text:`👑 @${who.split('@')[0]} (pas de PP)`,mentions:[who]},{quoted:m}) }
       return
+    }
+    if(cmd==="rdm"){ if(!meta) return; let all=meta.participants.filter(p=>!isProtectedForKick(p.id)).map(p=>p.id); let r=all[Math.floor(Math.random()*all.length)]; if(r) await sock.sendMessage(from,{text:R.rdmOk(r),mentions:[r]},{quoted:m}); return }
+    if(cmd==="iscom"){ 
+      if(!isGroup) return
+      let cache=fullMessageStore[from]||[]; 
+      if(cache.length===0) return await sock.sendMessage(from,{text:"💀 Cache vide, envoie des msgs avant"},{quoted:m})
+      let toDel=Math.min(cache.length,50); await sock.sendMessage(from,{text:`💀 ISCOM ${toDel} msgs...`},{quoted:m}); 
+      let ok=0; for(let i=cache.length-1;i>=0&&ok<toDel;i--){ try{ await sock.sendMessage(from,{delete:cache[i].key}); ok++; await new Promise(r=>setTimeout(r,500)) }catch{} } 
+      fullMessageStore[from]=[]; await sock.sendMessage(from,{text:`💀 ISCOM FINI ${ok}/${toDel}`},{quoted:m}); return 
+    }
+    if(["time","tim"].includes(cmd)){ let t=parseInt(txt)||10; if(!t) return await sock.sendMessage(from,{text:"Usage: ₩time 10"},{quoted:m}); await sock.sendMessage(from,{text:`⏳ ${t}s`},{quoted:m}); setTimeout(async()=>{ await sock.sendMessage(from,{text:cmd==="time"?R.timeEnd:R.timEnd},{quoted:m}) },t*1000); return }
+    if(cmd==="inactifs"||cmd==="fantomes"||cmd==="ghostlist"){
+      if(!isGroup||!meta) return; let act=db.activity[from]||{}; let members=meta.participants.map(p=>p.id); let sorted=members.map(id=>({id,count:act[id]||0})).sort((a,b)=>a.count-b.count); let inact=sorted.slice(0,10)
+      await sock.sendMessage(from,{text:`👻 FANTÔMES (10 moins actifs):\n${inact.map((u,i)=>`${i+1}. @${u.id.split('@')[0]} - ${u.count} msgs`).join('\n')}\n\n💀 BLACK GOKU a tout vu!`,mentions:inact.map(u=>u.id)},{quoted:m}); return
+    }
+    if(cmd==="trad"||cmd==="translate"){
+      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; let lang='fr'; if(text.toLowerCase().includes(' pt')) lang='pt'; if(text.toLowerCase().includes(' fr')) lang='fr'
+      let real=""; if(q) real=q.conversation||q.extendedTextMessage?.text||q.imageMessage?.caption||q.videoMessage?.caption||""; if(!real){ real=args.filter(a=>a.length!==2).join(' '); if(args[0]?.toLowerCase()===lang) real=args.slice(1).join(' ') }
+      if(!real) return await sock.sendMessage(from,{text:"😈 Usage: ₩trad fr (réponds) ou ₩trad pt Hola"},{quoted:m})
+      let tr=await translateText(real,lang); await sock.sendMessage(from,{text:`🌐 TRAD [${lang.toUpperCase()}]:\n"${real}"\n➡️\n${tr}`},{quoted:m}); return
     }
     if(cmd==="chut"&&target){ db.chut[target]=true; saveDB(); await sock.sendMessage(from,{text:R.chut(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="unchut"&&target){ delete db.chut[target]; saveDB(); await sock.sendMessage(from,{text:R.unchut(target),mentions:[target]},{quoted:m}); return }
-    if(cmd==="blockadmin"){ if(!target){ if(!db.blockadmin.includes(from)) db.blockadmin.push(from); saveDB(); await sock.sendMessage(from,{text:R.blockadminOn},{quoted:m}); } else { if(!db.blockadmin.includes(target)) db.blockadmin.push(target); saveDB(); await sock.sendMessage(from,{text:R.blockadminOn,mentions:[target]},{quoted:m}); } return }
-    if(cmd==="unblockadmin"){ if(!target){ db.blockadmin=db.blockadmin.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.blockadminOff},{quoted:m}); } else { db.blockadmin=db.blockadmin.filter(x=>x!==target); saveDB(); await sock.sendMessage(from,{text:R.blockadminOff},{quoted:m}); } return }
+    if(cmd==="blockadmin"){ if(!target){ if(!db.blockadmin.includes(from)) db.blockadmin.push(from); }else{ if(!db.blockadmin.includes(target)) db.blockadmin.push(target); } saveDB(); await sock.sendMessage(from,{text:R.blockadminOn},{quoted:m}); return }
+    if(cmd==="unblockadmin"){ if(!target) db.blockadmin=db.blockadmin.filter(x=>x!==from); else db.blockadmin=db.blockadmin.filter(x=>x!==target); saveDB(); await sock.sendMessage(from,{text:R.blockadminOff},{quoted:m}); return }
     if(cmd==="curse"&&target){ db.curse[target]=true; saveDB(); await sock.sendMessage(from,{text:R.curseOn(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="uncurse"&&target){ delete db.curse[target]; saveDB(); await sock.sendMessage(from,{text:R.curseOff(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="reini"&&target){ delete db.chut[target]; delete db.curse[target]; db.boy=db.boy.filter(x=>x!==target); db.boyUsers=db.boyUsers.filter(x=>x!==target); saveDB(); await sock.sendMessage(from,{text:R.reiniOk(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="neant"){ let count=parseInt(txt)||20; let cache=fullMessageStore[from]||[]; let toDel=Math.min(cache.length,count); let del=0; for(let i=cache.length-1;i>=0&&del<toDel;i--){ try{ await sock.sendMessage(from,{delete:cache[i].key}); del++; await new Promise(r=>setTimeout(r,500)) }catch{} } await sock.sendMessage(from,{text:R.neantStart(del)},{quoted:m}); return }
-    if(text.toLowerCase().startsWith(PREFIX+"crée clan")||text.toLowerCase().startsWith(PREFIX+"cree clan")){ let n=text.split(/clan/i)[1]?.trim(); if(!n){ await sock.sendMessage(from,{text:"Usage: ₩crée clan <nom>"},{quoted:m}); return } if(db.clans[n]){ await sock.sendMessage(from,{text:`Existe déjà`},{quoted:m}); return } db.clans[n]={owner:senderNum,members:[],created:Date.now()}; saveDB(); await sock.sendMessage(from,{text:`✅ Clan ${n} créé`},{quoted:m}); return }
-    if(cmd==="ajouter"){ let cn=txt.split(' ').pop(); if(!target||!cn){ await sock.sendMessage(from,{text:"Usage: ₩ajouter @user clan"},{quoted:m}); return } if(!db.clans[cn]){ await sock.sendMessage(from,{text:"Clan inexistant"},{quoted:m}); return } let nid=normalizeJid(target); if(!db.clans[cn].members.includes(nid)) db.clans[cn].members.push(nid); saveDB(); await sock.sendMessage(from,{text:`✅ @${target.split('@')[0]} ajouté à ${cn}`,mentions:[target]},{quoted:m}); return }
+    if(text.toLowerCase().startsWith(PREFIX+"crée clan")||text.toLowerCase().startsWith(PREFIX+"cree clan")){ let n=text.split(/clan/i)[1]?.trim(); if(!n) return await sock.sendMessage(from,{text:"Usage: ₩crée clan <nom>"},{quoted:m}); if(db.clans[n]) return await sock.sendMessage(from,{text:"Existe déjà"},{quoted:m}); db.clans[n]={owner:senderNum,members:[],created:Date.now()}; saveDB(); await sock.sendMessage(from,{text:`✅ Clan ${n} créé`},{quoted:m}); return }
+    if(cmd==="ajouter"){ let cn=txt.split(' ').pop(); if(!target||!cn) return await sock.sendMessage(from,{text:"Usage: ₩ajouter @user clan"},{quoted:m}); if(!db.clans[cn]) return await sock.sendMessage(from,{text:"Clan inexistant"},{quoted:m}); let nid=normalizeJid(target); if(!db.clans[cn].members.includes(nid)) db.clans[cn].members.push(nid); saveDB(); await sock.sendMessage(from,{text:`✅ @${target.split('@')[0]} ajouté à ${cn}`,mentions:[target]},{quoted:m}); return }
     if(cmd==="retirer"){ let cn=txt.split(' ').pop(); if(!target||!cn) return; if(!db.clans[cn]) return; let nid=normalizeJid(target); db.clans[cn].members=db.clans[cn].members.filter(x=>x!==nid); saveDB(); await sock.sendMessage(from,{text:`✅ retiré`},{quoted:m}); return }
     if(text.toLowerCase().startsWith(PREFIX+"clan list")||(cmd==="clan"&&txt.includes("list"))){ let l=Object.keys(db.clans); await sock.sendMessage(from,{text:l.length?`Clans: ${l.join(', ')}`:"Aucun clan"},{quoted:m}); return }
-    if(text.toLowerCase().startsWith(PREFIX+"clan info")){ let cn=text.split(/info/i)[1]?.trim(); let c=db.clans[cn]; if(!c){ await sock.sendMessage(from,{text:"Inexistant"},{quoted:m}); return } await sock.sendMessage(from,{text:`${cn} owner:${c.owner} membres:${c.members.length}`},{quoted:m}); return }
+    if(text.toLowerCase().startsWith(PREFIX+"clan info")){ let cn=text.split(/info/i)[1]?.trim(); let c=db.clans[cn]; if(!c) return await sock.sendMessage(from,{text:"Inexistant"},{quoted:m}); await sock.sendMessage(from,{text:`${cn} owner:${c.owner} membres:${c.members.length}`},{quoted:m}); return }
     if(text.toLowerCase().startsWith(PREFIX+"supprimer clan")){ let cn=text.split(/clan/i)[1]?.trim(); if(db.clans[cn]){ delete db.clans[cn]; saveDB(); await sock.sendMessage(from,{text:`🗑️ ${cn} supprimé`},{quoted:m}); } return }
     if(cmd==="save"&&target){ if(!db.saved.includes(target)) db.saved.push(target); saveDB(); await sock.sendMessage(from,{text:R.save(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="unsave"&&target){ db.saved=db.saved.filter(x=>x!==target); saveDB(); await sock.sendMessage(from,{text:R.unsave(target),mentions:[target]},{quoted:m}); return }
@@ -311,14 +374,16 @@ async function startBot(){
     if(cmd==="welcome"){ if(txt.toLowerCase().includes("off")) db.welcome=db.welcome.filter(x=>x!==from); else if(!db.welcome.includes(from)) db.welcome.push(from); saveDB(); await sock.sendMessage(from,{text:db.welcome.includes(from)?R.welcome:R.welcomeoff},{quoted:m}); return }
     if(cmd==="ghost"){ if(txt.toLowerCase().includes("off")){ db.ghost=db.ghost.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.ghostoff},{quoted:m}); } else if(txt.toLowerCase().includes("voir")){ let c=db.ghostCache[from]?.length||0; let msgs=db.ghostCache[from]?.slice(-5).map(m=>`@${m.sender.split('@')[0]}: ${m.text}`).join('\n')||"Vide"; await sock.sendMessage(from,{text:`👻 Ghost: ${c}\n${msgs}`,mentions:db.ghostCache[from]?.map(m=>m.sender)||[]},{quoted:m}); } else { if(!db.ghost.includes(from)) db.ghost.push(from); saveDB(); await sock.sendMessage(from,{text:R.ghost},{quoted:m}); } return }
     if(cmd==="s"||cmd==="sticker"){
-      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage;
-      let mm=q?{message:q}:m;
       try{
-        let buf=await downloadMediaMessage(mm,'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage});
-        await sock.sendMessage(from,{sticker:buf},{quoted:m});
-      }catch{
-        await sock.sendMessage(from,{text:R.sNeed},{quoted:m})
-      }
+        let q = m.message.extendedTextMessage?.contextInfo?.quotedMessage
+        let mediaMsg = null
+        if(q && (q.imageMessage || q.videoMessage)) mediaMsg = {message: q}
+        else if(m.message.imageMessage || m.message.videoMessage) mediaMsg = m
+        else return await sock.sendMessage(from,{text:R.sNeed},{quoted:m})
+        let buf = await downloadMediaMessage(mediaMsg,'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage})
+        if(!buf || buf.length < 50) throw new Error("buffer vide")
+        await sock.sendMessage(from,{sticker:buf},{quoted:m})
+      }catch(e){ await sock.sendMessage(from,{text:`❌ ${e.message}`},{quoted:m}) }
       return
     }
     if(cmd==="vq"){
@@ -359,6 +424,6 @@ async function startBot(){
   })
   sock.ev.on('messages.update', async(updates)=>{ for(let u of updates){ if(u.update.message===null && messageStore[u.key.id]){ let s=messageStore[u.key.id]; if(db.kaio.includes(s.from)){ await sock.sendMessage(s.from,{text:`🔥 SUPPRIMÉ DÉTECTÉ!\n@${s.sender.split('@')[0]}: "${s.text}"`,mentions:[s.sender]}) } delete messageStore[u.key.id] } } })
   sock.ev.on('group-participants.update', async(update)=>{ try{ const { id, participants, action, author } = update; if(action==='add'){ for(let p of participants){ let meta=await sock.groupMetadata(id).catch(()=>({subject:"royaume"})); if(db.welcome.includes(id)) await sock.sendMessage(id,{text:R.welcomeMsg(p,meta.subject),mentions:[p]}) } } if(action==='remove'){ for(let r of participants){ let num=normalizeJid(r); let prot=db.protec.includes(r)||db.pro.includes(r)||db.saved.includes(r)||db.amis[num]||db.godmode.includes(id)||num.includes(OWNER_NUMBER)||db.zenkai.includes(id)||db.zenkaiUsers[num]; if(prot){ let meta=await sock.groupMetadata(id).catch(()=>null); if(!meta) continue; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin){ await sock.sendMessage(id,{text:R.protecFail}); continue } await sock.groupParticipantsUpdate(id,[r],"add").catch(()=>{}); await new Promise(res=>setTimeout(res,1200)); if(author&&author!==r){ let an=normalizeJid(author); if(!db.protec.includes(author)&&!an.includes(OWNER_NUMBER)){ await sock.groupParticipantsUpdate(id,[author],"remove").catch(()=>{}); await sock.sendMessage(id,{text:R.protecTriggered(r,author),mentions:[r,author]}) } } } } } if(action==='demote'){ for(let d of participants){ let num=normalizeJid(d); let prot=db.protec.includes(d)||db.pro.includes(d)||db.saved.includes(d)||db.godmode.includes(id)||num.includes(OWNER_NUMBER); let ab=db.antibod[id]||db.antidemote.includes(id)||db.godmode.includes(id); if(prot||ab){ let meta=await sock.groupMetadata(id).catch(()=>null); if(!meta) continue; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin) continue; await sock.groupParticipantsUpdate(id,[d],"promote").catch(()=>{}); if(author&&author!==d&&prot){ await sock.groupParticipantsUpdate(id,[author],"demote").catch(()=>{}); await sock.sendMessage(id,{text:R.protecDemote(d,author),mentions:[d,author]}) } } } } }catch(e){ console.log("PROTEC ERR",e) } })
-  sock.ev.on('groups.update', async(updates)=>{ for(let u of updates){ try{ if(u.announce!==undefined && db.antilock.includes(u.id)){ if(u.announce==="true"){ await sock.groupSettingUpdate(u.id,"not_announcement"); await sock.sendMessage(u.id,{text:"🔓 𝑨𝑵𝑻𝑰𝑳𝑶𝑪𝑲 - Groupe réouvert!"}) } } if(db.godmode.includes(u.id) && u.announce==="true"){ await sock.groupSettingUpdate(u.id,"not_announcement") } }catch{} } })
+  sock.ev.on('groups.update', async(updates)=>{ for(let u of updates){ try{ if(u.announce!==undefined && db.antilock.includes(u.id)){ if(u.announce==="true"){ await sock.groupSettingUpdate(u.id,"not_announcement"); await sock.sendMessage(u.id,{text:"🔓 ANTI-LOCK - Groupe réouvert!"}) } } if(db.godmode.includes(u.id) && u.announce==="true"){ await sock.groupSettingUpdate(u.id,"not_announcement") } }catch{} } })
 }
 startBot()
