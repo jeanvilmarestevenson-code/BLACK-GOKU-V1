@@ -18,6 +18,21 @@ const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
 let sock, status="Demarrage...", lastCode="pas encore", latestQR=null, BOT_START=Date.now()
 let messageStore = {}
 let fullMessageStore = {}
+
+// === 8 REPONSES AMICALES HUMAINES QUAND ON MENTIONNE TON NOM ===
+const OWNER_TRIGGERS = ["goat", "black goku", "blackgoku", "jean", "stevenson", "the goat", "boss", "vilmar", "stevenson-code", "jean vilmar", "sondji"]
+const GOAT_REPLIES = [
+  "Yo 😎 oui c'est moi, tu m'as appelé? Je suis là frère.",
+  "je suis là! Qu'est-ce qu'il y a?",
+  "Oui mon reuf? Tu as besoin de quelque chose?",
+  "Je suis là frère, dis-moi tout",
+  "Présent! On est là, c'est comment? 😎",
+  "vous parlez de moi? 😂 Je suis là!",
+  "Oui oui je t'écoute,",
+  "Mon Maître BLACK GOKU n'est pas disponible maintenant"
+]
+const getRandomGoatReply = ()=> GOAT_REPLIES[Math.floor(Math.random()*GOAT_REPLIES.length)]
+
 const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┏━ ✦ 𝑴𝑬𝑴𝑩𝑹𝑬𝑺 ✦ ━┓
 ┃ ₩𝒕𝒂𝒈𝒂𝒍𝒍
@@ -136,7 +151,7 @@ protec:(j)=>`👑🔥 𝑷𝑹𝑶𝑻𝑬𝑪 @${j.split('@')[0]}!`,
 unprotec:(j)=>`💀 𝑷𝑹𝑶𝑻𝑬𝑪 𝒓𝒆𝒕𝒊𝒓é𝒆 @${j.split('@')[0]}.`,
 zenkai:(j)=>`⚡ @${j.split('@')[0]} 𝒁𝑬𝑵𝑲𝑨𝑰.`,
 nozenkai:(j)=>`𝒁𝑬𝑵𝑲𝑨𝑰 𝒓𝒆𝒕𝒊𝒓é.`,
-zenkaiOn:"⚡ 𝒁𝑬𝑵𝑲𝑨𝑰 𝑶𝑵",
+zenkaiOn:"⚡ 𝒁𝑬𝑵𝑲𝑨𝑰 𝑶𝑵 - 𝑷𝒓𝒐𝒕è𝒈𝒆 𝒌𝒊𝒄𝒌 + 𝒓𝒆𝒗𝒐𝒒𝒖𝒆 𝒂𝒅𝒎𝒊𝒏!",
 zenkaiOff:"𝒁𝑬𝑵𝑲𝑨𝑰 𝑶𝑭𝑭",
 antilink:"🔗 𝑨𝑵𝑻𝑰𝑳𝑰𝑵𝑲 𝑶𝑵",
 antilinkoff:"𝑶𝑭𝑭",
@@ -174,7 +189,7 @@ stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é",
 rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`,
 timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!",
 timEnd:"⏰ 𝑻𝑰𝑴 𝑭𝑰𝑵𝑰!",
-onlyOwner:"👑🔥 𝑺𝑬𝑼𝑳 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 !",
+onlyOwner:"👑🔥 𝑺𝑬𝑼𝑳 𝑳𝑬 𝑫𝑰𝑬𝑼 𝑺𝑼𝑷𝑹Ê𝑴𝑬!",
 protecTriggered:(prot, att)=>`☯️🔥 𝑷𝑹𝑶𝑻𝑬𝑪! @${att.split('@')[0]} 𝒂 𝒃𝒂𝒏𝒏𝒊 @${prot.split('@')[0]}!`,
 protecDemote:(prot, att)=>`☯️ 𝑨𝑵𝑻𝑰-𝑫𝑬𝑴𝑶𝑻𝑬! @${att.split('@')[0]} 𝒂 𝒅𝒆𝒎𝒐𝒕𝒆 @${prot.split('@')[0]}!`,
 protecFail:"⚠️ 𝑴𝑬𝑻𝑻𝑬𝒁 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑨𝑫𝑴𝑰𝑵!",
@@ -185,20 +200,75 @@ welcomeMsg:(j, g)=>`꧁༒☬ 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 ☬༒꧂\n�
 function normalizeJid(jid){ return jid? jid.split(':')[0].split('@')[0].replace(/[^0-9]/g,'') : "" }
 function isCreator(jid){ return normalizeJid(jid)===OWNER_NUMBER }
 function isProtectedForKick(jid){ return isCreator(jid) || db.saved.includes(jid) || db.protec.includes(jid) || db.pro.includes(jid) || db.godmode.includes(jid) || db.saved.includes(normalizeJid(jid)) || db.protec.includes(normalizeJid(jid)); }
+function isZenkaiProtected(jid, groupId){
+  let n = normalizeJid(jid)
+  if(groupId && db.zenkai.includes(groupId)) return true
+  if(db.zenkaiUsers[n] === groupId || db.zenkaiUsers[jid] === groupId) return true
+  if(Object.keys(db.zenkaiUsers).includes(n)) return true
+  return isProtectedForKick(jid)
+}
 async function askHyper(q){ try{ let r=await axios.get(`https://text.pollinations.ai/${encodeURIComponent(q)}`,{timeout:20000}); return typeof r.data==='string'?r.data.trim():JSON.stringify(r.data) }catch{ return "𝑰𝑨 𝒊𝒏𝒅𝒊𝒔𝒑𝒐𝒏𝒊𝒃𝒍𝒆" } }
 async function safeRemove(gid, jids){ let ok=0; for(let j of jids){ try{ await sock.groupParticipantsUpdate(gid,[j],"remove"); ok++; await new Promise(r=>setTimeout(r,1200)); }catch{} } return ok; }
+
+// === TRADUCTION V81 FIX - FR + PT + EN ===
 async function translateText(text, to='fr'){
+  to = to.toLowerCase()
+  if(to==='français') to='fr'
+  if(to==='portugais' || to==='portugais br' || to==='br') to='pt'
+  if(to==='francais') to='fr'
+  if(!['fr','pt','en','es'].includes(to)) to='fr'
   try{
-    let r=await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${to}`,{timeout:10000});
-    if(r.data.responseData && r.data.responseData.translatedText) return r.data.responseData.translatedText
-    return text
-  }catch{ return text }
+    // API 1: MyMemory
+    let r=await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${to}`,{timeout:8000});
+    if(r.data?.responseData?.translatedText && r.data.responseData.translatedText.length>1){
+      if(!r.data.responseData.translatedText.toLowerCase().includes('please specify')) return r.data.responseData.translatedText
+    }
+  }catch{}
+  try{
+    // API 2: LibreTranslate mirror
+    let r2=await axios.post('https://libretranslate.com/translate',{q:text, source:'auto', target:to, format:'text'},{timeout:8000, headers:{'Content-Type':'application/json'}})
+    if(r2.data?.translatedText) return r2.data.translatedText
+  }catch{}
+  try{
+    // API 3: Pollinations AI trad
+    let prompt = to==='fr' ? `Traduis en français: ${text}` : to==='pt' ? `Traduza para português: ${text}` : `Translate to English: ${text}`
+    let r3=await axios.get(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`,{timeout:10000})
+    if(typeof r3.data==='string' && r3.data.length>1) return r3.data.trim()
+  }catch{}
+  return text+" (trad indisponible)"
+}
+function findWaifuFile(num){
+  let bases = [`waifu${num}`, `waifu-${num}`, `Waifu${num}`, `WAIFU${num}`, `waifu ${num}`]
+  let exts = ['.jpg','.jpeg','.png','.webp','.JPG','.PNG','.JPEG']
+  for(let b of bases){
+    for(let e of exts){
+      let f = `./${b}${e}`
+      if(fs.existsSync(f)) return f
+    }
+  }
+  if(num==='1'){
+    let fall = ['./waifu.jpg','./Waifu.jpg','./WAIFU.jpg','./waifu.jpeg','./waifu.png']
+    for(let f of fall) if(fs.existsSync(f)) return f
+  }
+  return null
+}
+// === STICKER HD V81 - 2 METHODES ===
+async function makeStickerBuffer(mediaBuffer){
+  try{
+    // Essaie sharp si installé
+    const sharp = require('sharp')
+    let img = sharp(mediaBuffer).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90})
+    return await img.toBuffer()
+  }catch{
+    // Si pas de sharp, retourne buffer original (Baileys va convertir)
+    return mediaBuffer
+  }
 }
 app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE:${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); latestQR=null; messageStore={}; fullMessageStore={}; res.send('CLEAR OK') }catch(e){ res.send(e.message) } })
 app.get('/pair', async(req,res)=>{ if(!sock) return res.send('Bot demarre... attends 10s et refresh'); let num=(req.query.num||'').replace(/[^0-9]/g,'')||OWNER_NUMBER; try{ let code=await sock.requestPairingCode(num); lastCode=code; res.send(`<h1 style="font-size:60px">${code}</h1>`) }catch(e){ res.send('Erreur: '+e.message) } })
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR'); try{ const QRCode=require('qrcode'); const dataUrl=await QRCode.toDataURL(latestQR); res.send(`<img src="${dataUrl}" style="width:300px">`) }catch(e){ res.send(e.message) } })
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V78 LIVE "+PORT))
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V81 LIVE "+PORT))
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
   const { state, saveCreds } = await useMultiFileAuthState('auth2')
@@ -221,7 +291,22 @@ async function startBot(){
       if(fullMessageStore[from].length>200) fullMessageStore[from].shift()
       if(db.kaio.includes(from)) messageStore[m.key.id]={text:txtForCache,sender,from,id:m.key.id}
       if(db.ghost.includes(from)){ if(!db.ghostCache[from]) db.ghostCache[from]=[]; db.ghostCache[from].push({sender,text:txtForCache,time:Date.now()}); if(db.ghostCache[from].length>500) db.ghostCache[from].shift(); saveDB(); }
-      if(!textAll.startsWith(PREFIX)){ let en = db.autoreplyOn.includes(from) || db.autoreplyAll.includes(from) || db.autoreplyAll.includes('all'); if(en){ let low=textAll.toLowerCase(); for(let k in db.autoreply){ if(low.includes(k.toLowerCase())){ await sock.sendMessage(from,{text:db.autoreply[k]}); break; } } } }
+      if(!textAll.startsWith(PREFIX)){
+        let low = textAll.toLowerCase()
+        let en = db.autoreplyOn.includes(from) || db.autoreplyAll.includes(from) || db.autoreplyAll.includes('all')
+        if(en){
+          for(let k in db.autoreply){
+            if(low.includes(k.toLowerCase())){
+              await sock.sendMessage(from,{text:db.autoreply[k]}); break
+            }
+          }
+          for(let trig of OWNER_TRIGGERS){
+            if(low.includes(trig)){
+              await sock.sendMessage(from,{text:getRandomGoatReply()}); break
+            }
+          }
+        }
+      }
       saveDB()
     }
     if(db.privateMode && from.endsWith('@g.us') && !isOwner && !isCreator(sender)) return
@@ -245,17 +330,17 @@ async function startBot(){
     if(cmd==="goku"){ if(fs.existsSync('./goku.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./goku.jpg'),caption:R.gokuMsg},{quoted:m}); else await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return }
     if(cmd.startsWith("waifu")){
       let num = cmd.replace('waifu','') || '1'
-      let files = [`./waifu${num}.jpg`, `./waifu-${num}.jpg`, `./Waifu.jpg`, `./waifu.jpg`]
-      let found = files.find(f=>fs.existsSync(f))
+      let found = findWaifuFile(num)
       if(found){
         await sock.sendMessage(from,{image:fs.readFileSync(found),caption:`💜 Waifu ${num} - BLACK GOKU`},{quoted:m})
       } else {
         try{
-          let r = await axios.get('https://api.waifu.pics/sfw/waifu',{timeout:8000})
-          if(r.data.url) await sock.sendMessage(from,{image:{url:r.data.url},caption:`💜 Waifu ${num}`},{quoted:m})
+          let r = await axios.get('https://api.waifu.im/search?included_tags=waifu',{timeout:10000})
+          let url = r.data.images?.[0]?.url
+          if(url) await sock.sendMessage(from,{image:{url},caption:`💜 Waifu ${num} - API`},{quoted:m})
           else throw new Error()
         }catch{
-          await sock.sendMessage(from,{text:`❌ Mets waifu${num}.jpg dans ton dossier`},{quoted:m})
+          await sock.sendMessage(from,{text:`❌ Waifu${num} introuvable. Vérifie que waifu${num}.jpg est dans ton repo GitHub`},{quoted:m})
         }
       }
       return
@@ -337,11 +422,31 @@ async function startBot(){
       if(!isGroup||!meta) return; let act=db.activity[from]||{}; let members=meta.participants.map(p=>p.id); let sorted=members.map(id=>({id,count:act[id]||0})).sort((a,b)=>a.count-b.count); let inact=sorted.slice(0,10)
       await sock.sendMessage(from,{text:`👻 FANTÔMES (10 moins actifs):\n${inact.map((u,i)=>`${i+1}. @${u.id.split('@')[0]} - ${u.count} msgs`).join('\n')}\n\n💀 BLACK GOKU a tout vu!`,mentions:inact.map(u=>u.id)},{quoted:m}); return
     }
-    if(cmd==="trad"||cmd==="translate"){
-      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; let lang='fr'; if(text.toLowerCase().includes(' pt')) lang='pt'; if(text.toLowerCase().includes(' fr')) lang='fr'
-      let real=""; if(q) real=q.conversation||q.extendedTextMessage?.text||q.imageMessage?.caption||q.videoMessage?.caption||""; if(!real){ real=args.filter(a=>a.length!==2).join(' '); if(args[0]?.toLowerCase()===lang) real=args.slice(1).join(' ') }
-      if(!real) return await sock.sendMessage(from,{text:"😈 Usage: ₩trad fr (réponds) ou ₩trad pt Hola"},{quoted:m})
-      let tr=await translateText(real,lang); await sock.sendMessage(from,{text:`🌐 TRAD [${lang.toUpperCase()}]:\n"${real}"\n➡️\n${tr}`},{quoted:m}); return
+    // === TRAD V81 FIX FR/PT ===
+    if(cmd==="trad"||cmd==="translate"||cmd==="traduire"){
+      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage
+      let lang = 'fr'
+      let lowArgs = txt.toLowerCase()
+      if(lowArgs.startsWith('pt ')||lowArgs.startsWith('portugais')||lowArgs.startsWith('br ')||lowArgs.startsWith('pt-br')) lang='pt'
+      else if(lowArgs.startsWith('fr ')||lowArgs.startsWith('français')||lowArgs.startsWith('francais')) lang='fr'
+      else if(lowArgs.startsWith('en ')) lang='en'
+      else if(lowArgs.startsWith('es ')) lang='es'
+      else if(lowArgs.includes(' pt')) lang='pt'
+      else if(lowArgs.includes(' fr')) lang='fr'
+      let real=""
+      if(q) real=q.conversation||q.extendedTextMessage?.text||q.imageMessage?.caption||q.videoMessage?.caption||""
+      if(!real){
+        real=txt
+        // enleve le prefix lang
+        if(real.toLowerCase().startsWith(lang+' ')) real=real.slice(lang.length+1)
+        if(real.toLowerCase().startsWith('français ')) real=real.slice(9)
+        if(real.toLowerCase().startsWith('portugais ')) real=real.slice(10)
+      }
+      if(!real) return await sock.sendMessage(from,{text:"Usage: ₩trad fr ton texte\n₩trad pt ton texte\nOu réponds à un message avec ₩trad fr\nLangues: fr, pt, en, es"},{quoted:m})
+      await sock.sendMessage(from,{text:`🌐 Traduction... [${lang.toUpperCase()}]`},{quoted:m})
+      let tr=await translateText(real,lang)
+      await sock.sendMessage(from,{text:`🌐 [${lang.toUpperCase()}]:\n"${real}"\n➡️\n${tr}`},{quoted:m})
+      return
     }
     if(cmd==="chut"&&target){ db.chut[target]=true; saveDB(); await sock.sendMessage(from,{text:R.chut(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="unchut"&&target){ delete db.chut[target]; saveDB(); await sock.sendMessage(from,{text:R.unchut(target),mentions:[target]},{quoted:m}); return }
@@ -361,8 +466,42 @@ async function startBot(){
     if(cmd==="unsave"&&target){ db.saved=db.saved.filter(x=>x!==target); saveDB(); await sock.sendMessage(from,{text:R.unsave(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="protec"&&target){ if(!db.protec.includes(target)) db.protec.push(target); saveDB(); await sock.sendMessage(from,{text:R.protec(target),mentions:[target]},{quoted:m}); return }
     if((cmd==="unprotect"||cmd==="unprotec")&&target){ db.protec=db.protec.filter(x=>x!==target); saveDB(); await sock.sendMessage(from,{text:R.unprotec(target),mentions:[target]},{quoted:m}); return }
-    if(cmd==="zenkai"){ if(txt.toLowerCase().includes("on")){ if(!db.zenkai.includes(from)) db.zenkai.push(from); saveDB(); await sock.sendMessage(from,{text:R.zenkaiOn},{quoted:m}); } else if(target){ db.zenkaiUsers[normalizeJid(target)]=from; saveDB(); await sock.sendMessage(from,{text:R.zenkai(target),mentions:[target]},{quoted:m}); } return }
-    if(cmd==="nozenkai"){ if(txt.toLowerCase().includes("off")||!target){ db.zenkai=db.zenkai.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.zenkaiOff},{quoted:m}); } else { delete db.zenkaiUsers[normalizeJid(target)]; saveDB(); await sock.sendMessage(from,{text:R.nozenkai(target),mentions:[target]},{quoted:m}); } return }
+    if(cmd==="zenkai"){
+      if(txt.toLowerCase().includes("on")){
+        if(!db.zenkai.includes(from)) db.zenkai.push(from);
+        saveDB();
+        await sock.sendMessage(from,{text:R.zenkaiOn},{quoted:m});
+      } else if(target){
+        let n = normalizeJid(target)
+        db.zenkaiUsers[n] = from
+        db.zenkaiUsers[target] = from
+        saveDB();
+        await sock.sendMessage(from,{text:R.zenkai(target),mentions:[target]},{quoted:m});
+      } else {
+        if(!db.zenkai.includes(from)) db.zenkai.push(from);
+        saveDB();
+        await sock.sendMessage(from,{text:R.zenkaiOn},{quoted:m});
+      }
+      return
+    }
+    if(cmd==="nozenkai"){
+      if(txt.toLowerCase().includes("off")||txt.toLowerCase().includes("all")){
+        db.zenkai=db.zenkai.filter(x=>x!==from);
+        for(let k in db.zenkaiUsers) if(db.zenkaiUsers[k]===from) delete db.zenkaiUsers[k]
+        saveDB();
+        await sock.sendMessage(from,{text:R.zenkaiOff},{quoted:m});
+      } else if(target){
+        let n = normalizeJid(target)
+        delete db.zenkaiUsers[n]; delete db.zenkaiUsers[target];
+        saveDB();
+        await sock.sendMessage(from,{text:R.nozenkai(target),mentions:[target]},{quoted:m});
+      } else {
+        db.zenkai=db.zenkai.filter(x=>x!==from);
+        saveDB();
+        await sock.sendMessage(from,{text:R.zenkaiOff},{quoted:m});
+      }
+      return
+    }
     if(cmd==="boy"){ if(target){ if(!db.boy.includes(target)) db.boy.push(target); if(!db.boyUsers.includes(target)) db.boyUsers.push(target); saveDB(); await sock.sendMessage(from,{text:R.boyOn,mentions:[target]},{quoted:m}); return } if(txt.toLowerCase().includes("off")){ db.boy=db.boy.filter(x=>x!==from); db.boyUsers=[]; saveDB(); await sock.sendMessage(from,{text:R.boyOff},{quoted:m}); } else { if(!db.boy.includes(from)) db.boy.push(from); saveDB(); await sock.sendMessage(from,{text:R.boyOn},{quoted:m}); } return }
     if(cmd==="godmode"){ if(txt.toLowerCase().includes("off")){ db.godmode=db.godmode.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.godmodeoff},{quoted:m}); } else { if(!db.godmode.includes(from)) db.godmode.push(from); saveDB(); await sock.sendMessage(from,{text:R.godmode},{quoted:m}); } return }
     if(cmd==="antilink"){ if(txt.toLowerCase().includes("off")) db.antilink=db.antilink.filter(x=>x!==from); else if(!db.antilink.includes(from)) db.antilink.push(from); saveDB(); await sock.sendMessage(from,{text:db.antilink.includes(from)?R.antilink:R.antilinkoff},{quoted:m}); return }
@@ -373,17 +512,30 @@ async function startBot(){
     if(cmd==="antistatus"){ if(txt.toLowerCase().includes("off")) db.antistatus=db.antistatus.filter(x=>x!==from); else if(!db.antistatus.includes(from)) db.antistatus.push(from); saveDB(); await sock.sendMessage(from,{text:db.antistatus.includes(from)?R.antistatus:R.antistatusoff},{quoted:m}); return }
     if(cmd==="welcome"){ if(txt.toLowerCase().includes("off")) db.welcome=db.welcome.filter(x=>x!==from); else if(!db.welcome.includes(from)) db.welcome.push(from); saveDB(); await sock.sendMessage(from,{text:db.welcome.includes(from)?R.welcome:R.welcomeoff},{quoted:m}); return }
     if(cmd==="ghost"){ if(txt.toLowerCase().includes("off")){ db.ghost=db.ghost.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.ghostoff},{quoted:m}); } else if(txt.toLowerCase().includes("voir")){ let c=db.ghostCache[from]?.length||0; let msgs=db.ghostCache[from]?.slice(-5).map(m=>`@${m.sender.split('@')[0]}: ${m.text}`).join('\n')||"Vide"; await sock.sendMessage(from,{text:`👻 Ghost: ${c}\n${msgs}`,mentions:db.ghostCache[from]?.map(m=>m.sender)||[]},{quoted:m}); } else { if(!db.ghost.includes(from)) db.ghost.push(from); saveDB(); await sock.sendMessage(from,{text:R.ghost},{quoted:m}); } return }
+    // === STICKER V81 HD + 2e API ===
     if(cmd==="s"||cmd==="sticker"){
       try{
         let q = m.message.extendedTextMessage?.contextInfo?.quotedMessage
         let mediaMsg = null
-        if(q && (q.imageMessage || q.videoMessage)) mediaMsg = {message: q}
+        if(q && (q.imageMessage || q.videoMessage || q.documentMessage)) mediaMsg = {message: q}
         else if(m.message.imageMessage || m.message.videoMessage) mediaMsg = m
         else return await sock.sendMessage(from,{text:R.sNeed},{quoted:m})
         let buf = await downloadMediaMessage(mediaMsg,'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage})
-        if(!buf || buf.length < 50) throw new Error("buffer vide")
-        await sock.sendMessage(from,{sticker:buf},{quoted:m})
-      }catch(e){ await sock.sendMessage(from,{text:`❌ ${e.message}`},{quoted:m}) }
+        if(!buf || buf.length < 100) throw new Error("buffer vide")
+        let stickerBuf = await makeStickerBuffer(buf)
+        // Methode 1: direct webp
+        await sock.sendMessage(from,{sticker:stickerBuf},{quoted:m})
+      }catch(e){
+        // Methode 2: fallback sans sharp
+        try{
+          let q2 = m.message.extendedTextMessage?.contextInfo?.quotedMessage
+          let mm = q2 ? {message:q2} : m
+          let b2 = await downloadMediaMessage(mm,'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage})
+          await sock.sendMessage(from,{sticker:b2},{quoted:m})
+        }catch(e2){
+          await sock.sendMessage(from,{text:`❌ Sticker: ${e.message}`},{quoted:m})
+        }
+      }
       return
     }
     if(cmd==="vq"){
@@ -423,7 +575,58 @@ async function startBot(){
     if(cmd==="private"){ if(txt.includes("on")) db.privateMode=true; else db.privateMode=false; saveDB(); await sock.sendMessage(from,{text:db.privateMode?R.privateOn:R.privateOff},{quoted:m}); return }
   })
   sock.ev.on('messages.update', async(updates)=>{ for(let u of updates){ if(u.update.message===null && messageStore[u.key.id]){ let s=messageStore[u.key.id]; if(db.kaio.includes(s.from)){ await sock.sendMessage(s.from,{text:`🔥 SUPPRIMÉ DÉTECTÉ!\n@${s.sender.split('@')[0]}: "${s.text}"`,mentions:[s.sender]}) } delete messageStore[u.key.id] } } })
-  sock.ev.on('group-participants.update', async(update)=>{ try{ const { id, participants, action, author } = update; if(action==='add'){ for(let p of participants){ let meta=await sock.groupMetadata(id).catch(()=>({subject:"royaume"})); if(db.welcome.includes(id)) await sock.sendMessage(id,{text:R.welcomeMsg(p,meta.subject),mentions:[p]}) } } if(action==='remove'){ for(let r of participants){ let num=normalizeJid(r); let prot=db.protec.includes(r)||db.pro.includes(r)||db.saved.includes(r)||db.amis[num]||db.godmode.includes(id)||num.includes(OWNER_NUMBER)||db.zenkai.includes(id)||db.zenkaiUsers[num]; if(prot){ let meta=await sock.groupMetadata(id).catch(()=>null); if(!meta) continue; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin){ await sock.sendMessage(id,{text:R.protecFail}); continue } await sock.groupParticipantsUpdate(id,[r],"add").catch(()=>{}); await new Promise(res=>setTimeout(res,1200)); if(author&&author!==r){ let an=normalizeJid(author); if(!db.protec.includes(author)&&!an.includes(OWNER_NUMBER)){ await sock.groupParticipantsUpdate(id,[author],"remove").catch(()=>{}); await sock.sendMessage(id,{text:R.protecTriggered(r,author),mentions:[r,author]}) } } } } } if(action==='demote'){ for(let d of participants){ let num=normalizeJid(d); let prot=db.protec.includes(d)||db.pro.includes(d)||db.saved.includes(d)||db.godmode.includes(id)||num.includes(OWNER_NUMBER); let ab=db.antibod[id]||db.antidemote.includes(id)||db.godmode.includes(id); if(prot||ab){ let meta=await sock.groupMetadata(id).catch(()=>null); if(!meta) continue; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin) continue; await sock.groupParticipantsUpdate(id,[d],"promote").catch(()=>{}); if(author&&author!==d&&prot){ await sock.groupParticipantsUpdate(id,[author],"demote").catch(()=>{}); await sock.sendMessage(id,{text:R.protecDemote(d,author),mentions:[d,author]}) } } } } }catch(e){ console.log("PROTEC ERR",e) } })
+  sock.ev.on('group-participants.update', async(update)=>{
+    try{
+      const { id, participants, action, author } = update;
+      if(action==='add'){
+        for(let p of participants){
+          let meta=await sock.groupMetadata(id).catch(()=>({subject:"royaume"}));
+          if(db.welcome.includes(id)) await sock.sendMessage(id,{text:R.welcomeMsg(p,meta.subject),mentions:[p]})
+        }
+      }
+      if(action==='remove'){
+        for(let r of participants){
+          let num=normalizeJid(r);
+          let isProt = isZenkaiProtected(r, id) || db.protec.includes(r)||db.pro.includes(r)||db.saved.includes(r)||db.amis[num]||db.godmode.includes(id)||num.includes(OWNER_NUMBER)||db.zenkai.includes(id)||db.zenkaiUsers[num]
+          if(isProt){
+            let meta=await sock.groupMetadata(id).catch(()=>null); if(!meta) continue;
+            let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin;
+            if(!botAdmin){ await sock.sendMessage(id,{text:R.protecFail}); continue }
+            await sock.groupParticipantsUpdate(id,[r],"add").catch(()=>{});
+            await new Promise(res=>setTimeout(res,1200));
+            if(author&&author!==r){
+              let an=normalizeJid(author);
+              if(!db.protec.includes(author)&&!an.includes(OWNER_NUMBER)){
+                await sock.groupParticipantsUpdate(id,[author],"remove").catch(()=>{});
+                await sock.sendMessage(id,{text:R.protecTriggered(r,author),mentions:[r,author]})
+              }
+            }
+          }
+        }
+      }
+      if(action==='demote'){
+        for(let d of participants){
+          let num=normalizeJid(d);
+          let isProt = isZenkaiProtected(d, id) || db.protec.includes(d)||db.pro.includes(d)||db.saved.includes(d)||db.godmode.includes(id)||num.includes(OWNER_NUMBER)
+          let ab = db.antidemote.includes(id) || db.godmode.includes(id) || db.zenkai.includes(id) || db.zenkaiUsers[num]
+          if(isProt || ab){
+            let meta=await sock.groupMetadata(id).catch(()=>null); if(!meta) continue;
+            let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin;
+            if(!botAdmin) continue;
+            await sock.groupParticipantsUpdate(id,[d],"promote").catch(()=>{});
+            if(author&&author!==d){
+              if(isProt){
+                await sock.groupParticipantsUpdate(id,[author],"demote").catch(()=>{});
+                await sock.sendMessage(id,{text:R.protecDemote(d,author),mentions:[d,author]})
+              } else {
+                await sock.sendMessage(id,{text:`☯️ ZENKAI! @${author.split('@')[0]} a révoqué @${d.split('@')[0]} - BLACK GOKU le remet!`,mentions:[d,author]})
+              }
+            }
+          }
+        }
+      }
+    }catch(e){ console.log("PROTEC ERR",e) }
+  })
   sock.ev.on('groups.update', async(updates)=>{ for(let u of updates){ try{ if(u.announce!==undefined && db.antilock.includes(u.id)){ if(u.announce==="true"){ await sock.groupSettingUpdate(u.id,"not_announcement"); await sock.sendMessage(u.id,{text:"🔓 ANTI-LOCK - Groupe réouvert!"}) } } if(db.godmode.includes(u.id) && u.announce==="true"){ await sock.groupSettingUpdate(u.id,"not_announcement") } }catch{} } })
 }
 startBot()
