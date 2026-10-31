@@ -1,38 +1,27 @@
-# BLACK GOKU - Fichiers à ne pas push
-node_modules/
+# AUTH - JAMAIS PUSH
 auth2/
 auth/
-auth_info/
-auth_info_baileys/
+creds.json
+*auth*
+
+# DB
 black_db.json
 *.db
 *.json
 !package.json
-!package-lock.json
 
-# Logs
-logs/
-*.log
+# NODE
+node_modules/
 npm-debug.log*
-pino-*.log
+yarn-debug.log*
+package-lock.json
 
-# Env
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# IMAGES TEMP
+*.webp
+temp/
+tmp/
 
 # OS
 .DS_Store
 Thumbs.db
-
-# Images locales (si tu ne veux pas push les waifu/goku)
-*.jpg
-*.png
-*.mp4
-!menu.jpg
-
-# Render
-.render/
-dist/
+.env
