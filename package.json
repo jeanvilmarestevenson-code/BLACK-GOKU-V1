@@ -1,6 +1,6 @@
 {
-  "name": "black-goku-v87",
-  "version": "87.0.0",
+  "name": "black-goku-v91",
+  "version": "91.0.0",
   "main": "web.js",
   "scripts": {
     "start": "node web.js"
@@ -11,6 +11,10 @@
     "express": "^4.18.2",
     "node-cache": "^5.1.2",
     "axios": "^1.6.7",
-    "qrcode": "^1.5.3"
+    "qrcode": "^1.5.3",
+    "sharp": "^0.33.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
