@@ -1,15 +1,16 @@
 {
-  "name": "black-goku-v81",
-  "version": "81.0.0",
+  "name": "black-goku-v87",
+  "version": "87.0.0",
   "main": "web.js",
-  "scripts": { "start": "node web.js" },
+  "scripts": {
+    "start": "node web.js"
+  },
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.5.0",
-    "pino": "^8.17.0",
+    "@whiskeysockets/baileys": "^6.7.18",
+    "pino": "^8.17.2",
     "express": "^4.18.2",
     "node-cache": "^5.1.2",
-    "axios": "^1.6.2",
-    "qrcode": "^1.5.3",
-    "sharp": "^0.33.2"
+    "axios": "^1.6.7",
+    "qrcode": "^1.5.3"
   }
 }
