@@ -3,21 +3,22 @@ auth2/
 auth/
 creds.json
 *auth*
+creds/
 
 # DB
 black_db.json
 *.db
-*.json
 !package.json
+!package-lock.json
 
 # NODE
 node_modules/
 npm-debug.log*
 yarn-debug.log*
-package-lock.json
 
-# IMAGES TEMP
+# IMAGES TEMP - mais GARDE les waifu
 *.webp
+!waifu*.webp
 temp/
 tmp/
 
@@ -25,3 +26,8 @@ tmp/
 .DS_Store
 Thumbs.db
 .env
+
+# Garde les waifu FORCÉMENT
+!waifu*.jpg
+!waifu*.png
+!waifu*.jpeg
