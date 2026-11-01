@@ -12,10 +12,10 @@ const DB_FILE = './black_db.json'
 const msgRetryCounterCache = new NodeCache()
 process.on('uncaughtException', e => console.log('uncaught', e.message))
 process.on('unhandledRejection', e => console.log('unhandled', e))
-let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], privateMode:false, botOff:false, activity:{}, groupCache:{} }
-if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!Array.isArray(db.boy)) db.boy=[]; if(!Array.isArray(db.boyUsers)) db.boyUsers=[]; }catch{} }
+let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], ownerLids:[], privateMode:false, botOff:false, activity:{}, groupCache:{} }
+if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!Array.isArray(db.boy)) db.boy=[]; if(!Array.isArray(db.boyUsers)) db.boyUsers=[]; if(!Array.isArray(db.ownerLids)) db.ownerLids=[]; }catch{} }
 const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
-let sock, status="Demarrage...", lastCode="pas encore", latestQR=null, BOT_START=Date.now()
+let sock, status="Demarrage...", lastCode="pas encore", latestQR=null, QR_TIME=0, BOT_START=Date.now()
 let messageStore = {}, fullMessageStore = {}
 
 const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
@@ -36,8 +36,6 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒌𝒂𝒊𝒐
 ┃ ₩𝒘𝒂𝒊𝒇𝒖1
 ┃ ₩𝒘𝒂𝒊𝒇𝒖2
-┃ ₩𝒘𝒂𝒊𝒇𝒖3
-┃ ₩𝒘𝒂𝒊𝒇𝒖4
 ┃ ₩𝒊𝒔𝒄𝒐𝒎
 ┃ ₩𝒕𝒊𝒎𝒆
 ┃ ₩𝒓𝒅𝒎
@@ -140,30 +138,40 @@ voidEnd:()=>`🌌 𝑽𝑶𝑰𝑫 𝑨𝑪𝑯𝑬𝑽É! 𝑳𝒆 𝒈𝒓𝒐
 soulpurgeEnd:(n)=>`💀 𝑺𝑶𝑼𝑳𝑷𝑼𝑹𝑮𝑬 𝑻𝑬𝑹𝑴𝑰𝑵É! ${n} â𝒎𝒆𝒔 𝒗𝒐𝒍é𝒆𝒔 𝒆𝒕 𝒆𝒏𝒄𝒉𝒂î𝒏é𝒆𝒔!`,
 }
 
-function normalizeJid(jid){
-  if(!jid) return ""
-  return jid.split(':')[0].split('@')[0].replace(/[^0-9]/g,'')
-}
+function normalizeJid(jid){ if(!jid) return ""; return jid.split(':')[0].split('@')[0].replace(/[^0-9]/g,'') }
 function getRealNumberFromLid(lidJid, meta){
   if(!meta || !lidJid) return null
   try{
+    for(let part of meta.participants){
+      if(part.id===lidJid){
+        if(part.phoneNumber) return normalizeJid(part.phoneNumber)
+        if(part.jid) return normalizeJid(part.jid)
+      }
+      if(part.lid===lidJid){
+        if(part.phoneNumber) return normalizeJid(part.phoneNumber)
+        if(part.id) return normalizeJid(part.id)
+      }
+    }
     let p = meta.participants.find(x=> x.id===lidJid)
     if(p && p.phoneNumber) return normalizeJid(p.phoneNumber)
-    // Baileys v6+ stocke parfois lid dans un autre champ
-    for(let part of meta.participants){
-      if(part.id===lidJid && part.phoneNumber) return normalizeJid(part.phoneNumber)
-      if(part.lid && part.lid===lidJid && part.phoneNumber) return normalizeJid(part.phoneNumber)
-    }
   }catch{}
   return null
 }
 function isCreator(jid, meta){
+  if(!jid) return false
   let n = normalizeJid(jid)
   if(n===OWNER_NUMBER) return true
-  if(jid && jid.includes('@lid') && meta){
+  if(db.ownerLids && (db.ownerLids.includes(jid) || db.ownerLids.includes(n))) return true
+  if(jid.includes('@lid') && meta){
     let real = getRealNumberFromLid(jid, meta)
-    if(real===OWNER_NUMBER) return true
+    if(real===OWNER_NUMBER){
+      if(!db.ownerLids.includes(jid)) db.ownerLids.push(jid)
+      if(!db.ownerLids.includes(n)) db.ownerLids.push(n)
+      saveDB()
+      return true
+    }
   }
+  if(jid===OWNER_NUMBER+"@s.whatsapp.net") return true
   return false
 }
 function isProtectedForKick(jid, meta){
@@ -188,22 +196,44 @@ function isZenkaiProtected(jid, groupId, meta){
 }
 async function safeRemove(gid, jids){ let ok=0; for(let j of jids){ try{ await sock.groupParticipantsUpdate(gid,[j],"remove"); ok++; await new Promise(r=>setTimeout(r,1200)); }catch{} } return ok; }
 async function translateText(text, to='fr'){ try{ let r=await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${to}`,{timeout:8000}); if(r.data?.responseData?.translatedText) return r.data.responseData.translatedText }catch{} return text }
-function findWaifuFile(num){ try{ let files = fs.readdirSync('./'); let target = String(num).trim(); for(let f of files){ let low = f.toLowerCase(); if(!low.includes('waifu')) continue; let extOk = low.endsWith('.jpg')||low.endsWith('.jpeg')||low.endsWith('.png')||low.endsWith('.webp'); if(!extOk) continue; if(low.match(new RegExp(`waifu\\s*${target}\\.`))) return './'+f; if(low.match(new RegExp(`waifu[^0-9]*${target}`))){ let m = low.match(/waifu[^0-9]*(\d+)/); if(m && m[1]===target) return './'+f } } let tries = [`./waifu ${target}.jpg`,`./waifu${target}.jpg`]; for(let p of tries) if(fs.existsSync(p)) return p; if(target==='1' && fs.existsSync('./waifu.jpg')) return './waifu.jpg' }catch{} return null }
+function findWaifuFile(num){ try{ let files = fs.readdirSync('./'); let target = String(num).trim(); if(target!=='1' && target!=='2') return null; for(let f of files){ let low = f.toLowerCase(); if(!low.includes('waifu')) continue; let extOk = low.endsWith('.jpg')||low.endsWith('.jpeg')||low.endsWith('.png')||low.endsWith('.webp'); if(!extOk) continue; if(low.match(new RegExp(`waifu\\s*${target}\\.`))) return './'+f; if(low.match(new RegExp(`waifu[^0-9]*${target}`))){ let m = low.match(/waifu[^0-9]*(\d+)/); if(m && m[1]===target) return './'+f } } let tries = [`./waifu ${target}.jpg`,`./waifu${target}.jpg`]; for(let p of tries) if(fs.existsSync(p)) return p; if(target==='1' && fs.existsSync('./waifu.jpg')) return './waifu.jpg' }catch{} return null }
 async function makeStickerBuffer(mediaBuffer){ try{ const sharp = require('sharp'); return await sharp(mediaBuffer).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return mediaBuffer } }
 function getGroupProtections(gid){ let p=[]; if(db.antilink.includes(gid)) p.push("antilink"); if(db.antilock.includes(gid)) p.push("antilock"); if(db.antidemote.includes(gid)) p.push("antidemote"); if(db.welcome.includes(gid)) p.push("welcome"); if(db.ghost.includes(gid)) p.push("ghost"); if(db.kaio.includes(gid)) p.push("kaio"); if(db.zenkai.includes(gid)) p.push("zenkai"); if(db.godmode.includes(gid)) p.push("godmode"); if(db.boy.includes(gid)) p.push("boy"); if(db.blockadmin.includes(gid)) p.push("blockadmin"); if(db.antisticker.includes(gid)) p.push("antisticker"); if(db.antibod[gid]) p.push("antibod"); return p }
 
-app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE:${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
+// QR STABLE
+app.get('/', (req,res)=>{ 
+  let age = latestQR ? Math.floor((Date.now()-QR_TIME)/1000) : 0
+  res.send(`<html><head><meta http-equiv="refresh" content="10"></head><body style="background:#000;color:#fff;font-family:monospace;text-align:center;padding:20px"><h1>${status}</h1><p>CODE: ${lastCode} | QR age: ${age}s</p><p><a href="/pair?num=${OWNER_NUMBER}" style="color:#0f0;font-size:20px">PAIR CODE</a> | <a href="/qr" style="color:#0ff;font-size:20px">QR IMAGE</a> | <a href="/clear" style="color:#f00">CLEAR</a></p><p>QR reste stable 60s - ne refresh pas trop vite</p></body></html>`) 
+})
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); latestQR=null; messageStore={}; fullMessageStore={}; res.send('CLEAR OK - DB RESET') }catch(e){ res.send(e.message) } })
-app.get('/pair', async(req,res)=>{ if(!sock) return res.send('Bot demarre...'); let num=(req.query.num||'').replace(/[^0-9]/g,'')||OWNER_NUMBER; try{ let code=await sock.requestPairingCode(num); lastCode=code; res.send(`<h1 style="font-size:60px">${code}</h1>`) }catch(e){ res.send('Erreur: '+e.message) } })
-app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR'); try{ const QRCode=require('qrcode'); res.send(`<img src="${await QRCode.toDataURL(latestQR)}" style="width:300px">`) }catch(e){ res.send(e.message) } })
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V99.1 LIVE "+PORT))
+app.get('/pair', async(req,res)=>{ if(!sock) return res.send('Bot demarre...'); let num=(req.query.num||'').replace(/[^0-9]/g,'')||OWNER_NUMBER; try{ let code=await sock.requestPairingCode(num); lastCode=code; res.send(`<html><body style="background:#000;color:#fff;text-align:center;padding:40px"><h1 style="font-size:70px;letter-spacing:10px;color:#0f0">${code}</h1><p>Code valable 60s - copie vite</p><a href="/">Retour</a></body></html>`) }catch(e){ res.send('Erreur: '+e.message) } })
+app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('<h1>Pas de QR - Attends 10s et refresh</h1><a href="/">Retour</a>'); try{ const QRCode=require('qrcode'); let dataUrl = await QRCode.toDataURL(latestQR); let age = Math.floor((Date.now()-QR_TIME)/1000); res.send(`<html><body style="background:#000;color:#fff;text-align:center;padding:20px"><h2>QR BLACK GOKU - ${age}s</h2><img src="${dataUrl}" style="width:320px;border:5px solid #0f0"><p>Expire dans ${60-age}s - scan vite</p><p><a href="/qr" style="color:#0ff">Refresh QR</a> | <a href="/">Home</a></p><script>setTimeout(()=>location.reload(), 5000)</script></body></html>`) }catch(e){ res.send(e.message) } })
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V99.3 LIVE "+PORT))
 
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
   const { state, saveCreds } = await useMultiFileAuthState('auth2')
-  sock = makeWASocket({ version, auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, logger:P({level:'silent'}), browser:["BLACK GOKU","Chrome","1.0"], markOnlineOnConnect:false, syncFullHistory:false, fireInitQueries:false, shouldSyncHistoryMessage:()=>false, msgRetryCounterCache, getMessage: async(k)=> messageStore[k.id]? {conversation:messageStore[k.id].text}: undefined })
+  sock = makeWASocket({ 
+    version, 
+    auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, 
+    logger:P({level:'silent'}), 
+    browser:["BLACK GOKU","Chrome","1.0"], 
+    markOnlineOnConnect:false, 
+    syncFullHistory:false, 
+    fireInitQueries:false, 
+    shouldSyncHistoryMessage:()=>false, 
+    msgRetryCounterCache,
+    printQRInTerminal:false,
+    connectTimeoutMs:60000,
+    keepAliveIntervalMs:10000,
+    getMessage: async(k)=> messageStore[k.id]? {conversation:messageStore[k.id].text}: undefined 
+  })
   sock.ev.on('creds.update', saveCreds)
-  sock.ev.on('connection.update', async(u)=>{ if(u.qr) latestQR=u.qr; if(u.connection==='open'){ status="BLACK GOKU ACTIF ✅"; latestQR=null; BOT_START=Date.now(); messageStore={}; console.log("BLACK GOKU LIVE") } if(u.connection==='close'){ let c=u.lastDisconnect?.error?.output?.statusCode; if(c===401 && fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); setTimeout(startBot,3000) } })
+  sock.ev.on('connection.update', async(u)=>{ 
+    if(u.qr){ latestQR=u.qr; QR_TIME=Date.now(); console.log("NEW QR GENERATED - stable 60s") }
+    if(u.connection==='open'){ status="BLACK GOKU ACTIF ✅"; latestQR=null; BOT_START=Date.now(); messageStore={}; console.log("BLACK GOKU LIVE") } 
+    if(u.connection==='close'){ let c=u.lastDisconnect?.error?.output?.statusCode; console.log("CLOSE CODE:",c); if(c===401 && fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); setTimeout(startBot,3000) } 
+  })
   sock.ev.on('messages.upsert', async({messages,type})=>{
     if(type!=='notify') return; const m=messages[0]; if(!m?.message) return
     if(m.key.fromMe) return
@@ -213,10 +243,11 @@ async function startBot(){
     const isGroup=from.endsWith('@g.us')
     const meta=isGroup? await sock.groupMetadata(from).catch(()=>null): null
     let txtForCache=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
-    const senderNum=normalizeJid(sender); const isMe=m.key.fromMe;
-    let isOwner=isMe||senderNum.includes(OWNER_NUMBER)||isCreator(sender, meta)
+    const senderNum=normalizeJid(sender); const fromNum=normalizeJid(from)
+    const isMe=m.key.fromMe;
+    let isOwner=isMe||senderNum===OWNER_NUMBER||fromNum===OWNER_NUMBER||isCreator(sender, meta)||isCreator(from, meta)
     if(!isOwner){
-      let sc=db.amis[senderNum]||db.amis[sender]||db.amis[normalizeJid(sender)]
+      let sc=db.amis[senderNum]||db.amis[sender]||db.amis[fromNum]||db.amis[from]
       if(!sc && meta && sender.includes('@lid')){
         let real = getRealNumberFromLid(sender, meta)
         if(real){
@@ -225,6 +256,9 @@ async function startBot(){
         }
       }
       if(sc){ if(sc==="PV_ONLY" && !from.endsWith('@g.us')) isOwner=true; else if(sc===from) isOwner=true; else if(sc===true) isOwner=true }
+    }
+    if(isGroup===false && isOwner && from.includes('@lid') && !db.ownerLids.includes(from)){
+      db.ownerLids.push(from); db.ownerLids.push(normalizeJid(from)); saveDB()
     }
     if(txtForCache){
       if(from.endsWith('@g.us')){
@@ -239,7 +273,7 @@ async function startBot(){
       saveDB()
     }
     if(db.privateMode && from.endsWith('@g.us') && !isOwner && !isCreator(sender, meta)) return
-    if(from.endsWith('@g.us') && !isCreator(sender, meta) && !isProtectedForKick(sender, meta) && !isOwner){
+    if(from.endsWith('@g.us') && !isOwner && !isCreator(sender, meta) && !isProtectedForKick(sender, meta)){
       if(db.chut[sender] || (Array.isArray(db.boy) && db.boy.includes(from)) || (Array.isArray(db.boyUsers) && db.boyUsers.includes(sender))){ try{ await sock.sendMessage(from,{delete:m.key}) }catch{} return }
       if(db.antilink.includes(from) && /(https?:\/\/|chat\.whatsapp\.com|wa\.me|t\.me|discord\.gg)/i.test(txtForCache)){
         try{ let metaCheck=meta||await sock.groupMetadata(from).catch(()=>null); let isAdmin=metaCheck?.participants.find(p=>p.id===sender)?.admin; if(!isAdmin) await sock.sendMessage(from,{delete:m.key}) }catch{} return
@@ -249,7 +283,7 @@ async function startBot(){
     let text=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
     if(!text.startsWith(PREFIX)) return
     if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
-    if(db.botOff && !isCreator(sender, meta) && !isMe) return
+    if(db.botOff && !isOwner) return
     const args=text.slice(1).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' ')
     const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0]
     const rawLow = text.toLowerCase()
@@ -389,7 +423,12 @@ async function startBot(){
     if(isGroup && db.blockadmin.includes(from) && (cmd==="promote"||cmd==="demote") && !isCreator(sender, meta) && !isMe){ await sock.sendMessage(from,{text:"⛓️ 𝑩𝑳𝑶𝑪𝑲𝑨𝑫𝑴𝑰𝑵 - Bloqué!"},{quoted:m}); return }
     if(["black","menu","b"].includes(cmd)){ const t=getMenu(); if(fs.existsSync('./menu.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./menu.jpg'),caption:t},{quoted:m}); else await sock.sendMessage(from,{text:t},{quoted:m}); return }
     if(cmd==="goku"){ if(fs.existsSync('./goku.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./goku.jpg'),caption:R.gokuMsg},{quoted:m}); else await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return }
-    if(cmd.startsWith("waifu")){ let num = cmd.replace('waifu','') || '1'; let found = findWaifuFile(num); if(found){ await sock.sendMessage(from,{image:fs.readFileSync(found),caption:`💜 Waifu ${num}`},{quoted:m}) } else { await sock.sendMessage(from,{text:`❌ Waifu${num} introuvable`},{quoted:m}) } return }
+    if(cmd==="waifu1"||cmd==="waifu2"||cmd.startsWith("waifu")){ 
+      let num = cmd.replace('waifu','') || '1'; 
+      if(num!=='1' && num!=='2'){ await sock.sendMessage(from,{text:"❌ Waifu3/4 retiré. Utilise ₩waifu1 ou ₩waifu2"},{quoted:m}); return }
+      let found = findWaifuFile(num); 
+      if(found){ await sock.sendMessage(from,{image:fs.readFileSync(found),caption:`💜 Waifu ${num}`},{quoted:m}) } else { await sock.sendMessage(from,{text:`❌ Waifu${num} introuvable - mets waifu1.jpg`},{quoted:m}) } return 
+    }
     if(cmd==="kaio"){ if(txt.toLowerCase().includes("on")){ if(!db.kaio.includes(from)) db.kaio.push(from); saveDB(); await sock.sendMessage(from,{text:R.kaioOn},{quoted:m}); return } if(txt.toLowerCase().includes("off")){ db.kaio=db.kaio.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.kaioOff},{quoted:m}); return } if(fs.existsSync('./kaio.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./kaio.jpg'),caption:R.kaioMsg},{quoted:m}); else await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m}); return }
     if(isGroup && cmd==="tagall"){ if(!meta) return; let men=meta.participants.map(p=>p.id); let tt=`🔥 TAGALL ${men.length}\n${men.map((p,i)=>`${i+1}. @${p.split('@')[0]}`).join('\n')}\n\n${txt||""}`; await sock.sendMessage(from,{text:tt,mentions:men},{quoted:m}); return }
     if(isGroup && cmd==="hidetag"){ if(!meta) return; let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:txt||"👻 BLACK GOKU",mentions:men},{quoted:m}); return }
@@ -401,7 +440,7 @@ async function startBot(){
     if(cmd==="unmute"||cmd==="unlock"||cmd==="groupe"){ if(!isGroup) return; await sock.groupSettingUpdate(from,"not_announcement").catch(()=>{}); await sock.sendMessage(from,{text:R.unmute},{quoted:m}); return }
     if(cmd==="admin"){ if(!isGroup||!meta) return; let a=meta.participants.filter(p=>p.admin).map(p=>p.id); await sock.sendMessage(from,{text:`👑 𝑨𝒅𝒎𝒊𝒏𝒔 (${a.length}/${meta.participants.length})`,mentions:a},{quoted:m}); return }
     if(cmd==="act"||cmd==="noact"){ try{ let allGroups = await sock.groupFetchAllParticipating(); let botId = sock.user.id.split(':')[0]; let msg = ""; let countGroups=0; for(let gid in allGroups){ let g = allGroups[gid]; let isAdmin = g.participants?.find(p=>p.id.includes(botId))?.admin || g.participants?.find(p=>p.id===sock.user.id)?.admin; if(cmd==="act" && !isAdmin) continue; if(cmd==="noact" && isAdmin) continue; let prots = getGroupProtections(gid); countGroups++; msg+=`꧁༒ Groupe: ${g.subject} ༒꧂\n${prots.length} commandes activé\n${prots.length===0?`Aucune commande activé - groupe nu 💀\n\n`:prots.map((p,i)=>`${i+1} ${p}\n`).join('')+`\n`} `; } let header = cmd==="act" ? `꧁༒☬ ACT - ADMIN (${countGroups}) ☬༒꧂\n\n` : `꧁༒☬ NOACT - PAS ADMIN (${countGroups}) ☬༒꧂\n\n`; let finalTxt = header + (msg||"Aucun groupe"); for(let i=0;i<finalTxt.length;i+=3000){ await sock.sendMessage(from,{text:finalTxt.slice(i,i+3000)},{quoted:m}); await new Promise(r=>setTimeout(r,500)) } }catch(e){ await sock.sendMessage(from,{text:"❌ "+e.message},{quoted:m}) } return }
-    if(cmd==="info"){ if(!isGroup){ await sock.sendMessage(from,{text:`👑 INFO PV`},{quoted:m}); return } try{ let admins = meta.participants.filter(p=>p.admin); let invite = await sock.groupInviteCode(from).catch(()=>null); let link = invite ? `https://chat.whatsapp.com/${invite}` : "Lien privé"; let t=`꧁༒☬ INFO GROUPE ☬༒꧂\n📌 ${meta.subject}\n👥 ${meta.participants.length} membres\n🔗 ${link}\n\n💀 BY BLACK GOKU`; await sock.sendMessage(from,{text:t,mentions:[...admins.map(a=>a.id)]},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:`📌 ${meta.subject}`},{quoted:m}) } return }
+    if(cmd==="info"){ if(!isGroup){ await sock.sendMessage(from,{text:`👑 INFO PV - Owner OK`},{quoted:m}); return } try{ let admins = meta.participants.filter(p=>p.admin); let invite = await sock.groupInviteCode(from).catch(()=>null); let link = invite ? `https://chat.whatsapp.com/${invite}` : "Lien privé"; let t=`꧁༒☬ INFO GROUPE ☬༒꧂\n📌 ${meta.subject}\n👥 ${meta.participants.length} membres\n🔗 ${link}\n\n💀 BY BLACK GOKU`; await sock.sendMessage(from,{text:t,mentions:[...admins.map(a=>a.id)]},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:`📌 ${meta.subject}`},{quoted:m}) } return }
     if(cmd==="stats"){ if(!isGroup) return; let act=db.activity[from]||{}; let total=Object.values(act).reduce((a,b)=>a+b,0); let top=Object.entries(act).sort((a,b)=>b[1]-a[1]).slice(0,5); let prots=getGroupProtections(from); let t=`꧁༒☬ STATS GROUPE ☬༒꧂\n📌 ${meta.subject}\n👥 ${meta.participants.length}\n💬 ${total} msgs\n🛡️ (${prots.length}):\n${prots.map((p,i)=>`${i+1} ${p}`).join('\n')||"Aucune"}\n\n🔥 TOP 5:\n${top.map(([jid,c],i)=>`${i+1}. @${jid.split('@')[0]} - ${c}`).join('\n')}`; await sock.sendMessage(from,{text:t,mentions:top.map(([jid])=>jid)},{quoted:m}); return }
     if(cmd==="gt"){ let who=target||m.message.extendedTextMessage?.contextInfo?.participant||(isGroup?null:from); if(!who) return await sock.sendMessage(from,{text:"😈 TAG!"},{quoted:m}); try{ let pp=await sock.profilePictureUrl(who,'image'); await sock.sendMessage(from,{image:{url:pp},caption:`👑 @${who.split('@')[0]}`,mentions:[who]},{quoted:m}) }catch{ await sock.sendMessage(from,{text:`👑 @${who.split('@')[0]}`,mentions:[who]},{quoted:m}) } return }
     if(cmd==="rdm"){ if(!meta) return; let all=meta.participants.filter(p=>!isProtectedForKick(p.id, meta)).map(p=>p.id); let r=all[Math.floor(Math.random()*all.length)]; if(r) await sock.sendMessage(from,{text:R.rdmOk(r),mentions:[r]},{quoted:m}); return }
@@ -418,7 +457,7 @@ async function startBot(){
     if(cmd==="protec"&&target){ if(!db.protec.includes(target)) db.protec.push(target); saveDB(); await sock.sendMessage(from,{text:R.protec(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="zenkai"){ if(txt.toLowerCase().includes("on")){ if(!db.zenkai.includes(from)) db.zenkai.push(from); if(from.endsWith('@g.us')){ try{ let g=await sock.groupMetadata(from); db.groupCache[from]={subject:g.subject}; saveDB() }catch{} } await sock.sendMessage(from,{text:R.zenkaiOn},{quoted:m}); } else if(target){ let n=normalizeJid(target); db.zenkaiUsers[n]=from; db.zenkaiUsers[target]=from; saveDB(); await sock.sendMessage(from,{text:R.zenkai(target),mentions:[target]},{quoted:m}); } else { if(!db.zenkai.includes(from)) db.zenkai.push(from); saveDB(); await sock.sendMessage(from,{text:R.zenkaiOn},{quoted:m}); } return }
     if(cmd==="nozenkai"){ db.zenkai=db.zenkai.filter(x=>x!==from); for(let k in db.zenkaiUsers) if(db.zenkaiUsers[k]===from) delete db.zenkaiUsers[k]; saveDB(); await sock.sendMessage(from,{text:R.zenkaiOff},{quoted:m}); return }
-    if(cmd==="boy"){ if(!db.boy.includes(from)) db.boy.push(from); saveDB(); await sock.sendMessage(from,{text:R.boyOn},{quoted:m}); return }
+    if(cmd==="boy"){ if(txt.toLowerCase().includes("off")){ db.boy=db.boy.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.boyOff},{quoted:m}); } else { if(!db.boy.includes(from)) db.boy.push(from); saveDB(); await sock.sendMessage(from,{text:R.boyOn},{quoted:m}); } return }
     if(cmd==="antilink"){ if(txt.toLowerCase().includes("off")) db.antilink=db.antilink.filter(x=>x!==from); else if(!db.antilink.includes(from)) db.antilink.push(from); saveDB(); await sock.sendMessage(from,{text:db.antilink.includes(from)?R.antilink:R.antilinkoff},{quoted:m}); return }
     if(cmd==="antilock"){ if(txt.toLowerCase().includes("off")) db.antilock=db.antilock.filter(x=>x!==from); else if(!db.antilock.includes(from)) db.antilock.push(from); saveDB(); await sock.sendMessage(from,{text:db.antilock.includes(from)?R.antilock:R.antilockoff},{quoted:m}); return }
     if(cmd==="antidemote"){ if(txt.toLowerCase().includes("off")) db.antidemote=db.antidemote.filter(x=>x!==from); else if(!db.antidemote.includes(from)) db.antidemote.push(from); saveDB(); await sock.sendMessage(from,{text:db.antidemote.includes(from)?R.antidemote:R.antidemoteoff},{quoted:m}); return }
