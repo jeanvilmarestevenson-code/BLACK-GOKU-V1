@@ -9,7 +9,12 @@ yarn-debug.log*
 yarn-error.log*
 *.png
 *.webp
+*.mp4
+*.mp3
+*.opus
+
 !goku.jpg
 !menu.jpg
 !kaio.jpg
 !waifu*.jpg
+!waifu.jpg
