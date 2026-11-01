@@ -1,20 +1,17 @@
 {
-  "name": "black-goku-v99",
-  "version": "99.1.0",
+  "name": "black-goku-v99-3",
+  "version": "99.3.0",
   "main": "web.js",
   "scripts": {
     "start": "node web.js"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.8",
-    "pino": "^8.17.0",
+    "pino": "^8.16.0",
     "express": "^4.18.2",
     "node-cache": "^5.1.2",
-    "axios": "^1.6.7",
-    "sharp": "^0.33.2",
-    "qrcode": "^1.5.3"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "axios": "^1.6.0",
+    "qrcode": "^1.5.3",
+    "sharp": "^0.33.0"
   }
 }
