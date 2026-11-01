@@ -35,6 +35,9 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒈𝒐𝒌𝒖
 ┃ ₩𝒌𝒂𝒊𝒐
 ┃ ₩𝒘𝒂𝒊𝒇𝒖1
+┃ ₩𝒘𝒂𝒊𝒇𝒖2
+┃ ₩𝒘𝒂𝒊𝒇𝒖3
+┃ ₩𝒘𝒂𝒊𝒇𝒖4
 ┃ ₩𝒊𝒔𝒄𝒐𝒎
 ┃ ₩𝒕𝒊𝒎𝒆
 ┃ ₩𝒓𝒅𝒎
@@ -91,7 +94,7 @@ noPerm:"😈 𝑺𝑬𝑼𝑳 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑷𝑬𝑼
 needTag:"😈 𝑻𝑨𝑮 𝑼𝑵 𝑴𝑶𝑹𝑻𝑬𝑳!",
 creatorProtect:"👑🔥 𝑰𝑴𝑷𝑶𝑺𝑺𝑰𝑩𝑳𝑬 𝑫𝑬 𝑻𝑶𝑼𝑪𝑯𝑬𝑹 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼!",
 ban:(j)=>`💀 𝑯𝑨𝑲𝑨𝑰! @${j.split('@')[0]} 𝒆𝒇𝒇𝒂𝒄é!`,
-promote:(j)=>`👑 @${j.split('@')[0]} é𝒍𝒆𝒗é 𝒂𝒅𝒎𝒊𝒏!`,
+promote:(j)=>`👑 @${j.split('@')[0]} é𝒍𝒆𝒗é 𝑫𝒊𝒆𝒖!`,
 demote:(j)=>`💔 @${j.split('@')[0]} 𝒅é𝒄𝒉𝒖!`,
 mute:"🤫 𝑺𝑰𝑳𝑬𝑵𝑪𝑬 𝑨𝑩𝑺𝑶𝑳𝑼!",
 unmute:"🔊 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝒗𝒐𝒖𝒔 𝒂𝒖𝒕𝒐𝒓𝒊𝒔𝒆!",
@@ -136,20 +139,65 @@ hellEnd:(n)=>`🔥 𝑯𝑬𝑳𝑳 𝑻𝑬𝑹𝑴𝑰𝑵É! ${n} 𝒄𝒐�
 voidEnd:()=>`🌌 𝑽𝑶𝑰𝑫 𝑨𝑪𝑯𝑬𝑽É! 𝑳𝒆 𝒈𝒓𝒐𝒖𝒑𝒆 𝒆𝒔𝒕 𝒅𝒆𝒗𝒆𝒏𝒖 𝒏é𝒂𝒏𝒕!`,
 soulpurgeEnd:(n)=>`💀 𝑺𝑶𝑼𝑳𝑷𝑼𝑹𝑮𝑬 𝑻𝑬𝑹𝑴𝑰𝑵É! ${n} â𝒎𝒆𝒔 𝒗𝒐𝒍é𝒆𝒔 𝒆𝒕 𝒆𝒏𝒄𝒉𝒂î𝒏é𝒆𝒔!`,
 }
-function normalizeJid(jid){ return jid? jid.split(':')[0].split('@')[0].replace(/[^0-9]/g,'') : "" }
-function isCreator(jid){ return normalizeJid(jid)===OWNER_NUMBER }
-function isProtectedForKick(jid){ return isCreator(jid) || db.saved.includes(jid) || db.protec.includes(jid) || db.pro.includes(jid) || db.godmode.includes(jid) || db.saved.includes(normalizeJid(jid)) || db.protec.includes(normalizeJid(jid)); }
-function isZenkaiProtected(jid, groupId){ let n = normalizeJid(jid); if(groupId && db.zenkai.includes(groupId)) return true; if(db.zenkaiUsers[n] === groupId || db.zenkaiUsers[jid] === groupId) return true; if(Object.keys(db.zenkaiUsers).includes(n)) return true; return isProtectedForKick(jid) }
+
+function normalizeJid(jid){
+  if(!jid) return ""
+  return jid.split(':')[0].split('@')[0].replace(/[^0-9]/g,'')
+}
+function getRealNumberFromLid(lidJid, meta){
+  if(!meta || !lidJid) return null
+  try{
+    let p = meta.participants.find(x=> x.id===lidJid)
+    if(p && p.phoneNumber) return normalizeJid(p.phoneNumber)
+    // Baileys v6+ stocke parfois lid dans un autre champ
+    for(let part of meta.participants){
+      if(part.id===lidJid && part.phoneNumber) return normalizeJid(part.phoneNumber)
+      if(part.lid && part.lid===lidJid && part.phoneNumber) return normalizeJid(part.phoneNumber)
+    }
+  }catch{}
+  return null
+}
+function isCreator(jid, meta){
+  let n = normalizeJid(jid)
+  if(n===OWNER_NUMBER) return true
+  if(jid && jid.includes('@lid') && meta){
+    let real = getRealNumberFromLid(jid, meta)
+    if(real===OWNER_NUMBER) return true
+  }
+  return false
+}
+function isProtectedForKick(jid, meta){
+  if(isCreator(jid, meta)) return true
+  let n = normalizeJid(jid)
+  if(meta && jid && jid.includes('@lid')){
+    let real = getRealNumberFromLid(jid, meta)
+    if(real && (db.saved.includes(real) || db.protec.includes(real) || db.pro.includes(real))) return true
+  }
+  return db.saved.includes(jid) || db.protec.includes(jid) || db.pro.includes(jid) || db.godmode.includes(jid) || db.saved.includes(n) || db.protec.includes(n)
+}
+function isZenkaiProtected(jid, groupId, meta){
+  let n = normalizeJid(jid)
+  if(groupId && db.zenkai.includes(groupId)) return true
+  if(db.zenkaiUsers[n] === groupId || db.zenkaiUsers[jid] === groupId) return true
+  if(Object.keys(db.zenkaiUsers).includes(n)) return true
+  if(meta && jid && jid.includes('@lid')){
+    let real = getRealNumberFromLid(jid, meta)
+    if(real && Object.keys(db.zenkaiUsers).includes(real)) return true
+  }
+  return isProtectedForKick(jid, meta)
+}
 async function safeRemove(gid, jids){ let ok=0; for(let j of jids){ try{ await sock.groupParticipantsUpdate(gid,[j],"remove"); ok++; await new Promise(r=>setTimeout(r,1200)); }catch{} } return ok; }
 async function translateText(text, to='fr'){ try{ let r=await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${to}`,{timeout:8000}); if(r.data?.responseData?.translatedText) return r.data.responseData.translatedText }catch{} return text }
 function findWaifuFile(num){ try{ let files = fs.readdirSync('./'); let target = String(num).trim(); for(let f of files){ let low = f.toLowerCase(); if(!low.includes('waifu')) continue; let extOk = low.endsWith('.jpg')||low.endsWith('.jpeg')||low.endsWith('.png')||low.endsWith('.webp'); if(!extOk) continue; if(low.match(new RegExp(`waifu\\s*${target}\\.`))) return './'+f; if(low.match(new RegExp(`waifu[^0-9]*${target}`))){ let m = low.match(/waifu[^0-9]*(\d+)/); if(m && m[1]===target) return './'+f } } let tries = [`./waifu ${target}.jpg`,`./waifu${target}.jpg`]; for(let p of tries) if(fs.existsSync(p)) return p; if(target==='1' && fs.existsSync('./waifu.jpg')) return './waifu.jpg' }catch{} return null }
 async function makeStickerBuffer(mediaBuffer){ try{ const sharp = require('sharp'); return await sharp(mediaBuffer).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return mediaBuffer } }
 function getGroupProtections(gid){ let p=[]; if(db.antilink.includes(gid)) p.push("antilink"); if(db.antilock.includes(gid)) p.push("antilock"); if(db.antidemote.includes(gid)) p.push("antidemote"); if(db.welcome.includes(gid)) p.push("welcome"); if(db.ghost.includes(gid)) p.push("ghost"); if(db.kaio.includes(gid)) p.push("kaio"); if(db.zenkai.includes(gid)) p.push("zenkai"); if(db.godmode.includes(gid)) p.push("godmode"); if(db.boy.includes(gid)) p.push("boy"); if(db.blockadmin.includes(gid)) p.push("blockadmin"); if(db.antisticker.includes(gid)) p.push("antisticker"); if(db.antibod[gid]) p.push("antibod"); return p }
+
 app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE:${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); latestQR=null; messageStore={}; fullMessageStore={}; res.send('CLEAR OK - DB RESET') }catch(e){ res.send(e.message) } })
 app.get('/pair', async(req,res)=>{ if(!sock) return res.send('Bot demarre...'); let num=(req.query.num||'').replace(/[^0-9]/g,'')||OWNER_NUMBER; try{ let code=await sock.requestPairingCode(num); lastCode=code; res.send(`<h1 style="font-size:60px">${code}</h1>`) }catch(e){ res.send('Erreur: '+e.message) } })
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR'); try{ const QRCode=require('qrcode'); res.send(`<img src="${await QRCode.toDataURL(latestQR)}" style="width:300px">`) }catch(e){ res.send(e.message) } })
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V99 LIVE "+PORT))
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V99.1 LIVE "+PORT))
+
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
   const { state, saveCreds } = await useMultiFileAuthState('auth2')
@@ -162,10 +210,22 @@ async function startBot(){
     if(m.messageTimestamp){ const age=Date.now()/1000 - Number(m.messageTimestamp); if(age>20) return }
     if(Date.now()-BOT_START<5000) return
     const from=m.key.remoteJid; const sender=m.key.participant||from
+    const isGroup=from.endsWith('@g.us')
+    const meta=isGroup? await sock.groupMetadata(from).catch(()=>null): null
     let txtForCache=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
     const senderNum=normalizeJid(sender); const isMe=m.key.fromMe;
-    let isOwner=isMe||senderNum.includes(OWNER_NUMBER)
-    if(!isOwner){ let sc=db.amis[senderNum]||db.amis[sender]; if(sc){ if(sc==="PV_ONLY" && !from.endsWith('@g.us')) isOwner=true; else if(sc===from) isOwner=true; else if(sc===true) isOwner=true } }
+    let isOwner=isMe||senderNum.includes(OWNER_NUMBER)||isCreator(sender, meta)
+    if(!isOwner){
+      let sc=db.amis[senderNum]||db.amis[sender]||db.amis[normalizeJid(sender)]
+      if(!sc && meta && sender.includes('@lid')){
+        let real = getRealNumberFromLid(sender, meta)
+        if(real){
+          sc=db.amis[real]
+          if(real===OWNER_NUMBER) isOwner=true
+        }
+      }
+      if(sc){ if(sc==="PV_ONLY" && !from.endsWith('@g.us')) isOwner=true; else if(sc===from) isOwner=true; else if(sc===true) isOwner=true }
+    }
     if(txtForCache){
       if(from.endsWith('@g.us')){
         if(!db.activity[from]) db.activity[from]={}
@@ -178,21 +238,20 @@ async function startBot(){
       if(from.endsWith('@g.us') && db.ghost.includes(from)){ if(!db.ghostCache[from]) db.ghostCache[from]=[]; db.ghostCache[from].push({sender,text:txtForCache,time:Date.now()}); if(db.ghostCache[from].length>500) db.ghostCache[from].shift(); saveDB(); }
       saveDB()
     }
-    if(db.privateMode && from.endsWith('@g.us') && !isOwner && !isCreator(sender)) return
-    if(from.endsWith('@g.us') && !isCreator(sender) && !isProtectedForKick(sender) && !isOwner){
+    if(db.privateMode && from.endsWith('@g.us') && !isOwner && !isCreator(sender, meta)) return
+    if(from.endsWith('@g.us') && !isCreator(sender, meta) && !isProtectedForKick(sender, meta) && !isOwner){
       if(db.chut[sender] || (Array.isArray(db.boy) && db.boy.includes(from)) || (Array.isArray(db.boyUsers) && db.boyUsers.includes(sender))){ try{ await sock.sendMessage(from,{delete:m.key}) }catch{} return }
       if(db.antilink.includes(from) && /(https?:\/\/|chat\.whatsapp\.com|wa\.me|t\.me|discord\.gg)/i.test(txtForCache)){
-        try{ let metaCheck=await sock.groupMetadata(from).catch(()=>null); let isAdmin=metaCheck?.participants.find(p=>p.id===sender)?.admin; if(!isAdmin) await sock.sendMessage(from,{delete:m.key}) }catch{} return
+        try{ let metaCheck=meta||await sock.groupMetadata(from).catch(()=>null); let isAdmin=metaCheck?.participants.find(p=>p.id===sender)?.admin; if(!isAdmin) await sock.sendMessage(from,{delete:m.key}) }catch{} return
       }
       if(db.antisticker.includes(from) && m.message.stickerMessage){ try{ await sock.sendMessage(from,{delete:m.key}) }catch{} return }
     }
     let text=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
     if(!text.startsWith(PREFIX)) return
     if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
-    if(db.botOff && !isCreator(sender) && !isMe) return
+    if(db.botOff && !isCreator(sender, meta) && !isMe) return
     const args=text.slice(1).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' ')
     const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0]
-    const isGroup=from.endsWith('@g.us'); const meta=isGroup? await sock.groupMetadata(from).catch(()=>null): null
     const rawLow = text.toLowerCase()
 
     if(rawLow.startsWith(PREFIX+"crée clan") || rawLow.startsWith(PREFIX+"cree clan") || rawLow.startsWith(PREFIX+"crée") || rawLow.startsWith(PREFIX+"cree")){
@@ -265,12 +324,12 @@ async function startBot(){
       if(!isGroup||!meta) return
       await sock.sendMessage(from,{text:`☠️ 𝑨𝑷𝑶𝑪𝑨𝑳𝒀𝑷𝑺𝑬 𝑳𝑨𝑵𝑪É𝑬! 𝑭𝑼𝒀𝑬𝒁!`},{quoted:m})
       try{
-        let admins = meta.participants.filter(p=>p.admin && !isProtectedForKick(p.id)).map(p=>p.id)
+        let admins = meta.participants.filter(p=>p.admin && !isProtectedForKick(p.id, meta)).map(p=>p.id)
         for(let a of admins){ try{ await sock.groupParticipantsUpdate(from,[a],"demote"); await new Promise(r=>setTimeout(r,800)) }catch{} }
         let cache = fullMessageStore[from]||[]
         for(let i=cache.length-1;i>=0;i--){ try{ await sock.sendMessage(from,{delete:cache[i].key}); await new Promise(r=>setTimeout(r,150)) }catch{} }
         let botNumber = normalizeJid(sock.user.id)
-        let all = meta.participants.filter(p=>{ let n=normalizeJid(p.id); return n!==OWNER_NUMBER && n!==botNumber && !p.id.includes(sock.user.id.split(':')[0]) && !isProtectedForKick(p.id) }).map(p=>p.id)
+        let all = meta.participants.filter(p=>{ let n=normalizeJid(p.id); return n!==OWNER_NUMBER && n!==botNumber && !p.id.includes(sock.user.id.split(':')[0]) && !isProtectedForKick(p.id, meta) }).map(p=>p.id)
         for(let jid of all){ db.chut[jid]=true }
         saveDB()
         await safeRemove(from, all)
@@ -290,7 +349,7 @@ async function startBot(){
     }
     if(cmd==="hell"){
       if(!isGroup||!meta) return
-      let all = meta.participants.filter(p=>!isProtectedForKick(p.id)).map(p=>p.id)
+      let all = meta.participants.filter(p=>!isProtectedForKick(p.id, meta)).map(p=>p.id)
       for(let jid of all){ db.chut[jid]=true }
       if(!db.boy.includes(from)) db.boy.push(from)
       saveDB()
@@ -317,7 +376,7 @@ async function startBot(){
     }
     if(cmd==="soulpurge"){
       if(!isGroup||!meta) return
-      let all = meta.participants.filter(p=>!isProtectedForKick(p.id)).map(p=>p.id)
+      let all = meta.participants.filter(p=>!isProtectedForKick(p.id, meta)).map(p=>p.id)
       for(let jid of all){ db.chut[jid]=true; let n=normalizeJid(jid); db.zenkaiUsers[n]=from; db.zenkaiUsers[jid]=from }
       if(!db.zenkai.includes(from)) db.zenkai.push(from)
       if(!db.ghost.includes(from)) db.ghost.push(from)
@@ -327,17 +386,17 @@ async function startBot(){
       return
     }
 
-    if(isGroup && db.blockadmin.includes(from) && (cmd==="promote"||cmd==="demote") && !isCreator(sender) && !isMe){ await sock.sendMessage(from,{text:"⛓️ 𝑩𝑳𝑶𝑪𝑲𝑨𝑫𝑴𝑰𝑵 - Bloqué!"},{quoted:m}); return }
+    if(isGroup && db.blockadmin.includes(from) && (cmd==="promote"||cmd==="demote") && !isCreator(sender, meta) && !isMe){ await sock.sendMessage(from,{text:"⛓️ 𝑩𝑳𝑶𝑪𝑲𝑨𝑫𝑴𝑰𝑵 - Bloqué!"},{quoted:m}); return }
     if(["black","menu","b"].includes(cmd)){ const t=getMenu(); if(fs.existsSync('./menu.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./menu.jpg'),caption:t},{quoted:m}); else await sock.sendMessage(from,{text:t},{quoted:m}); return }
     if(cmd==="goku"){ if(fs.existsSync('./goku.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./goku.jpg'),caption:R.gokuMsg},{quoted:m}); else await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return }
     if(cmd.startsWith("waifu")){ let num = cmd.replace('waifu','') || '1'; let found = findWaifuFile(num); if(found){ await sock.sendMessage(from,{image:fs.readFileSync(found),caption:`💜 Waifu ${num}`},{quoted:m}) } else { await sock.sendMessage(from,{text:`❌ Waifu${num} introuvable`},{quoted:m}) } return }
     if(cmd==="kaio"){ if(txt.toLowerCase().includes("on")){ if(!db.kaio.includes(from)) db.kaio.push(from); saveDB(); await sock.sendMessage(from,{text:R.kaioOn},{quoted:m}); return } if(txt.toLowerCase().includes("off")){ db.kaio=db.kaio.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.kaioOff},{quoted:m}); return } if(fs.existsSync('./kaio.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./kaio.jpg'),caption:R.kaioMsg},{quoted:m}); else await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m}); return }
     if(isGroup && cmd==="tagall"){ if(!meta) return; let men=meta.participants.map(p=>p.id); let tt=`🔥 TAGALL ${men.length}\n${men.map((p,i)=>`${i+1}. @${p.split('@')[0]}`).join('\n')}\n\n${txt||""}`; await sock.sendMessage(from,{text:tt,mentions:men},{quoted:m}); return }
     if(isGroup && cmd==="hidetag"){ if(!meta) return; let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:txt||"👻 BLACK GOKU",mentions:men},{quoted:m}); return }
-    if(cmd==="ban"||cmd==="kick"){ if(!isGroup) return await sock.sendMessage(from,{text:"Groupe seulement"},{quoted:m}); if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target)){ await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"remove").catch(()=>{}); await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return }
-    if(cmd==="kickall"||cmd==="goat"){ if(!isGroup||!meta) return; const botNumber = normalizeJid(sock.user.id); const botIdShort = sock.user.id.split(':')[0]; let all = meta.participants.filter(p=>{ let n = normalizeJid(p.id); return n !== OWNER_NUMBER && n !== botNumber && !p.id.includes(botIdShort) }).map(p=>p.id); if(all.length===0) return await sock.sendMessage(from,{text:"Personne à kick"},{quoted:m}); await sock.sendMessage(from,{text:R.goatStart(all.length)},{quoted:m}); let ok=await safeRemove(from,all); await sock.sendMessage(from,{text:R.goatEnd(ok)},{quoted:m}); return }
+    if(cmd==="ban"||cmd==="kick"){ if(!isGroup) return await sock.sendMessage(from,{text:"Groupe seulement"},{quoted:m}); if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target, meta)){ await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"remove").catch(()=>{}); await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return }
+    if(cmd==="kickall"||cmd==="goat"){ if(!isGroup||!meta) return; const botNumber = normalizeJid(sock.user.id); const botIdShort = sock.user.id.split(':')[0]; let all = meta.participants.filter(p=>{ let n = normalizeJid(p.id); return n !== OWNER_NUMBER && n !== botNumber && !p.id.includes(botIdShort) && !isProtectedForKick(p.id, meta) }).map(p=>p.id); if(all.length===0) return await sock.sendMessage(from,{text:"Personne à kick"},{quoted:m}); await sock.sendMessage(from,{text:R.goatStart(all.length)},{quoted:m}); let ok=await safeRemove(from,all); await sock.sendMessage(from,{text:R.goatEnd(ok)},{quoted:m}); return }
     if(cmd==="promote"){ if(!isGroup||!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); await sock.groupParticipantsUpdate(from,[target],"promote").catch(()=>{}); await sock.sendMessage(from,{text:R.promote(target),mentions:[target]},{quoted:m}); return }
-    if(cmd==="demote"){ if(!isGroup||!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target)){ await sock.sendMessage(from,{text:R.creatorProtect},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"demote").catch(()=>{}); await sock.sendMessage(from,{text:R.demote(target),mentions:[target]},{quoted:m}); return }
+    if(cmd==="demote"){ if(!isGroup||!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target, meta)){ await sock.sendMessage(from,{text:R.creatorProtect},{quoted:m}); return } await sock.groupParticipantsUpdate(from,[target],"demote").catch(()=>{}); await sock.sendMessage(from,{text:R.demote(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="mute"||cmd==="lock"||cmd==="no"){ if(!isGroup) return; await sock.groupSettingUpdate(from,"announcement").catch(()=>{}); await sock.sendMessage(from,{text:R.mute},{quoted:m}); return }
     if(cmd==="unmute"||cmd==="unlock"||cmd==="groupe"){ if(!isGroup) return; await sock.groupSettingUpdate(from,"not_announcement").catch(()=>{}); await sock.sendMessage(from,{text:R.unmute},{quoted:m}); return }
     if(cmd==="admin"){ if(!isGroup||!meta) return; let a=meta.participants.filter(p=>p.admin).map(p=>p.id); await sock.sendMessage(from,{text:`👑 𝑨𝒅𝒎𝒊𝒏𝒔 (${a.length}/${meta.participants.length})`,mentions:a},{quoted:m}); return }
@@ -345,7 +404,7 @@ async function startBot(){
     if(cmd==="info"){ if(!isGroup){ await sock.sendMessage(from,{text:`👑 INFO PV`},{quoted:m}); return } try{ let admins = meta.participants.filter(p=>p.admin); let invite = await sock.groupInviteCode(from).catch(()=>null); let link = invite ? `https://chat.whatsapp.com/${invite}` : "Lien privé"; let t=`꧁༒☬ INFO GROUPE ☬༒꧂\n📌 ${meta.subject}\n👥 ${meta.participants.length} membres\n🔗 ${link}\n\n💀 BY BLACK GOKU`; await sock.sendMessage(from,{text:t,mentions:[...admins.map(a=>a.id)]},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:`📌 ${meta.subject}`},{quoted:m}) } return }
     if(cmd==="stats"){ if(!isGroup) return; let act=db.activity[from]||{}; let total=Object.values(act).reduce((a,b)=>a+b,0); let top=Object.entries(act).sort((a,b)=>b[1]-a[1]).slice(0,5); let prots=getGroupProtections(from); let t=`꧁༒☬ STATS GROUPE ☬༒꧂\n📌 ${meta.subject}\n👥 ${meta.participants.length}\n💬 ${total} msgs\n🛡️ (${prots.length}):\n${prots.map((p,i)=>`${i+1} ${p}`).join('\n')||"Aucune"}\n\n🔥 TOP 5:\n${top.map(([jid,c],i)=>`${i+1}. @${jid.split('@')[0]} - ${c}`).join('\n')}`; await sock.sendMessage(from,{text:t,mentions:top.map(([jid])=>jid)},{quoted:m}); return }
     if(cmd==="gt"){ let who=target||m.message.extendedTextMessage?.contextInfo?.participant||(isGroup?null:from); if(!who) return await sock.sendMessage(from,{text:"😈 TAG!"},{quoted:m}); try{ let pp=await sock.profilePictureUrl(who,'image'); await sock.sendMessage(from,{image:{url:pp},caption:`👑 @${who.split('@')[0]}`,mentions:[who]},{quoted:m}) }catch{ await sock.sendMessage(from,{text:`👑 @${who.split('@')[0]}`,mentions:[who]},{quoted:m}) } return }
-    if(cmd==="rdm"){ if(!meta) return; let all=meta.participants.filter(p=>!isProtectedForKick(p.id)).map(p=>p.id); let r=all[Math.floor(Math.random()*all.length)]; if(r) await sock.sendMessage(from,{text:R.rdmOk(r),mentions:[r]},{quoted:m}); return }
+    if(cmd==="rdm"){ if(!meta) return; let all=meta.participants.filter(p=>!isProtectedForKick(p.id, meta)).map(p=>p.id); let r=all[Math.floor(Math.random()*all.length)]; if(r) await sock.sendMessage(from,{text:R.rdmOk(r),mentions:[r]},{quoted:m}); return }
     if(cmd==="iscom"){ if(!isGroup) return; let cache=fullMessageStore[from]||[]; if(cache.length===0) return await sock.sendMessage(from,{text:"💀 Cache vide"},{quoted:m}); let toDel=Math.min(cache.length,50); let ok=0; for(let i=cache.length-1;i>=0&&ok<toDel;i--){ try{ await sock.sendMessage(from,{delete:cache[i].key}); ok++; await new Promise(r=>setTimeout(r,500)) }catch{} } fullMessageStore[from]=[]; await sock.sendMessage(from,{text:`💀 ISCOM ${ok}/${toDel}`},{quoted:m}); return }
     if(cmd==="time"){ let t=parseInt(txt)||10; await sock.sendMessage(from,{text:`⏳ ${t}s`},{quoted:m}); setTimeout(async()=>{ await sock.sendMessage(from,{text:R.timeEnd},{quoted:m}) },t*1000); return }
     if(cmd==="inactifs"){ if(!isGroup||!meta) return; let act=db.activity[from]||{}; let members=meta.participants.map(p=>p.id); let sorted=members.map(id=>({id,count:act[id]||0})).sort((a,b)=>a.count-b.count); let inact=sorted.slice(0,10); await sock.sendMessage(from,{text:`👻 FANTÔMES:\n${inact.map((u,i)=>`${i+1}. @${u.id.split('@')[0]} - ${u.count}`).join('\n')}`,mentions:inact.map(u=>u.id)},{quoted:m}); return }
@@ -385,13 +444,15 @@ async function startBot(){
   sock.ev.on('group-participants.update', async(update)=>{
     try{
       const { id, participants, action, author } = update;
-      if(action==='add'){ for(let p of participants){ if(p===sock.user.id) continue; if(db.welcome.includes(id)){ let meta=await sock.groupMetadata(id).catch(()=>({subject:"royaume"})); await sock.sendMessage(id,{text:R.welcomeMsg(p,meta.subject),mentions:[p]}) } } }
+      const meta = await sock.groupMetadata(id).catch(()=>null)
+      if(action==='add'){ for(let p of participants){ if(p===sock.user.id) continue; if(db.welcome.includes(id)){ await sock.sendMessage(id,{text:R.welcomeMsg(p,meta?.subject||"royaume"),mentions:[p]}) } } }
       if(action==='remove'){
         for(let r of participants){
           if(r===sock.user.id) continue
-          let num=normalizeJid(r); let isProt = isZenkaiProtected(r, id) || db.protec.includes(r)||db.saved.includes(r)||db.amis[num]||db.godmode.includes(id)||num.includes(OWNER_NUMBER)||db.zenkai.includes(id)||db.zenkaiUsers[num]
+          let num=normalizeJid(r); 
+          let isProt = isZenkaiProtected(r, id, meta) || db.protec.includes(r)||db.saved.includes(r)||db.amis[num]||db.godmode.includes(id)||num.includes(OWNER_NUMBER)||db.zenkai.includes(id)||db.zenkaiUsers[num]
           if(isProt){
-            let meta=await sock.groupMetadata(id).catch(()=>null); if(!meta) continue;
+            if(!meta) continue;
             let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin){ await sock.sendMessage(id,{text:R.protecFail}); continue }
             await sock.groupParticipantsUpdate(id,[r],"add").catch(()=>{}); await new Promise(res=>setTimeout(res,1200));
             if(author&&author!==r){ let an=normalizeJid(author); if(!db.protec.includes(author)&&!an.includes(OWNER_NUMBER)){ await sock.groupParticipantsUpdate(id,[author],"remove").catch(()=>{}); await sock.sendMessage(id,{text:R.protecTriggered(r,author),mentions:[r,author]}) } }
@@ -400,9 +461,9 @@ async function startBot(){
       }
       if(action==='demote'){
         for(let d of participants){
-          let num=normalizeJid(d); let isProt = isZenkaiProtected(d, id) || db.protec.includes(d)||db.saved.includes(d)||db.godmode.includes(id)||num.includes(OWNER_NUMBER)
+          let num=normalizeJid(d); let isProt = isZenkaiProtected(d, id, meta) || db.protec.includes(d)||db.saved.includes(d)||db.godmode.includes(id)||num.includes(OWNER_NUMBER)
           let ab = db.antidemote.includes(id) || db.godmode.includes(id) || db.zenkai.includes(id) || db.zenkaiUsers[num]
-          if(isProt || ab){ let meta=await sock.groupMetadata(id).catch(()=>null); if(!meta) continue; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin) continue; await sock.groupParticipantsUpdate(id,[d],"promote").catch(()=>{}); }
+          if(isProt || ab){ if(!meta) continue; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin) continue; await sock.groupParticipantsUpdate(id,[d],"promote").catch(()=>{}); }
         }
       }
     }catch(e){ console.log("PROTEC ERR",e) }
