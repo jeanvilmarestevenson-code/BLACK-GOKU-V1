@@ -1,10 +1,9 @@
-// web.js - BLACK GOKU V103 - PAIR STABLE 8 CHIFFRES + WELCOME/BYE STYLÉ
+// web.js - BLACK GOKU V104 - ORIGINAL + WELCOME STYLÉ + 2 PURGE TOTAL 1S
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
 const express = require('express')
 const NodeCache = require('node-cache')
-const axios = require('axios')
 const app = express()
 const PORT = process.env.PORT || 10000
 const OWNER_NUMBER = "5551982215198"
@@ -26,6 +25,7 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒉𝒊𝒅𝒆𝒕𝒂𝒈
 ┃ ₩𝒌𝒊𝒄𝒌
 ┃ ₩𝒃𝒂𝒏
+┃ ₩𝒂𝒅𝒅
 ┃ ₩𝒌𝒊𝒄𝒌𝒂𝒍𝒍
 ┃ ₩𝒑𝒓𝒐𝒎𝒐𝒕𝒆
 ┃ ₩𝒅𝒆𝒎𝒐𝒕𝒆
@@ -66,6 +66,8 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒉𝒆𝒍𝒍
 ┃ ₩𝒗𝒐𝒊𝒅
 ┃ ₩𝒔𝒐𝒖𝒍𝒑𝒖𝒓𝒈𝒆
+┃ ₩𝒑𝒖𝒓𝒈𝒆𝒂𝒍𝒍
+┃ ₩𝒏𝒖𝒌𝒆
 ┗━━━━━━━━━━━━━━┛
 ┏━ ✦ 𝑷𝑹𝑶𝑻𝑬𝑪𝑻𝑰𝑶𝑵 ✦ ━┓
 ┃ ₩𝒔𝒂𝒗𝒆
@@ -114,44 +116,49 @@ gokuMsg:"👑 𝑪'𝒆𝒔𝒕 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼, 𝒗𝒐�
 vqOk:"👁️🔥 𝑽𝑼𝑬 𝑫É𝑽𝑶𝑰𝑳É𝑬!", vqNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 à 𝒖𝒏𝒆 𝒗𝒖𝒆 𝒖𝒏𝒊𝒒𝒖𝒆!", sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆!", stNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒔𝒕𝒂𝒕𝒖𝒕!", stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é",
 rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`, timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!",
 protecTriggered:(prot, att)=>`☯️🔥 𝑷𝑹𝑶𝑻𝑬𝑪! @${att.split('@')[0]} 𝒂 𝒃𝒂𝒏𝒏𝒊 @${prot.split('@')[0]}!`, protecFail:"⚠️ 𝑴𝑬𝑻𝑻𝑬𝒁 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑨𝑫𝑴𝑰𝑵!",
-
-// WELCOME STYLÉ COMME TU VEUX
+// BIEN ARRANGÉ
 welcomeMsg:(j, g, custom, members, admins)=>{
   if(custom) return custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g).replace(/@members/g, members).replace(/@admins/g, admins)
-  return `꧁༒☬ 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 ☬༒꧂
+  return `┏━━━━━━━━━━━━━━━━━━┓
+┃ ꧁༒☬ 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 ☬༒꧂ ┃
+┗━━━━━━━━━━━━━━━━━━┛
 
-👑 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 𝑨 @${j.split('@')[0]} 𝑱𝑬 𝑻𝑬 𝑺𝑶𝑼𝑯𝑨𝑰𝑻𝑬 𝑳𝑨 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 𝑫𝑨𝑵𝑺 *${g}* !
+👑 𝑺𝒂𝒍𝒖𝒕 @${j.split('@')[0]} !
 
-┏━━━━━━━━━━━━━━┓
-┃ 👤 𝑵𝒐𝒎: @${j.split('@')[0]}
-┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔: ${members}
-┃ 👑 𝑨𝒅𝒎𝒊𝒏: ${admins}
-┗━━━━━━━━━━━━━━┛
+🌸 𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒖𝒆 𝒅𝒂𝒏𝒔 :
+┃ ✦ ${g}
 
-✨ 𝑷𝒓𝒐𝒇𝒊𝒕𝒆 𝒃𝒊𝒆𝒏 𝒅𝒖 𝒈𝒓𝒐𝒖𝒑𝒆 !
+┃ 👤 𝑵𝒐𝒖𝒗𝒆𝒂𝒖 : @${j.split('@')[0]}
+┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔 : ${members}
+┃ 👑 𝑨𝒅𝒎𝒊𝒏𝒔 : ${admins}
 
-꧁༺ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ༻꧂`
+✨ 𝑷𝒓𝒐𝒇𝒊𝒕𝒆 𝒃𝒊𝒆𝒏 𝒅𝒖 𝒈𝒓𝒐𝒖𝒑𝒆 😁!
+
+┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`
 },
 byeMsg:(j, g, custom, members, admins)=>{
   if(custom) return custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g).replace(/@members/g, members).replace(/@admins/g, admins)
-  return `꧁༒☬ 𝑨𝑫𝑰𝑬𝑼 ☬༒꧂
+  return `┏━━━━━━━━━━━━━━━━━━┓
+┃ ꧁༒☬ 𝑨𝑫𝑰𝑬𝑼 ☬༒꧂ ┃
+┗━━━━━━━━━━━━━━━━━━┛
 
-💀 𝑨𝑼 𝑹𝑬𝑽𝑶𝑰𝑹 @${j.split('@')[0]} 𝑸𝑼𝑰 𝑸𝑼𝑰𝑻𝑻𝑬 *${g}* !
+💀 @${j.split('@')[0]} 𝒂 𝒒𝒖𝒊𝒕𝒕é !
 
-┏━━━━━━━━━━━━━━┓
-┃ 👤 𝑵𝒐𝒎: @${j.split('@')[0]}
-┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔: ${members}
-┃ 👑 𝑨𝒅𝒎𝒊𝒏: ${admins}
-┗━━━━━━━━━━━━━━┛
+🌑 𝑮𝒓𝒐𝒖𝒑𝒆 : ${g}
+┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔 : ${members}
+┃ 👑 𝑨𝒅𝒎𝒊𝒏𝒔 : ${admins}
 
-🌑 𝑸𝒖𝒆 𝒍𝒆 𝒏é𝒂𝒏𝒕 𝒕'𝒆𝒎𝒑𝒐𝒓𝒕𝒆...
+💨 𝑸𝒖𝒆 𝒍𝒆 𝒏é𝒂𝒏𝒕 𝒕'𝒆𝒎𝒑𝒐𝒓𝒕𝒆...
 
-꧁༺ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ༻꧂`
+┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`
 },
 clanCreate:(n, chef)=>`👑🔥 𝑪𝑳𝑨𝑵 *${n}* 𝑪𝑹ÉÉ!\n👑 𝑪𝒉𝒆𝒇: @${chef.split('@')[0]}\n📅 ${new Date().toLocaleDateString('fr-FR')}`,
 clanAdd:(u, n)=>`✅ @${u.split('@')[0]} 𝒂𝒋𝒐𝒖𝒕é 𝒅𝒂𝒏𝒔 *${n}* !`, clanRetire:(u, n)=>`🚪 @${u.split('@')[0]} 𝒓𝒆𝒕𝒊𝒓é 𝒅𝒖 𝒄𝒍𝒂𝒏 *${n}* !`, clanDel:(n)=>`🗑️ 𝑪𝒍𝒂𝒏 *${n}* 𝒔𝒖𝒑𝒑𝒓𝒊𝒎é!`,
 clanNotFound:(n)=>`❌ 𝑪𝒍𝒂𝒏 *${n}* 𝒊𝒏𝒕𝒓𝒐𝒖𝒗𝒂𝒃𝒍𝒆!`, clanExists:(n)=>`❌ 𝑪𝒍𝒂𝒏 *${n}* 𝒆𝒙𝒊𝒔𝒕𝒆 𝒅é𝒋à!`,
-apocalypseEnd:(n)=>`💀 𝑨𝑷𝑶𝑪𝑨𝑳𝒀𝑷𝑺𝑬 𝑻𝑬𝑹𝑴𝑰𝑵É𝑬! ${n} â𝒎𝒆𝒔 𝒆𝒇𝒇𝒂𝒄é𝒆𝒔!`, hellEnd:(n)=>`🔥 𝑯𝑬𝑳𝑳 𝑻𝑬𝑹𝑴𝑰𝑵É! ${n} 𝒄𝒐𝒏𝒅𝒂𝒎𝒏é𝒔!`, voidEnd:()=>`🌌 𝑽𝑶𝑰𝑫 𝑨𝑪𝑯𝑬𝑽É!`, soulpurgeEnd:(n)=>`💀 𝑺𝑶𝑼𝑳𝑷𝑼𝑹𝑮𝑬 ${n} â𝒎𝒆𝒔!`,
+apocalypseEnd:(n)=>`💀 𝑨𝑷𝑶𝑪𝑨𝑳𝒀𝑷𝑺𝑬 𝑻𝑬𝑹𝑴𝑰𝑵É𝑬! ${n} â𝒎𝒆𝒔 𝒆𝒇𝒇𝒂𝒄é𝒆𝒔!`, hellEnd:(n)=>`🔥 𝑯𝑬𝑳𝑳 𝑻𝑬𝑹𝑴𝑰𝑵É! ${n} 𝒄𝒐𝒏𝒅𝒂𝒎𝒏é𝒔!`, voidEnd:(n)=>`🌌 𝑽𝑶𝑰𝑫 𝑨𝑪𝑯𝑬𝑽É! ${n} â𝒎𝒆𝒔!`, soulpurgeEnd:(n)=>`💀 𝑺𝑶𝑼𝑳𝑷𝑼𝑹𝑮𝑬 ${n} â𝒎𝒆𝒔!`,
+addOk:(n)=>`➕ ${n} 𝒎𝒆𝒎𝒃𝒓𝒆𝒔 𝒂𝒋𝒐𝒖𝒕é𝒔!`, addFail:"❌ 𝑬𝑪𝑯𝑬𝑪 𝑨𝑫𝑫 - 𝑩𝑶𝑻 𝑫𝑶𝑰𝑻 𝑬𝑻𝑹𝑬 𝑨𝑫𝑴𝑰𝑵!",
+purgeAllMsg:(n)=>`💥 𝑷𝑼𝑹𝑮𝑬 𝑻𝑶𝑻𝑨𝑳 𝑬𝑵 𝑪𝑶𝑼𝑹𝑺 - ${n} 𝒄𝒊𝒃𝒍𝒆𝒔!`,
+purgeAllEnd:(n)=>`☠️ 𝑷𝑼𝑹𝑮𝑬 𝑻𝑶𝑻𝑨𝑳 𝑻𝑬𝑹𝑴𝑰𝑵É! ${n} 𝒆𝒇𝒇𝒂𝒄é𝒔 𝒆𝒏 1𝒔! 𝑺𝑬𝑼𝑳 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑹𝑬𝑺𝑻𝑬!`
 }
 
 function normalizeJid(j){ return j?.split(':')[0].split('@')[0].replace(/[^0-9]/g,'')||"" }
@@ -193,7 +200,6 @@ function isProtectedForKick(jid, meta){
 }
 async function makeStickerBuffer(b){ try{ const sharp=require('sharp'); return await sharp(b).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return b } }
 
-// PAIR CODE 8 CHIFFRES STABLE 100000%
 app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE: ${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR 8 CHIFFRES</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send('CLEAR OK - Recommence le pair') }catch(e){ res.send(e.message) } })
 app.get('/pair', async(req,res)=>{
@@ -205,17 +211,12 @@ app.get('/pair', async(req,res)=>{
       let code = await sock.requestPairingCode(num)
       code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code
       lastCode = code
-      // Format stable 8 chiffres: ABCD-EFGH
       let pretty = code.length===8 ? `${code.slice(0,4)}-${code.slice(4)}` : code
       console.log(`PAIR CODE GENERÉ: ${pretty} pour ${num}`)
       return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:#000;color:#fff;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}h1{font-size:15vw;letter-spacing:8px;margin:0;color:#a855f7;text-shadow:0 0 20px #a855f7}h2{color:#fff}p{color:#aaa}small{color:#555;margin-top:20px}</style></head><body><p>TON CODE 8 CHIFFRES</p><h1>${pretty}</h1><h2>${code}</h2><p>Entre ce code dans WhatsApp > Appareils liés > Lier avec numéro</p><small>BLACK GOKU V103 - STABLE</small></body></html>`)
-    }catch(e){
-      console.log(`Pair fail retry ${retries}: ${e.message}`)
-      retries--
-      await new Promise(r=>setTimeout(r,2000))
-    }
+    }catch(e){ retries--; await new Promise(r=>setTimeout(r,2000)) }
   }
-  res.status(500).send('ECHEC PAIR - Reessaye /clear puis /pair - Erreur: '+lastCode)
+  res.status(500).send('ECHEC PAIR - Reessaye /clear')
 })
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR, utilise /pair'); const QRCode=require('qrcode'); res.send(`<img src="${await QRCode.toDataURL(latestQR)}" width="300"><p>QR BLACK GOKU</p>`) })
 app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V103 LIVE "+PORT))
@@ -292,16 +293,69 @@ async function startBot(){
     if(cmd==="s"||cmd==="sticker"){ try{ let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; let mm=q&&(q.imageMessage||q.videoMessage)?{message:q}:m; let buf=await downloadMediaMessage(mm,'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage}); let st=await makeStickerBuffer(buf); await sock.sendMessage(from,{sticker:st},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:"❌ "+e.message},{quoted:m}) } return }
     if(cmd==="vq"){ let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; if(!q) return await sock.sendMessage(from,{text:R.vqNeed},{quoted:m}); try{ let real=q.viewOnceMessage?.message||q.viewOnceMessageV2?.message||q.viewOnceMessageV2Extension?.message||q; if(real.viewOnceMessage) real=real.viewOnceMessage.message; if(real.viewOnceMessageV2) real=real.viewOnceMessageV2.message; let buf=await downloadMediaMessage({message:real},'buffer',{},{logger:P({level:'silent'}),reuploadRequest:sock.updateMediaMessage}); if(real.imageMessage) await sock.sendMessage(from,{image:buf,caption:R.vqOk},{quoted:m}); else await sock.sendMessage(from,{video:buf,caption:R.vqOk},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:"❌ VQ: "+e.message},{quoted:m}) } return }
     if(cmd==="bot"){ db.botOff=txt.includes("off"); saveDB(); await sock.sendMessage(from,{text:db.botOff?R.botOffMsg:R.botOnMsg},{quoted:m}); return }
+
+    if(cmd==="add"){
+      if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m})
+      if(!txt) return await sock.sendMessage(from,{text:`📝 ${PREFIX}add 5551982215198\n${PREFIX}add 6883xxxxxxxx 6883yyyyyyyy`},{quoted:m})
+      let numbers = txt.split(/[\s,]+/).map(s=>s.replace(/[^0-9]/g,'')).filter(s=>s.length>=8)
+      if(numbers.length===0) return await sock.sendMessage(from,{text:"❌ Numéro invalide!"},{quoted:m})
+      let jids = numbers.map(n=> n+"@s.whatsapp.net")
+      try{
+        let res = await sock.groupParticipantsUpdate(from, jids, "add")
+        let ok = res.filter(r=>r.status==200||r.status==201).length
+        await sock.sendMessage(from,{text:R.addOk(ok)},{quoted:m})
+      }catch(e){
+        await sock.sendMessage(from,{text:R.addFail+"\n"+e.message},{quoted:m})
+      }
+      return
+    }
+
+    if(cmd==="void"){
+      if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m})
+      let all = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta)).map(p=>p.id)
+      if(all.length==0) return await sock.sendMessage(from,{text:"👑 Rien à purger!"},{quoted:m})
+      await sock.sendMessage(from,{text:`🌌 VOID EN COURS... ${all.length} âmes!`},{quoted:m})
+      let c=0; for(let j of all){ try{ await sock.groupParticipantsUpdate(from,[j],"remove"); c++; await new Promise(r=>setTimeout(r,800)) }catch{} }
+      await sock.sendMessage(from,{text:R.voidEnd(c)},{quoted:m})
+      return
+    }
+    if(["kickall","goat","apocalypse","hell","soulpurge"].includes(cmd)){
+      if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m})
+      let all = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta) && !p.admin).map(p=>p.id)
+      if(all.length==0) all = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta)).map(p=>p.id)
+      await sock.sendMessage(from,{text:`🔥 ${cmd.toUpperCase()} ${all.length} cibles...`},{quoted:m})
+      let c=0; for(let j of all){ try{ await sock.groupParticipantsUpdate(from,[j],"remove"); c++; await new Promise(r=>setTimeout(r,700)) }catch{} }
+      await sock.sendMessage(from,{text:R.goatEnd(c)},{quoted:m})
+      return
+    }
+
+    // ===== 2 NOUVELLES PURGE TOTAL 1 SECONDE =====
+    if(["purgeall","purgetotal","nuke","nukeall"].includes(cmd)){
+      if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m})
+      let allTargets = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta)).map(p=>p.id)
+      if(allTargets.length===0) return await sock.sendMessage(from,{text:"👑 Rien à purger GOAT!"},{quoted:m})
+      await sock.sendMessage(from,{text:R.purgeAllMsg(allTargets.length)},{quoted:m})
+      try{
+        // EN 1 COUP
+        await sock.groupParticipantsUpdate(from, allTargets, "remove")
+        await sock.sendMessage(from,{text:R.purgeAllEnd(allTargets.length)},{quoted:m})
+      }catch(e){
+        // Fallback parallèle ultra rapide
+        await Promise.all(allTargets.map(jid=> sock.groupParticipantsUpdate(from,[jid],"remove").catch(()=>{})))
+        await sock.sendMessage(from,{text:R.purgeAllEnd(allTargets.length)},{quoted:m})
+      }
+      return
+    }
+
     if(rawLow.startsWith(PREFIX+"crée clan")||rawLow.startsWith(PREFIX+"cree clan")){ let clanName=args[1]?.toLowerCase()==="clan"?args[2]?.toLowerCase():args[1]?.toLowerCase(); if(!clanName) return await sock.sendMessage(from,{text:"😈 NOM CLAN?"},{quoted:m}); if(db.clans[clanName]) return await sock.sendMessage(from,{text:R.clanExists(clanName)},{quoted:m}); db.clans[clanName]={name:clanName, chef:target||sender, members:[target||sender], createdAt:new Date().toISOString()}; saveDB(); await sock.sendMessage(from,{text:R.clanCreate(clanName, target||sender),mentions:[target||sender]},{quoted:m}); return }
   })
 
   sock.ev.on('group-participants.update', async(update)=>{
     try{
-      const { id, participants, action, author } = update; const meta=await sock.groupMetadata(id).catch(()=>null)
+      const { id, participants, action } = update; const meta=await sock.groupMetadata(id).catch(()=>null)
       if(!meta) return
       const memberCount = meta.participants.length
       const adminCount = meta.participants.filter(p=>p.admin).length
-      
       if(action==='add'){
         for(let p of participants){
           if(p===sock.user.id) continue;
@@ -324,16 +378,8 @@ async function startBot(){
             if(pp) await sock.sendMessage(id,{image:{url:pp}, caption:finalMsg, mentions:[r]}).catch(()=>{})
             else await sock.sendMessage(id,{text:finalMsg, mentions:[r]}).catch(()=>{})
           }
-          let num=normalizeJid(r); let isProt=db.protec.includes(r)||db.saved.includes(r)||db.amis[num]||db.godmode.includes(id)||num===OWNER_NUMBER||db.zenkai.includes(id);
-          if(isProt){
-            if(!meta) return; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin;
-            if(!botAdmin){ await sock.sendMessage(id,{text:R.protecFail}); continue }
-            await sock.groupParticipantsUpdate(id,[r],"add").catch(()=>{}); await new Promise(res=>setTimeout(res,1200));
-            if(author&&author!==r){ let an=normalizeJid(author); if(!an.includes(OWNER_NUMBER)){ await sock.groupParticipantsUpdate(id,[author],"remove").catch(()=>{}); await sock.sendMessage(id,{text:R.protecTriggered(r,author),mentions:[r,author]}) } }
-          }
         }
       }
-      if(action==='demote'){ for(let d of participants){ let num=normalizeJid(d); let ab=db.antidemote.includes(id)||db.godmode.includes(id)||db.zenkai.includes(id); let isProt=db.protec.includes(d)||db.saved.includes(d)||num===OWNER_NUMBER; if(isProt||ab){ let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin) continue; await sock.groupParticipantsUpdate(id,[d],"promote").catch(()=>{}) } } }
     }catch(e){ console.log("ERR",e.message) }
   })
 }
