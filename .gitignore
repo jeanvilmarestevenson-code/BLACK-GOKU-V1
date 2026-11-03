@@ -1,9 +1,9 @@
-# Modules
+# Node
 node_modules/
 package-lock.json
 yarn.lock
 
-# Auth Baileys - NE JAMAIS PUSH
+# Baileys AUTH - JAMAIS PUSH CA SINON TON NUMERO SE FAIT BAN
 auth2/
 auth/
 creds.json
@@ -11,33 +11,29 @@ app-state*.json
 pre-key*.json
 session*.json
 *.session-journal
+baileys_store.json
 
-# DB - Garde en local
+# DB BLACK GOKU
 black_db.json
 black_db.json.bak
+*.db.json
 
-# Images de test - laisse que celles du bot
+# Images test
 *.jpg
 *.jpeg
 *.png
 *.webp
-!menu.jpg
-!goku.jpg
-!kaio.jpg
+*.mp4
 
-# Env
+# Env / Logs
 .env
 .env.local
-
-# Logs
-logs/
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
-*.log
+logs/
 .DS_Store
 Thumbs.db
 
-# Render / Hosting
+# Render
 .render/
 dist/
