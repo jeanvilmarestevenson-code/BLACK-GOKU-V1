@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V104 - ORIGINAL + WELCOME STYLÉ + 2 PURGE TOTAL 1S
+// web.js - BLACK GOKU V104 FINAL COMPLET - GOAT EDITION
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -36,8 +36,7 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒔𝒕𝒂𝒕𝒔
 ┃ ₩𝒈𝒐𝒌𝒖
 ┃ ₩𝒌𝒂𝒊𝒐
-┃ ₩𝒘𝒂𝒊𝒇𝒖1
-┃ ₩𝒘𝒂𝒊𝒇𝒖2
+┃ ₩𝒘𝒂𝒊𝒇𝒖
 ┃ ₩𝒊𝒔𝒄𝒐𝒎
 ┃ ₩𝒕𝒊𝒎𝒆
 ┃ ₩𝒓𝒅𝒎
@@ -112,11 +111,10 @@ welcome:"👋 𝑾𝑬𝑳𝑪𝑶𝑴𝑬 𝑶𝑵", welcomeoff:"𝑶𝑭𝑭",
 ghost:"👻 𝑮𝑯𝑶𝑺𝑻 𝑶𝑵", ghostoff:"𝑶𝑭𝑭", boyOn:"💀 𝑩𝑶𝒀 𝑶𝑵", boyOff:"𝑶𝑭𝑭",
 amis:(j)=>`✅ 𝑨𝑴𝑰 @${j.split('@')[0]}!`, noami:(j)=>`❌ 𝑩𝑨𝑵𝑵𝑰 @${j.split('@')[0]}!`,
 botOffMsg:"💤 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑺'𝑬𝑵𝑫𝑶𝑹𝑻...", botOnMsg:"🤖🔥 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑺𝑬 𝑹É𝑽𝑬𝑰𝑳𝑳𝑬!",
-gokuMsg:"👑 𝑪'𝒆𝒔𝒕 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼, 𝒗𝒐𝒕𝒓𝒆 𝑫𝒊𝒆𝒖.", kaioMsg:"🔥 𝑪'𝒆𝒔𝒕 𝑲𝑨𝑰𝑶.", kaioOn:"🔥 𝑲𝑨𝑰𝑶 𝑶𝑵 - Je vois tout!", kaioOff:"𝑲𝑨𝑰𝑶 𝑶𝑭𝑭",
+gokuMsg:"👑 𝑪'𝒆𝒔𝒕 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼, 𝒗𝒐𝒕𝒓𝒆 𝑫𝒊𝒆𝒖. 𝑳𝒆 𝒓𝒐𝒊 𝒅𝒆𝒔 𝑺𝒂𝒚𝒂𝒏𝒔.", kaioMsg:"🔥 𝑪'𝒆𝒔𝒕 𝑲𝑨𝑰𝑶, 𝒍𝒆 𝒅𝒊𝒆𝒖 𝒒𝒖𝒊 𝒗𝒐𝒊𝒕 𝒕𝒐𝒖𝒕!", kaioOn:"🔥 𝑲𝑨𝑰𝑶 𝑶𝑵 - Je vois tout!", kaioOff:"𝑲𝑨𝑰𝑶 𝑶𝑭𝑭",
 vqOk:"👁️🔥 𝑽𝑼𝑬 𝑫É𝑽𝑶𝑰𝑳É𝑬!", vqNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 à 𝒖𝒏𝒆 𝒗𝒖𝒆 𝒖𝒏𝒊𝒒𝒖𝒆!", sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆!", stNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒔𝒕𝒂𝒕𝒖𝒕!", stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é",
 rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`, timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!",
 protecTriggered:(prot, att)=>`☯️🔥 𝑷𝑹𝑶𝑻𝑬𝑪! @${att.split('@')[0]} 𝒂 𝒃𝒂𝒏𝒏𝒊 @${prot.split('@')[0]}!`, protecFail:"⚠️ 𝑴𝑬𝑻𝑻𝑬𝒁 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑨𝑫𝑴𝑰𝑵!",
-// BIEN ARRANGÉ
 welcomeMsg:(j, g, custom, members, admins)=>{
   if(custom) return custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g).replace(/@members/g, members).replace(/@admins/g, admins)
   return `┏━━━━━━━━━━━━━━━━━━┓
@@ -132,7 +130,7 @@ welcomeMsg:(j, g, custom, members, admins)=>{
 ┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔 : ${members}
 ┃ 👑 𝑨𝒅𝒎𝒊𝒏𝒔 : ${admins}
 
-✨ 𝑷𝒓𝒐𝒇𝒊𝒕𝒆 𝒃𝒊𝒆𝒏 𝒅𝒖 𝒈𝒓𝒐𝒖𝒑𝒆 😁!
+✨ 𝑷𝒓𝒐𝒇𝒊𝒕𝒆 𝒃𝒊𝒆𝒏 𝒅𝒖 𝒈𝒓𝒐𝒖𝒑𝒆 !
 
 ┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`
 },
@@ -142,9 +140,10 @@ byeMsg:(j, g, custom, members, admins)=>{
 ┃ ꧁༒☬ 𝑨𝑫𝑰𝑬𝑼 ☬༒꧂ ┃
 ┗━━━━━━━━━━━━━━━━━━┛
 
-💀 @${j.split('@')[0]} 𝒂 𝒒𝒖𝒊𝒕𝒕é !
+💀 @${j.split('@')[0]} 𝒂 𝒒𝒖𝒊𝒕𝒕é 𝒍𝒆 𝒓𝒐𝒚𝒂𝒖𝒎𝒆 !
 
 🌑 𝑮𝒓𝒐𝒖𝒑𝒆 : ${g}
+
 ┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔 : ${members}
 ┃ 👑 𝑨𝒅𝒎𝒊𝒏𝒔 : ${admins}
 
@@ -219,7 +218,7 @@ app.get('/pair', async(req,res)=>{
   res.status(500).send('ECHEC PAIR - Reessaye /clear')
 })
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR, utilise /pair'); const QRCode=require('qrcode'); res.send(`<img src="${await QRCode.toDataURL(latestQR)}" width="300"><p>QR BLACK GOKU</p>`) })
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V103 LIVE "+PORT))
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V104 LIVE "+PORT))
 
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
@@ -283,7 +282,40 @@ async function startBot(){
     if(cmd==="boy"){ if(txt.toLowerCase().includes("off")){ db.boy=db.boy.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.boyOff},{quoted:m}); } else { if(!db.boy.includes(from)) db.boy.push(from); saveDB(); await sock.sendMessage(from,{text:R.boyOn},{quoted:m}); } return }
     if(cmd==="zenkai"){ if(txt.toLowerCase().includes("on")){ if(!db.zenkai.includes(from)) db.zenkai.push(from); saveDB(); await sock.sendMessage(from,{text:R.zenkaiOn},{quoted:m}); } else if(target){ let n=normalizeJid(target); db.zenkaiUsers[n]=from; saveDB(); await sock.sendMessage(from,{text:R.zenkai(target),mentions:[target]},{quoted:m}); } return }
     if(cmd==="nozenkai"){ db.zenkai=db.zenkai.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.zenkaiOff},{quoted:m}); return }
-    if(["black","menu","b"].includes(cmd)){ await sock.sendMessage(from,{text:getMenu()},{quoted:m}); return }
+
+    // IMAGES
+    if(["black","menu","b"].includes(cmd)){
+      try{
+        if(fs.existsSync('./Menu.jpg')){
+          await sock.sendMessage(from,{image:fs.readFileSync('./Menu.jpg'), caption:getMenu()},{quoted:m})
+        } else {
+          await sock.sendMessage(from,{text:getMenu()},{quoted:m})
+        }
+      }catch{ await sock.sendMessage(from,{text:getMenu()},{quoted:m}) }
+      return
+    }
+    if(cmd==="goku"){
+      try{
+        if(fs.existsSync('./Goku.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./Goku.jpg'), caption:R.gokuMsg},{quoted:m})
+        else await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m})
+      }catch(e){ await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}) }
+      return
+    }
+    if(cmd==="kaio"){
+      try{
+        if(fs.existsSync('./Kaio.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./Kaio.jpg'), caption:R.kaioMsg},{quoted:m})
+        else await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m})
+      }catch(e){ await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m}) }
+      return
+    }
+    if(["waifu1","waifu2","waifu3","waifu4","waifu"].includes(cmd)){
+      try{
+        if(fs.existsSync('./waifu.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./waifu.jpg'), caption:`🔥 ${cmd.toUpperCase()} - 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼`},{quoted:m})
+        else await sock.sendMessage(from,{text:`🔥 ${cmd.toUpperCase()} - Image waifu.jpg manquante`},{quoted:m})
+      }catch(e){}
+      return
+    }
+
     if(isGroup&&cmd==="tagall"){ let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:`🔥 TAGALL ${men.length}\n${txt}`,mentions:men},{quoted:m}); return }
     if(isGroup&&cmd==="hidetag"){ let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:txt||"👻 BLACK GOKU",mentions:men},{quoted:m}); return }
     if(cmd==="ban"||cmd==="kick"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target,meta)) return await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); await sock.groupParticipantsUpdate(from,[target],"remove"); await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return }
@@ -329,18 +361,15 @@ async function startBot(){
       return
     }
 
-    // ===== 2 NOUVELLES PURGE TOTAL 1 SECONDE =====
     if(["purgeall","purgetotal","nuke","nukeall"].includes(cmd)){
       if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m})
       let allTargets = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta)).map(p=>p.id)
-      if(allTargets.length===0) return await sock.sendMessage(from,{text:"👑 Rien à purger GOAT!"},{quoted:m})
+      if(allTargets.length==0) return await sock.sendMessage(from,{text:"👑 Rien à purger GOAT!"},{quoted:m})
       await sock.sendMessage(from,{text:R.purgeAllMsg(allTargets.length)},{quoted:m})
       try{
-        // EN 1 COUP
         await sock.groupParticipantsUpdate(from, allTargets, "remove")
         await sock.sendMessage(from,{text:R.purgeAllEnd(allTargets.length)},{quoted:m})
       }catch(e){
-        // Fallback parallèle ultra rapide
         await Promise.all(allTargets.map(jid=> sock.groupParticipantsUpdate(from,[jid],"remove").catch(()=>{})))
         await sock.sendMessage(from,{text:R.purgeAllEnd(allTargets.length)},{quoted:m})
       }
