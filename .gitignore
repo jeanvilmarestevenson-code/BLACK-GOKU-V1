@@ -1,9 +1,43 @@
+# Modules
 node_modules/
+package-lock.json
+yarn.lock
+
+# Auth Baileys - NE JAMAIS PUSH
 auth2/
 auth/
+creds.json
+app-state*.json
+pre-key*.json
+session*.json
+*.session-journal
+
+# DB - Garde en local
 black_db.json
-*.log
+black_db.json.bak
+
+# Images de test - laisse que celles du bot
+*.jpg
+*.jpeg
+*.png
+*.webp
+!menu.jpg
+!goku.jpg
+!kaio.jpg
+
+# Env
 .env
+.env.local
+
+# Logs
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
 .DS_Store
-npm-debug.log
-sessions/
+Thumbs.db
+
+# Render / Hosting
+.render/
+dist/
