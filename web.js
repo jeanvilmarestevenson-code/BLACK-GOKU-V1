@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V104 FINAL COMPLET - GOAT EDITION
+// web.js - BLACK GOKU V104.2 FIX - MÊME FORMATION ORIGINAL
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -198,6 +198,8 @@ function isProtectedForKick(jid, meta){
   return db.saved.includes(jid) || db.protec.includes(jid) || db.pro.includes(jid) || db.godmode.includes(jid) || db.saved.includes(n) || db.protec.includes(n)
 }
 async function makeStickerBuffer(b){ try{ const sharp=require('sharp'); return await sharp(b).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return b } }
+// FIX POUR TES FICHIERS EN MINUSCULE + ESPACES
+function findImg(list){ for(let f of list){ if(fs.existsSync(f)) return f; if(fs.existsSync('./'+f)) return './'+f; } return null; }
 
 app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE: ${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR 8 CHIFFRES</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send('CLEAR OK - Recommence le pair') }catch(e){ res.send(e.message) } })
@@ -283,36 +285,37 @@ async function startBot(){
     if(cmd==="zenkai"){ if(txt.toLowerCase().includes("on")){ if(!db.zenkai.includes(from)) db.zenkai.push(from); saveDB(); await sock.sendMessage(from,{text:R.zenkaiOn},{quoted:m}); } else if(target){ let n=normalizeJid(target); db.zenkaiUsers[n]=from; saveDB(); await sock.sendMessage(from,{text:R.zenkai(target),mentions:[target]},{quoted:m}); } return }
     if(cmd==="nozenkai"){ db.zenkai=db.zenkai.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.zenkaiOff},{quoted:m}); return }
 
-    // IMAGES
     if(["black","menu","b"].includes(cmd)){
+      let img = findImg(['menu.jpg','Menu.jpg','MENU.jpg'])
       try{
-        if(fs.existsSync('./Menu.jpg')){
-          await sock.sendMessage(from,{image:fs.readFileSync('./Menu.jpg'), caption:getMenu()},{quoted:m})
-        } else {
-          await sock.sendMessage(from,{text:getMenu()},{quoted:m})
-        }
+        if(img) await sock.sendMessage(from,{image:fs.readFileSync(img), caption:getMenu()},{quoted:m})
+        else await sock.sendMessage(from,{text:getMenu()},{quoted:m})
       }catch{ await sock.sendMessage(from,{text:getMenu()},{quoted:m}) }
       return
     }
     if(cmd==="goku"){
+      let img = findImg(['goku.jpg','Goku.jpg','GOKU.jpg'])
       try{
-        if(fs.existsSync('./Goku.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./Goku.jpg'), caption:R.gokuMsg},{quoted:m})
+        if(img) await sock.sendMessage(from,{image:fs.readFileSync(img), caption:R.gokuMsg},{quoted:m})
         else await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m})
-      }catch(e){ await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}) }
+      }catch{ await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}) }
       return
     }
     if(cmd==="kaio"){
+      let img = findImg(['kaio.jpg','Kaio.jpg','KAIO.jpg'])
       try{
-        if(fs.existsSync('./Kaio.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./Kaio.jpg'), caption:R.kaioMsg},{quoted:m})
+        if(img) await sock.sendMessage(from,{image:fs.readFileSync(img), caption:R.kaioMsg},{quoted:m})
         else await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m})
-      }catch(e){ await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m}) }
+      }catch{ await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m}) }
       return
     }
-    if(["waifu1","waifu2","waifu3","waifu4","waifu"].includes(cmd)){
+    if(["waifu","waifu1","waifu2","w1","w2"].includes(cmd)){
+      let list = cmd==="waifu2"||cmd==="w2" ? ['waifu 2.jpg','waifu2.jpg','waifu.jpg'] : ['waifu 1.jpg','waifu1.jpg','waifu.jpg','waifu 2.jpg']
+      let img = findImg(list)
       try{
-        if(fs.existsSync('./waifu.jpg')) await sock.sendMessage(from,{image:fs.readFileSync('./waifu.jpg'), caption:`🔥 ${cmd.toUpperCase()} - 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼`},{quoted:m})
-        else await sock.sendMessage(from,{text:`🔥 ${cmd.toUpperCase()} - Image waifu.jpg manquante`},{quoted:m})
-      }catch(e){}
+        if(img) await sock.sendMessage(from,{image:fs.readFileSync(img), caption:`🔥 ${cmd.toUpperCase()} - 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼`},{quoted:m})
+        else await sock.sendMessage(from,{text:`🔥 ${cmd.toUpperCase()} - mets waifu 1.jpg`},{quoted:m})
+      }catch{}
       return
     }
 
@@ -328,7 +331,7 @@ async function startBot(){
 
     if(cmd==="add"){
       if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m})
-      if(!txt) return await sock.sendMessage(from,{text:`📝 ${PREFIX}add 5551982215198\n${PREFIX}add 6883xxxxxxxx 6883yyyyyyyy`},{quoted:m})
+      if(!txt) return await sock.sendMessage(from,{text:`📝 ${PREFIX}add 5551982215198`},{quoted:m})
       let numbers = txt.split(/[\s,]+/).map(s=>s.replace(/[^0-9]/g,'')).filter(s=>s.length>=8)
       if(numbers.length===0) return await sock.sendMessage(from,{text:"❌ Numéro invalide!"},{quoted:m})
       let jids = numbers.map(n=> n+"@s.whatsapp.net")
@@ -336,9 +339,7 @@ async function startBot(){
         let res = await sock.groupParticipantsUpdate(from, jids, "add")
         let ok = res.filter(r=>r.status==200||r.status==201).length
         await sock.sendMessage(from,{text:R.addOk(ok)},{quoted:m})
-      }catch(e){
-        await sock.sendMessage(from,{text:R.addFail+"\n"+e.message},{quoted:m})
-      }
+      }catch(e){ await sock.sendMessage(from,{text:R.addFail+"\n"+e.message},{quoted:m}) }
       return
     }
 
