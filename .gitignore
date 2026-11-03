@@ -6,3 +6,6 @@ npm-debug.log
 black_db.json
 session
 auth_info
+auth
+creds.json
+*.log
