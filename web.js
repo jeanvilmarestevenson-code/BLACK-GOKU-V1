@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V102.1 - OWNER FIX + FULL REPONSES + WELCOME/BYE PHOTO
+// web.js - BLACK GOKU V103 - PAIR STABLE 8 CHIFFRES + WELCOME/BYE STYLÉ
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -91,7 +91,6 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┗━━━━━━━━━━━━━━┛
 *₩𝑪𝑹ÉÉ 𝑷𝑨𝑹 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼₩*`;
 
-// TON OBJET R FULL ORIGINAL - TOUCHE PLUS
 const R = {
 noPerm:"😈 𝑺𝑬𝑼𝑳 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑷𝑬𝑼𝑻 𝑼𝑻𝑰𝑳𝑰𝑺𝑬𝑹 𝑪𝑬 𝑩𝑶𝑻 𝑻𝑶𝑰 𝑴𝑰𝑺𝑬𝑹𝑨𝑩𝑳𝑬 𝑴𝑶𝑹𝑻𝑬𝑳 𝑻𝑼 𝑹𝑬𝑮𝑨𝑹𝑫𝑬 𝑬𝑻 𝑻𝑼 𝑶𝑩𝑬𝑰𝑺 😈😈",
 needTag:"😈 𝑻𝑨𝑮 𝑼𝑵 𝑴𝑶𝑹𝑻𝑬𝑳!",
@@ -115,8 +114,40 @@ gokuMsg:"👑 𝑪'𝒆𝒔𝒕 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼, 𝒗𝒐�
 vqOk:"👁️🔥 𝑽𝑼𝑬 𝑫É𝑽𝑶𝑰𝑳É𝑬!", vqNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 à 𝒖𝒏𝒆 𝒗𝒖𝒆 𝒖𝒏𝒊𝒒𝒖𝒆!", sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆!", stNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒔𝒕𝒂𝒕𝒖𝒕!", stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é",
 rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`, timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!",
 protecTriggered:(prot, att)=>`☯️🔥 𝑷𝑹𝑶𝑻𝑬𝑪! @${att.split('@')[0]} 𝒂 𝒃𝒂𝒏𝒏𝒊 @${prot.split('@')[0]}!`, protecFail:"⚠️ 𝑴𝑬𝑻𝑻𝑬𝒁 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑨𝑫𝑴𝑰𝑵!",
-welcomeMsg:(j, g, custom)=> custom ? custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g) : `꧁༒☬ 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 ☬༒꧂\n👑 @${j.split('@')[0]} 𝒅𝒂𝒏𝒔 *${g}*.\n*😁`,
-byeMsg:(j, g, custom)=> custom ? custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g) : `꧁༒☬ 𝑨𝑫𝑰𝑬𝑼 ☬༒꧂\n💀 @${j.split('@')[0]} 𝒂 𝒒𝒖𝒊𝒕𝒕é *${g}*.\n𝑸𝒖𝒆 𝒍𝒆 𝒏é𝒂𝒏𝒕 𝒍'𝒆𝒎𝒑𝒐𝒓𝒕𝒆.`,
+
+// WELCOME STYLÉ COMME TU VEUX
+welcomeMsg:(j, g, custom, members, admins)=>{
+  if(custom) return custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g).replace(/@members/g, members).replace(/@admins/g, admins)
+  return `꧁༒☬ 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 ☬༒꧂
+
+👑 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 𝑨 @${j.split('@')[0]} 𝑱𝑬 𝑻𝑬 𝑺𝑶𝑼𝑯𝑨𝑰𝑻𝑬 𝑳𝑨 𝑩𝑰𝑬𝑵𝑽𝑬𝑵𝑼𝑬 𝑫𝑨𝑵𝑺 *${g}* !
+
+┏━━━━━━━━━━━━━━┓
+┃ 👤 𝑵𝒐𝒎: @${j.split('@')[0]}
+┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔: ${members}
+┃ 👑 𝑨𝒅𝒎𝒊𝒏: ${admins}
+┗━━━━━━━━━━━━━━┛
+
+✨ 𝑷𝒓𝒐𝒇𝒊𝒕𝒆 𝒃𝒊𝒆𝒏 𝒅𝒖 𝒈𝒓𝒐𝒖𝒑𝒆 !
+
+꧁༺ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ༻꧂`
+},
+byeMsg:(j, g, custom, members, admins)=>{
+  if(custom) return custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g).replace(/@members/g, members).replace(/@admins/g, admins)
+  return `꧁༒☬ 𝑨𝑫𝑰𝑬𝑼 ☬༒꧂
+
+💀 𝑨𝑼 𝑹𝑬𝑽𝑶𝑰𝑹 @${j.split('@')[0]} 𝑸𝑼𝑰 𝑸𝑼𝑰𝑻𝑻𝑬 *${g}* !
+
+┏━━━━━━━━━━━━━━┓
+┃ 👤 𝑵𝒐𝒎: @${j.split('@')[0]}
+┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔: ${members}
+┃ 👑 𝑨𝒅𝒎𝒊𝒏: ${admins}
+┗━━━━━━━━━━━━━━┛
+
+🌑 𝑸𝒖𝒆 𝒍𝒆 𝒏é𝒂𝒏𝒕 𝒕'𝒆𝒎𝒑𝒐𝒓𝒕𝒆...
+
+꧁༺ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ༻꧂`
+},
 clanCreate:(n, chef)=>`👑🔥 𝑪𝑳𝑨𝑵 *${n}* 𝑪𝑹ÉÉ!\n👑 𝑪𝒉𝒆𝒇: @${chef.split('@')[0]}\n📅 ${new Date().toLocaleDateString('fr-FR')}`,
 clanAdd:(u, n)=>`✅ @${u.split('@')[0]} 𝒂𝒋𝒐𝒖𝒕é 𝒅𝒂𝒏𝒔 *${n}* !`, clanRetire:(u, n)=>`🚪 @${u.split('@')[0]} 𝒓𝒆𝒕𝒊𝒓é 𝒅𝒖 𝒄𝒍𝒂𝒏 *${n}* !`, clanDel:(n)=>`🗑️ 𝑪𝒍𝒂𝒏 *${n}* 𝒔𝒖𝒑𝒑𝒓𝒊𝒎é!`,
 clanNotFound:(n)=>`❌ 𝑪𝒍𝒂𝒏 *${n}* 𝒊𝒏𝒕𝒓𝒐𝒖𝒗𝒂𝒃𝒍𝒆!`, clanExists:(n)=>`❌ 𝑪𝒍𝒂𝒏 *${n}* 𝒆𝒙𝒊𝒔𝒕𝒆 𝒅é𝒋à!`,
@@ -130,10 +161,6 @@ function getRealNumberFromLid(lidJid, meta){
     for(let p of meta.participants){
       if(p.id===lidJid && p.phoneNumber) return normalizeJid(p.phoneNumber)
       if(p.lid===lidJid && p.phoneNumber) return normalizeJid(p.phoneNumber)
-      if(p.phoneNumber) {
-        let n = normalizeJid(p.phoneNumber)
-        if(db.ownerLids.includes(p.id) || db.ownerLids.includes(p.lid)) return n
-      }
     }
     let f = meta.participants.find(x=> x.id===lidJid || x.lid===lidJid)
     if(f?.phoneNumber) return normalizeJid(f.phoneNumber)
@@ -145,14 +172,12 @@ function isCreator(jid, meta){
   if(n===OWNER_NUMBER) return true
   if(db.ownerLids.includes(jid) || db.ownerLids.includes(n)) return true
   if(jid===OWNER_NUMBER+"@s.whatsapp.net") return true
-  if(n===OWNER_NUMBER) return true
   if(jid.includes('@lid') && meta){
     let real = getRealNumberFromLid(jid, meta)
     if(real===OWNER_NUMBER){
       if(!db.ownerLids.includes(jid)) { db.ownerLids.push(jid); saveDB(); }
       return true
     }
-    // FIX CRITIQUE : si on a déjà vu ce LID comme owner, on le laisse passer même sans phoneNumber
     if(db.ownerLids.includes(jid)) return true
   }
   return false
@@ -168,21 +193,42 @@ function isProtectedForKick(jid, meta){
 }
 async function makeStickerBuffer(b){ try{ const sharp=require('sharp'); return await sharp(b).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return b } }
 
-app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR</a> | <a href="/qr">QR</a>`))
-app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send('CLEAR OK') }catch(e){ res.send(e.message) } })
-app.get('/pair', async(req,res)=>{ if(!sock) return res.send('Demarre...'); try{ let code=await sock.requestPairingCode((req.query.num||OWNER_NUMBER).replace(/[^0-9]/g,'')); lastCode=code; res.send(`<h1 style="font-size:70px">${code}</h1>`) }catch(e){ res.send(e.message) } })
-app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR'); const QRCode=require('qrcode'); res.send(`<img src="${await QRCode.toDataURL(latestQR)}" width="300">`) })
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V102.1 LIVE "+PORT))
+// PAIR CODE 8 CHIFFRES STABLE 100000%
+app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE: ${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR 8 CHIFFRES</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
+app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send('CLEAR OK - Recommence le pair') }catch(e){ res.send(e.message) } })
+app.get('/pair', async(req,res)=>{
+  if(!sock) return res.status(503).send('Bot demarre... attendez 5s et reactualisez')
+  let num = (req.query.num||OWNER_NUMBER).replace(/[^0-9]/g,'')
+  let retries = 3
+  while(retries>0){
+    try{
+      let code = await sock.requestPairingCode(num)
+      code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code
+      lastCode = code
+      // Format stable 8 chiffres: ABCD-EFGH
+      let pretty = code.length===8 ? `${code.slice(0,4)}-${code.slice(4)}` : code
+      console.log(`PAIR CODE GENERÉ: ${pretty} pour ${num}`)
+      return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:#000;color:#fff;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}h1{font-size:15vw;letter-spacing:8px;margin:0;color:#a855f7;text-shadow:0 0 20px #a855f7}h2{color:#fff}p{color:#aaa}small{color:#555;margin-top:20px}</style></head><body><p>TON CODE 8 CHIFFRES</p><h1>${pretty}</h1><h2>${code}</h2><p>Entre ce code dans WhatsApp > Appareils liés > Lier avec numéro</p><small>BLACK GOKU V103 - STABLE</small></body></html>`)
+    }catch(e){
+      console.log(`Pair fail retry ${retries}: ${e.message}`)
+      retries--
+      await new Promise(r=>setTimeout(r,2000))
+    }
+  }
+  res.status(500).send('ECHEC PAIR - Reessaye /clear puis /pair - Erreur: '+lastCode)
+})
+app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR, utilise /pair'); const QRCode=require('qrcode'); res.send(`<img src="${await QRCode.toDataURL(latestQR)}" width="300"><p>QR BLACK GOKU</p>`) })
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V103 LIVE "+PORT))
 
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
   const { state, saveCreds } = await useMultiFileAuthState('auth2')
   sock = makeWASocket({ version, auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, logger:P({level:'silent'}), browser:["BLACK GOKU","Chrome","1.0"], msgRetryCounterCache, markOnlineOnConnect:false, getMessage: async(k)=> messageStore[k.id]? {conversation:messageStore[k.id].text}: undefined })
   sock.ev.on('creds.update', saveCreds)
-  sock.ev.on('connection.update', async(u)=>{ if(u.qr) latestQR=u.qr; if(u.connection==='open'){ status="BLACK GOKU ACTIF ✅"; latestQR=null; BOT_START=Date.now(); console.log("LIVE") } if(u.connection==='close'){ if(u.lastDisconnect?.error?.output?.statusCode===401 && fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); setTimeout(startBot,3000) } })
+  sock.ev.on('connection.update', async(u)=>{ if(u.qr) latestQR=u.qr; if(u.connection==='open'){ status="BLACK GOKU ACTIF ✅"; latestQR=null; BOT_START=Date.now(); console.log("LIVE - BOT CONNECTÉ") } if(u.connection==='close'){ if(u.lastDisconnect?.error?.output?.statusCode===401 && fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); setTimeout(startBot,3000) } })
 
   sock.ev.on('messages.upsert', async({messages,type})=>{
-    if(type!=='notify') return; const m=messages[0]; if(!m?.message) return; if(m.key.fromMe) return
+    if(type!=='notify') return; const m=messages[0]; if(!m?.message) return
     if(m.messageTimestamp && (Date.now()/1000 - Number(m.messageTimestamp) > 30)) return
     if(Date.now()-BOT_START<5000) return
     const from=m.key.remoteJid; const sender=m.key.participant||from
@@ -190,10 +236,11 @@ async function startBot(){
     const meta=isGroup? await sock.groupMetadata(from).catch(()=>null): null
     let txtForCache=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
     let senderNum=normalizeJid(sender); let fromNum=normalizeJid(from)
+    let isSelfOwner = senderNum===OWNER_NUMBER || fromNum===OWNER_NUMBER
+    if(m.key.fromMe && !isSelfOwner) return
 
-    // FIX OWNER ULTIME - Si c'est toi, on force
     let isOwner=false
-    if(senderNum===OWNER_NUMBER || fromNum===OWNER_NUMBER) isOwner=true
+    if(isSelfOwner) isOwner=true
     else if(isCreator(sender, meta) || isCreator(from, meta)) isOwner=true
     else {
       let sc=db.amis[senderNum]||db.amis[fromNum]
@@ -203,7 +250,6 @@ async function startBot(){
       }
       if(sc) isOwner=true
     }
-    // Sauvegarde auto LID owner
     if(isOwner && from.includes('@lid') && !db.ownerLids.includes(from)) { db.ownerLids.push(from); saveDB(); }
     if(isOwner && sender.includes('@lid') && !db.ownerLids.includes(sender)) { db.ownerLids.push(sender); saveDB(); }
 
@@ -225,8 +271,8 @@ async function startBot(){
     const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0]
     const rawLow=text.toLowerCase()
 
-    if(cmd==="setwelcome"){ if(!txt) return await sock.sendMessage(from,{text:`📝 ${PREFIX}setwelcome Bienvenue @user dans @group\nActuel: ${db.welcomeTexts[from]||"défaut"}`},{quoted:m}); db.welcomeTexts[from]=txt; saveDB(); await sock.sendMessage(from,{text:`✅ Welcome:\n${txt}`},{quoted:m}); return }
-    if(cmd==="setbye"){ if(!txt) return await sock.sendMessage(from,{text:`📝 ${PREFIX}setbye Au revoir @user de @group\nActuel: ${db.byeTexts[from]||"défaut"}`},{quoted:m}); db.byeTexts[from]=txt; saveDB(); await sock.sendMessage(from,{text:`✅ Bye:\n${txt}`},{quoted:m}); return }
+    if(cmd==="setwelcome"){ if(!txt) return await sock.sendMessage(from,{text:`📝 ${PREFIX}setwelcome Bienvenue @user dans @group | @members membres | @admins admins\nActuel: ${db.welcomeTexts[from]||"défaut"}`},{quoted:m}); db.welcomeTexts[from]=txt; saveDB(); await sock.sendMessage(from,{text:`✅ Welcome stylé enregistré:\n${txt}\n\nVariables: @user @group @members @admins`},{quoted:m}); return }
+    if(cmd==="setbye"){ if(!txt) return await sock.sendMessage(from,{text:`📝 ${PREFIX}setbye Au revoir @user de @group\nActuel: ${db.byeTexts[from]||"défaut"}`},{quoted:m}); db.byeTexts[from]=txt; saveDB(); await sock.sendMessage(from,{text:`✅ Bye stylé enregistré:\n${txt}`},{quoted:m}); return }
     if(cmd==="welcome"){ if(txt.toLowerCase().includes("off")) db.welcome=db.welcome.filter(x=>x!==from); else if(!db.welcome.includes(from)) db.welcome.push(from); saveDB(); await sock.sendMessage(from,{text:db.welcome.includes(from)?R.welcome:R.welcomeoff},{quoted:m}); return }
     if(cmd==="bye"){ if(txt.toLowerCase().includes("off")) db.bye=db.bye.filter(x=>x!==from); else if(!db.bye.includes(from)) db.bye.push(from); saveDB(); await sock.sendMessage(from,{text:db.bye.includes(from)?R.byeOn:R.byeOff},{quoted:m}); return }
     if(cmd==="antilink"){ if(txt.toLowerCase().includes("off")) db.antilink=db.antilink.filter(x=>x!==from); else if(!db.antilink.includes(from)) db.antilink.push(from); saveDB(); await sock.sendMessage(from,{text:db.antilink.includes(from)?R.antilink:R.antilinkoff},{quoted:m}); return }
@@ -252,13 +298,17 @@ async function startBot(){
   sock.ev.on('group-participants.update', async(update)=>{
     try{
       const { id, participants, action, author } = update; const meta=await sock.groupMetadata(id).catch(()=>null)
+      if(!meta) return
+      const memberCount = meta.participants.length
+      const adminCount = meta.participants.filter(p=>p.admin).length
+      
       if(action==='add'){
         for(let p of participants){
           if(p===sock.user.id) continue;
           if(db.welcome.includes(id)){
             let pp; try{ pp=await sock.profilePictureUrl(p,'image') }catch{ pp=null }
             let custom=db.welcomeTexts[id]
-            let finalMsg=R.welcomeMsg(p, meta?.subject||"royaume", custom)
+            let finalMsg=R.welcomeMsg(p, meta.subject||"royaume", custom, memberCount, adminCount)
             if(pp) await sock.sendMessage(id,{image:{url:pp}, caption:finalMsg, mentions:[p]})
             else await sock.sendMessage(id,{text:finalMsg, mentions:[p]})
           }
@@ -270,20 +320,20 @@ async function startBot(){
           if(db.bye.includes(id)){
             let pp; try{ pp=await sock.profilePictureUrl(r,'image') }catch{ pp=null }
             let custom=db.byeTexts[id]
-            let finalMsg=R.byeMsg(r, meta?.subject||"royaume", custom)
+            let finalMsg=R.byeMsg(r, meta.subject||"royaume", custom, memberCount, adminCount)
             if(pp) await sock.sendMessage(id,{image:{url:pp}, caption:finalMsg, mentions:[r]}).catch(()=>{})
             else await sock.sendMessage(id,{text:finalMsg, mentions:[r]}).catch(()=>{})
           }
           let num=normalizeJid(r); let isProt=db.protec.includes(r)||db.saved.includes(r)||db.amis[num]||db.godmode.includes(id)||num===OWNER_NUMBER||db.zenkai.includes(id);
           if(isProt){
-            if(!meta) continue; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin;
+            if(!meta) return; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin;
             if(!botAdmin){ await sock.sendMessage(id,{text:R.protecFail}); continue }
             await sock.groupParticipantsUpdate(id,[r],"add").catch(()=>{}); await new Promise(res=>setTimeout(res,1200));
             if(author&&author!==r){ let an=normalizeJid(author); if(!an.includes(OWNER_NUMBER)){ await sock.groupParticipantsUpdate(id,[author],"remove").catch(()=>{}); await sock.sendMessage(id,{text:R.protecTriggered(r,author),mentions:[r,author]}) } }
           }
         }
       }
-      if(action==='demote'){ for(let d of participants){ let num=normalizeJid(d); let ab=db.antidemote.includes(id)||db.godmode.includes(id)||db.zenkai.includes(id); let isProt=db.protec.includes(d)||db.saved.includes(d)||num===OWNER_NUMBER; if(isProt||ab){ if(!meta) continue; let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin) continue; await sock.groupParticipantsUpdate(id,[d],"promote").catch(()=>{}) } } }
+      if(action==='demote'){ for(let d of participants){ let num=normalizeJid(d); let ab=db.antidemote.includes(id)||db.godmode.includes(id)||db.zenkai.includes(id); let isProt=db.protec.includes(d)||db.saved.includes(d)||num===OWNER_NUMBER; if(isProt||ab){ let botAdmin=meta.participants.find(p=>p.id.includes(sock.user.id.split(':')[0]))?.admin; if(!botAdmin) continue; await sock.groupParticipantsUpdate(id,[d],"promote").catch(()=>{}) } } }
     }catch(e){ console.log("ERR",e.message) }
   })
 }
