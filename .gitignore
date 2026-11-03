@@ -1,6 +1,8 @@
-node_modules/
-auth2/
-black_db.json
-npm-debug.log
+node_modules
+auth2
 .env
+npm-debug.log
 .DS_Store
+black_db.json
+session
+auth_info
