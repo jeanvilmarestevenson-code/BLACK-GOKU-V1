@@ -1,6 +1,6 @@
 {
   "name": "black-goku-v1",
-  "version": "104.0.0",
+  "version": "104.3.0",
   "main": "web.js",
   "scripts": {
     "start": "node web.js"
