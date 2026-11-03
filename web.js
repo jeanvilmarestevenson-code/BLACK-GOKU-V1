@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V104.2 FIX - MÊME FORMATION ORIGINAL
+// web.js - BLACK GOKU V104.3 FIX FROMME - TOUJOURS MEME FORMATION
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -6,7 +6,7 @@ const express = require('express')
 const NodeCache = require('node-cache')
 const app = express()
 const PORT = process.env.PORT || 10000
-const OWNER_NUMBER = "5551982215198"
+const OWNER_NUMBER = process.env.OWNER_NUMBER || "5551982215198"
 const PREFIX = "₩"
 const DB_FILE = './black_db.json'
 const msgRetryCounterCache = new NodeCache()
@@ -198,7 +198,6 @@ function isProtectedForKick(jid, meta){
   return db.saved.includes(jid) || db.protec.includes(jid) || db.pro.includes(jid) || db.godmode.includes(jid) || db.saved.includes(n) || db.protec.includes(n)
 }
 async function makeStickerBuffer(b){ try{ const sharp=require('sharp'); return await sharp(b).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return b } }
-// FIX POUR TES FICHIERS EN MINUSCULE + ESPACES
 function findImg(list){ for(let f of list){ if(fs.existsSync(f)) return f; if(fs.existsSync('./'+f)) return './'+f; } return null; }
 
 app.get('/', (req,res)=> res.send(`<h1>${status}</h1><p>CODE: ${lastCode}</p><a href="/pair?num=${OWNER_NUMBER}">PAIR 8 CHIFFRES</a> | <a href="/qr">QR</a> | <a href="/clear">CLEAR</a>`))
@@ -214,13 +213,13 @@ app.get('/pair', async(req,res)=>{
       lastCode = code
       let pretty = code.length===8 ? `${code.slice(0,4)}-${code.slice(4)}` : code
       console.log(`PAIR CODE GENERÉ: ${pretty} pour ${num}`)
-      return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:#000;color:#fff;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}h1{font-size:15vw;letter-spacing:8px;margin:0;color:#a855f7;text-shadow:0 0 20px #a855f7}h2{color:#fff}p{color:#aaa}small{color:#555;margin-top:20px}</style></head><body><p>TON CODE 8 CHIFFRES</p><h1>${pretty}</h1><h2>${code}</h2><p>Entre ce code dans WhatsApp > Appareils liés > Lier avec numéro</p><small>BLACK GOKU V103 - STABLE</small></body></html>`)
+      return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:#000;color:#fff;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}h1{font-size:15vw;letter-spacing:8px;margin:0;color:#a855f7;text-shadow:0 0 20px #a855f7}h2{color:#fff}p{color:#aaa}small{color:#555;margin-top:20px}</style></head><body><p>TON CODE 8 CHIFFRES</p><h1>${pretty}</h1><h2>${code}</h2><p>Entre ce code dans WhatsApp > Appareils liés > Lier avec numéro</p><small>BLACK GOKU V104.3 FIX</small></body></html>`)
     }catch(e){ retries--; await new Promise(r=>setTimeout(r,2000)) }
   }
   res.status(500).send('ECHEC PAIR - Reessaye /clear')
 })
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send('Pas de QR, utilise /pair'); const QRCode=require('qrcode'); res.send(`<img src="${await QRCode.toDataURL(latestQR)}" width="300"><p>QR BLACK GOKU</p>`) })
-app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V104 LIVE "+PORT))
+app.listen(PORT,'0.0.0.0',()=>console.log("BLACK GOKU V104.3 LIVE "+PORT))
 
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
@@ -238,8 +237,7 @@ async function startBot(){
     const meta=isGroup? await sock.groupMetadata(from).catch(()=>null): null
     let txtForCache=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
     let senderNum=normalizeJid(sender); let fromNum=normalizeJid(from)
-    let isSelfOwner = senderNum===OWNER_NUMBER || fromNum===OWNER_NUMBER
-    if(m.key.fromMe && !isSelfOwner) return
+    let isSelfOwner = senderNum===OWNER_NUMBER || fromNum===OWNER_NUMBER || m.key.fromMe === true
 
     let isOwner=false
     if(isSelfOwner) isOwner=true
@@ -269,7 +267,7 @@ async function startBot(){
     if(!text.startsWith(PREFIX)) return
     if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
 
-    const args=text.slice(1).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' ')
+    const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' ')
     const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0]
     const rawLow=text.toLowerCase()
 
