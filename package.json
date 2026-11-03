@@ -1,17 +1,21 @@
 {
-  "name": "black-goku-v99-3",
-  "version": "99.3.0",
+  "name": "black-goku-v102",
+  "version": "102.1.0",
+  "description": "BLACK GOKU BOT - By The GOAT - Owner Fix + Welcome/Bye Photo",
   "main": "web.js",
   "scripts": {
     "start": "node web.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.8",
-    "pino": "^8.16.0",
-    "express": "^4.18.2",
+    "pino": "^8.17.0",
+    "express": "^4.19.2",
     "node-cache": "^5.1.2",
-    "axios": "^1.6.0",
+    "axios": "^1.7.2",
     "qrcode": "^1.5.3",
-    "sharp": "^0.33.0"
+    "sharp": "^0.33.4"
   }
 }
