@@ -1,7 +1,7 @@
 {
   "name": "black-goku-v1",
-  "version": "104.8.0",
-  "description": "BLACK GOKU H24 + SESSION ID WEB - THE GOAT",
+  "version": "106.0.0",
+  "description": "BLACK GOKU V106 - GT VOLE PP + WAIFU IMAGE + SESSION ID WEB - THE GOAT",
   "main": "web.js",
   "scripts": {
     "start": "node web.js",
@@ -12,18 +12,23 @@
     "bot",
     "baileys",
     "black-goku",
-    "h24"
+    "h24",
+    "gt",
+    "waifu"
   ],
   "author": "THE GOAT BLACK GOKU",
   "license": "MIT",
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.8",
     "express": "^4.18.2",
-    "pino": "^8.16.0",
+    "pino": "^8.17.2",
     "node-cache": "^5.1.2",
     "qrcode": "^1.5.3",
-    "sharp": "^0.32.6",
-    "axios": "^1.6.0"
+    "sharp": "^0.33.4",
+    "axios": "^1.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   },
   "engines": {
     "node": ">=18.0.0"
