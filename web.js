@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V106 - GT VOLE PP + WAIFU IMAGE + FORMAT SUKUNA EXACT
+// web.js - BLACK GOKU V106 FINAL - EX DETAILLE + 3 IMAGES + FORMAT SUKUNA EXACT
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -37,7 +37,7 @@ let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode
 if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!db.welcomeTexts) db.welcomeTexts={}; if(!db.byeTexts) db.byeTexts={}; if(!db.bye) db.bye=[]; if(!db.muted) db.muted={}; if(!Array.isArray(db.ownerLids)) db.ownerLids=[]; }catch{} }
 const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
 let sock, status="Demarrage...", lastCode="pas encore", latestQR=null, BOT_START=Date.now()
-let messageStore = {}, fullMessageStore = {}
+let messageStore = {}
 
 const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┏━ ✦ 𝑴𝑬𝑴𝑩𝑹𝑬𝑺 ✦ ━┓
@@ -66,6 +66,7 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒂𝒄𝒕
 ┃ ₩𝒏𝒐𝒂𝒄𝒕
 ┃ ₩𝒈𝒊𝒕
+┃ ₩𝒆𝒙
 ┗━━━━━━━━━━━━━━┛
 ┏━ ✦ 𝑪𝑳𝑨𝑵 ✦ ━┓
 ┃ ₩𝒄𝒓é𝒆 𝒄𝒍𝒂𝒏 𝒏𝒐𝒎 @𝒄𝒉𝒆𝒇
@@ -236,8 +237,79 @@ async function startBot(){
     if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
     const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' '); const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
 
+    // === EX DETAILLE - FORMAT SUKUNA EXACT ===
     if(cmd==="ex"||cmd==="explain"||cmd==="aide"||cmd==="help"){
-      let guide = `꧁༒☬ GUIDE BLACK GOKU POUR DEBUTANT ☬༒꧂\n\nMEMBRES: tagall, hidetag, kick/ban, add, kickall/purgeall/nuke, promote/demote, mute/unmute, admin, info, stats/act, inactifs/noact, goku/kaio/waifu, iscom, time, rdm, gt, trad, git\n\nCLAN: crée clan, ajouter, retirer, delete, clan list, clan info\n\nPUNITIONS: chut, unchut, blockadmin, reini, neant, goat, apocalypse, hell/void/soulpurge\n\nPROTECTION: save, zenkai, antilink, antilock, antidemote, welcome/bye, ghost, boy\n\nSTICKER: s, vq, st\n\nOWNER: amis, noami, bot\n\nTape ₩menu`;
+      let guide = `┏━━━━━━━━━━━━━━━━━━┓
+┃ ꧁༒☬ 𝑬𝑿𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵𝑺 ☬༒꧂ ┃
+┗━━━━━━━━━━━━━━━━━━┛
+┏━ ✦ 𝑴𝑬𝑴𝑩𝑹𝑬𝑺 ✦ ━┓
+┃ ₩𝒕𝒂𝒈𝒂𝒍𝒍 : Tag tous les membres du groupe
+┃ ₩𝒉𝒊𝒅𝒆𝒕𝒂𝒈 : Tag caché sans afficher
+┃ ₩𝒌𝒊𝒄𝒌 / ₩𝒃𝒂𝒏 : Virer un membre tagué
+┃ ₩𝒂𝒅𝒅 : Ajouter membre par numéro ex: ₩add 2250...
+┃ ₩𝒌𝒊𝒄𝒌𝒂𝒍𝒍 / ₩𝒑𝒖𝒓𝒈𝒆𝒂𝒍𝒍 / ₩𝒏𝒖𝒌𝒆 : Vider tout le groupe
+┃ ₩𝒑𝒓𝒐𝒎𝒐𝒕𝒆 : Passer un membre admin
+┃ ₩𝒅𝒆𝒎𝒐𝒕𝒆 : Enlever admin
+┃ ₩𝒎𝒖𝒕𝒆 : Fermer le groupe (seuls admins parlent)
+┃ ₩𝒖𝒏𝒎𝒖𝒕𝒆 : Ouvrir le groupe
+┃ ₩𝒂𝒅𝒎𝒊𝒏 : Liste des admins
+┃ ₩𝒊𝒏𝒇𝒐 : Infos du groupe
+┃ ₩𝒔𝒕𝒂𝒕𝒔 / ₩𝒂𝒄𝒕 : Classement activité
+┃ ₩𝒏𝒐𝒂𝒄𝒕 / ₩𝒊𝒏𝒂𝒄𝒕𝒊𝒇𝒔 : Liste des inactifs
+┃ ₩𝒈𝒐𝒌𝒖 : Envoie image goku.jpg
+┃ ₩𝒌𝒂𝒊𝒐 𝒐𝒏/𝒐𝒇𝒇 : Active mode Kaio
+┃ ₩𝒘𝒂𝒊𝒇𝒖 : Envoie image waifu 1.jpg
+┃ ₩𝒊𝒔𝒄𝒐𝒎 : Liste groupes actifs
+┃ ₩𝒕𝒊𝒎𝒆 10 : Lance timer 10s
+┃ ₩𝒓𝒅𝒎 : Choisit un membre au hasard
+┃ ₩𝒈𝒕 @𝒖𝒔𝒆𝒓 : Vole la photo de profil
+┃ ₩𝒕𝒓𝒂𝒅 𝒕𝒆𝒙𝒕𝒆 : Traduction
+┃ ₩𝒈𝒊𝒕 : Affiche lien Github officiel
+┃ ₩𝒆𝒙 : Affiche ce guide détaillé
+┗━━━━━━━━━━━━━━┛
+┏━ ✦ 𝑪𝑳𝑨𝑵 ✦ ━┓
+┃ ₩𝒄𝒓é𝒆 𝒄𝒍𝒂𝒏 𝒏𝒐𝒎 @𝒄𝒉𝒆𝒇 : Créer un clan
+┃ ₩𝒂𝒋𝒐𝒖𝒕𝒆𝒓 @𝒖𝒔𝒆𝒓 𝒅𝒂𝒏𝒔 𝒏𝒐𝒎 : Ajouter au clan
+┃ ₩𝒓𝒆𝒕𝒊𝒓𝒆𝒓 @𝒖𝒔𝒆𝒓 𝒏𝒐𝒎 : Retirer du clan
+┃ ₩𝒅𝒆𝒍𝒆𝒕𝒆 𝒏𝒐𝒎 : Supprimer clan
+┃ ₩𝒄𝒍𝒂𝒏 𝒍𝒊𝒔𝒕 : Liste tous les clans
+┃ ₩𝒄𝒍𝒂𝒏 𝒊𝒏𝒇𝒐 𝒏𝒐𝒎 : Infos d'un clan
+┗━━━━━━━━━━━━━━┛
+┏━ ✦ 𝑷𝑼𝑵𝑰𝑻𝑰𝑶𝑵𝑺 ✦ ━┓
+┃ ₩𝒄𝒉𝒖𝒕 @𝒖𝒔𝒆𝒓 : Rendre muet (supprime ses msgs)
+┃ ₩𝒖𝒏𝒄𝒉𝒖𝒕 @𝒖𝒔𝒆𝒓 : Enlever le mute
+┃ ₩𝒃𝒍𝒐𝒄𝒌𝒂𝒅𝒎𝒊𝒏 𝒐𝒏/𝒐𝒇𝒇 : Bloquer commandes admins
+┃ ₩𝒓𝒆𝒊𝒏𝒊 @𝒖𝒔𝒆𝒓 : Reset activité/chut
+┃ ₩𝒏𝒆𝒂𝒏𝒕 50 : Efface 50 msgs
+┃ ₩𝒈𝒐𝒂𝒕 : Kick tous sauf protégés (lent)
+┃ ₩𝒂𝒑𝒐𝒄𝒂𝒍𝒚𝒑𝒔𝒆 : Change nom/desc + pp waifu + kick all
+┃ ₩𝒉𝒆𝒍𝒍 / ₩𝒗𝒐𝒊𝒅 / ₩𝒔𝒐𝒖𝒍𝒑𝒖𝒓𝒈𝒆 : Purge rapide
+┗━━━━━━━━━━━━━━┛
+┏━ ✦ 𝑷𝑹𝑶𝑻𝑬𝑪𝑻𝑰𝑶𝑵 ✦ ━┓
+┃ ₩𝒔𝒂𝒗𝒆 @𝒖𝒔𝒆𝒓 : Protéger contre kick
+┃ ₩𝒛𝒆𝒏𝒌𝒂𝒊 𝒐𝒏 : Active protection Zenkai
+┃ ₩𝒏𝒐𝒛𝒆𝒏𝒌𝒂𝒊 : Désactive Zenkai
+┃ ₩𝒃𝒐𝒚 𝒐𝒏/𝒐𝒇𝒇 : Mode Boy
+┃ ₩𝒂𝒏𝒕𝒊𝒍𝒊𝒏𝒌 𝒐𝒏/𝒐𝒇𝒇 : Bloque les liens
+┃ ₩𝒂𝒏𝒕𝒊𝒍𝒐𝒄𝒌 𝒐𝒏/𝒐𝒇𝒇 : Re-ajoute si on kick
+┃ ₩𝒂𝒏𝒕𝒊𝒅𝒆𝒎𝒐𝒕𝒆 𝒐𝒏/𝒐𝒇𝒇 : Re-promote si demote
+┃ ₩𝒘𝒆𝒍𝒄𝒐𝒎𝒆 𝒐𝒏/𝒐𝒇𝒇 : Message bienvenue
+┃ ₩𝒃𝒚𝒆 𝒐𝒏/𝒐𝒇𝒇 : Message au revoir
+┃ ₩𝒔𝒆𝒕𝒘𝒆𝒍𝒄𝒐𝒎𝒆 𝒕𝒆𝒙𝒕𝒆 : Changer texte welcome avec @user @group @members @admins
+┃ ₩𝒔𝒆𝒕𝒃𝒚𝒆 𝒕𝒆𝒙𝒕𝒆 : Changer texte bye
+┃ ₩𝒈𝒉𝒐𝒔𝒕 𝒐𝒏/𝒐𝒇𝒇/𝒗𝒐𝒊𝒓 : Sauvegarde msgs supprimés
+┗━━━━━━━━━━━━━━┛
+┏━ ✦ 𝑺𝑻𝑰𝑪𝑲𝑬𝑹 ✦ ━┓
+┃ ₩𝒔 : Réponds à image -> Sticker
+┃ ₩𝒗𝒒 : Réponds à vue unique -> Dévoile
+┃ ₩𝒔𝒕 : Réponds à statut -> Vole
+┗━━━━━━━━━━━━━━┛
+┏━ ✦ 𝑶𝑾𝑵𝑬𝑹 ✦ ━┓
+┃ ₩𝒂𝒎𝒊𝒔 @𝒖𝒔𝒆𝒓 : Donner accès bot
+┃ ₩𝒏𝒐𝒂𝒎𝒊 @𝒖𝒔𝒆𝒓 : Retirer accès
+┃ ₩𝒃𝒐𝒕 𝒐𝒏/𝒐𝒇𝒇 : Allumer/éteindre bot
+┗━━━━━━━━━━━━━━┛
+┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`;
       await sock.sendMessage(from,{text:guide},{quoted:m}); return
     }
 
@@ -250,18 +322,28 @@ async function startBot(){
     if(cmd==="antidemote"){ if(txt.toLowerCase().includes("off")) db.antidemote=db.antidemote.filter(x=>x!==from); else if(!db.antidemote.includes(from)) db.antidemote.push(from); saveDB(); await sock.sendMessage(from,{text:db.antidemote.includes(from)?R.antidemote:R.antidemoteoff},{quoted:m}); return }
     if(cmd==="ghost"){ let a=txt.toLowerCase(); if(a.includes("on")){ if(!db.ghost.includes(from)) db.ghost.push(from); saveDB(); await sock.sendMessage(from,{text:R.ghost},{quoted:m}) } else if(a.includes("off")){ db.ghost=db.ghost.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.ghostoff},{quoted:m}) } else if(a.includes("voir")){ let cache=db.ghostCache[from]||[]; await sock.sendMessage(from,{text:`👻 GHOST ${cache.length} msgs:\n${cache.slice(-10).map(c=>c.text).join('\n')||"vide"}`},{quoted:m}) } else { await sock.sendMessage(from,{text:`👻 ${PREFIX}ghost on/off/voir`},{quoted:m}) } return }
 
-    if(["black","menu","b"].includes(cmd)){ await sock.sendMessage(from,{text:getMenu()},{quoted:m}); return }
+    // === MENU AVEC menu.jpg - MEME FORMATION ===
+    if(["black","menu","b"].includes(cmd)){
+      let menuPath = findImg(['menu.jpg','MENU.jpg','Menu.jpg','menu.jpeg'])
+      if(menuPath){
+        try{
+          await sock.sendMessage(from,{ image: fs.readFileSync(menuPath), caption: getMenu() },{quoted:m})
+          return
+        }catch(e){}
+      }
+      await sock.sendMessage(from,{text:getMenu()},{quoted:m}); return
+    }
 
     if(cmd==="git"||cmd==="github"){
       let msg=`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑮𝑰𝑻𝑯𝑼𝑩 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n👑 𝑮𝑰𝑻𝑯𝑼𝑩 𝑶𝑭𝑭𝑰𝑪𝑰𝑬𝑳 𝑫𝑬 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼\n🌸 𝑳𝒊𝒆𝒏 :\n┃ ✦ ${GITHUB_LINK}\n┃ 👤 𝑪𝒓é𝒂𝒕𝒆𝒖𝒓 : 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼\n┃ 👥 𝑴𝒆𝒎𝒃𝒓𝒆𝒔 : 𝑻𝒐𝒖𝒔 𝒑𝒆𝒖𝒗𝒆𝒏𝒕 𝒗𝒐𝒊𝒓\n┃ ⭐ 𝑬𝒕𝒐𝒊𝒍𝒆𝒔 : 𝑴𝒆𝒕𝒔 𝒖𝒏𝒆 é𝒕𝒐𝒊𝒍𝒆 !\n✨ 𝑷𝒓𝒐𝒕𝒆𝒄𝒕𝒊𝒐𝒏 : 𝑳𝒆𝒄𝒕𝒖𝒓𝒆 𝒔𝒆𝒖𝒍𝒆\n┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`
       await sock.sendMessage(from,{text:msg},{quoted:m}); return
     }
 
-    // === GT QUI VOLE VRAIMENT LA PP ===
+    // === GT - MEME STYLE SUKUNA EXACT ===
     if(cmd==="gt"){
       try{
         let targetJid = target
-        if(!targetJid && !isGroup){ targetJid = from } // EN PV = ta propre pp
+        if(!targetJid && !isGroup){ targetJid = from }
         if(!targetJid && isGroup){
           let quoted = m.message.extendedTextMessage?.contextInfo?.participant
           if(quoted) targetJid = quoted
@@ -281,7 +363,7 @@ async function startBot(){
       return
     }
 
-    // === WAIFU QUI ENVOIE VRAIMENT L'IMAGE ===
+    // === WAIFU - MEME STYLE ===
     if(cmd==="waifu"){
       let waifuPath = findImg(['waifu 1.jpg','waifu1.jpg','waifu.jpg','WAIFU 1.jpg','waifu 1.jpeg'])
       if(waifuPath){
@@ -297,6 +379,18 @@ async function startBot(){
       return
     }
 
+    // === GOKU AVEC goku.jpg - MEME FORMATION ===
+    if(cmd==="goku"){
+      let gokuPath = findImg(['goku.jpg','GOKU.jpg','Goku.jpg','goku.jpeg'])
+      if(gokuPath){
+        try{
+          await sock.sendMessage(from,{ image: fs.readFileSync(gokuPath), caption: R.gokuMsg },{quoted:m})
+          return
+        }catch(e){}
+      }
+      await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return
+    }
+
     if(cmd==="tagall"){ if(!isGroup) return; let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:`🔥 TAGALL ${men.length}\n${txt}`,mentions:men},{quoted:m}); return }
     if(cmd==="hidetag"){ if(!isGroup) return; let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:txt||"🔥",mentions:men},{quoted:m}); return }
     if(cmd==="ban"||cmd==="kick"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target,meta)) return await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); await sock.groupParticipantsUpdate(from,[target],"remove"); await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return }
@@ -310,7 +404,6 @@ async function startBot(){
     if(cmd==="info"){ if(!isGroup) return; await sock.sendMessage(from,{text:`📊 INFO ${meta.subject}\n┃ 👥 Membres: ${meta.participants.length}\n┃ 👑 Admins: ${meta.participants.filter(p=>p.admin).length}\n┃ 🆔 ${from}\n┃ 📝 ${meta.desc||"Pas de description"}`},{quoted:m}); return }
     if(cmd==="stats"||cmd==="act"){ if(!isGroup) return; let actMap=db.activity[from]||{}; let sorted=Object.entries(actMap).sort((a,b)=>b[1]-a[1]).slice(0,15); await sock.sendMessage(from,{text:`📊 STATS ${meta.subject}\n${sorted.map(([jid,c],i)=>`┃ ${i+1}. @${jid.split('@')[0]} : ${c} msgs`).join('\n')||"Aucune activité"}`,mentions:sorted.map(x=>x[0])},{quoted:m}); return }
     if(cmd==="noact"||cmd==="inactifs"){ if(!isGroup) return; let actMap=db.activity[from]||{}; let inactifs=meta.participants.filter(p=>!actMap[p.id]).map(p=>p.id); await sock.sendMessage(from,{text:`💤 INACTIFS ${inactifs.length}\n${inactifs.map(id=>`┃ @${id.split('@')[0]}`).join('\n')||"Aucun inactif"}`,mentions:inactifs},{quoted:m}); return }
-    if(cmd==="goku"){ await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return }
     if(cmd==="kaio"){ if(txt.toLowerCase().includes("on")){ if(!db.kaio.includes(from)) db.kaio.push(from); saveDB(); await sock.sendMessage(from,{text:R.kaioOn},{quoted:m}) } else if(txt.toLowerCase().includes("off")){ db.kaio=db.kaio.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.kaioOff},{quoted:m}) } else { await sock.sendMessage(from,{text:R.kaioMsg},{quoted:m}) } return }
     if(cmd==="iscom"){ let groups=Object.keys(db.activity); await sock.sendMessage(from,{text:`📋 ISCOM - ${groups.length} groupes actifs\n${groups.slice(0,20).join('\n')}`},{quoted:m}); return }
     if(cmd==="time"){ let sec=parseInt(txt)||10; await sock.sendMessage(from,{text:`⏰ 𝑻𝑰𝑴𝑬 ${sec}s lancé!`},{quoted:m}); setTimeout(async()=>{ await sock.sendMessage(from,{text:R.timeEnd},{quoted:m}) }, sec*1000); return }
