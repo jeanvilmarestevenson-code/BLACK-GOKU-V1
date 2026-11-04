@@ -1,5 +1,5 @@
 cat > .gitignore << 'EOF'
-# DEPENDENCIES
+# DEPENDENCIES - NE JAMAIS PUSH 200MB
 node_modules/
 package-lock.json
 yarn.lock
@@ -7,7 +7,7 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# BAILEYS SESSION - TRES IMPORTANT
+# BAILEYS SESSION - TRES IMPORTANT - SI TU PUSH CA TU TE FAIS HACK
 auth2/
 auth/
 auth_info/
@@ -16,14 +16,14 @@ session/
 creds.json
 qrcode.png
 
-# ENV
+# ENV - TES CODES SECRETS
 .env
 .env.local
 .env.development
 .env.production
 .env.*.local
 
-# DB
+# DB BLACK GOKU - RESTE EN LOCAL
 black_db.json
 black_db.json.bak
 database.json
@@ -41,15 +41,16 @@ pids/
 npm-debug.log*
 pm2 logs
 
-# OS
+# OS - FICHIERS INUTILES WINDOWS/MAC
 .DS_Store
+.DS_Store?
 Thumbs.db
 ehthumbs.db
 Icon?
 Desktop.ini
 $RECYCLE.BIN/
 
-# RENDER / BUILD
+# RENDER / BUILD - PAS BESOIN SUR GITHUB
 .render/
 .vercel/
 dist/
@@ -65,7 +66,7 @@ temp/
 *.temp
 .cache/
 
-# LOURD - mais GARDE TES IMAGES BOT
+# VIDEOS / ARCHIVES LOURDES - IGNORE
 *.mp4
 *.mov
 *.avi
@@ -73,9 +74,21 @@ temp/
 *.rar
 *.tar
 *.gz
+
+# GARDE CES FICHIERS IMPORTANTS - OBLIGATOIRE POUR V106
+!menu.jpg
+!MENU.jpg
+!Menu.jpg
+!goku.jpg
+!GOKU.jpg
+!Goku.jpg
+!waifu 1.jpg
+!waifu1.jpg
+!waifu.jpg
+!WAIFU 1.jpg
+!WAIFU.jpg
 EOF
 
 git add .gitignore
-git add "menu.jpg" "goku.jpg" "waifu 1.jpg" "waifu1.jpg" "waifu.jpg" 2>/dev/null || true
-git commit -m "fix gitignore - keep menu.jpg goku.jpg waifu"
+git commit -m "gitignore V106 FINAL - protège session + garde 3 images"
 git push
