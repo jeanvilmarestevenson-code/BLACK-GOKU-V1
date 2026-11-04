@@ -1,3 +1,4 @@
+cat > .gitignore << 'EOF'
 node_modules
 auth2
 .env
@@ -9,3 +10,8 @@ auth_info
 auth
 creds.json
 *.log
+EOF
+
+git add .gitignore
+git commit -m "add gitignore"
+git push
