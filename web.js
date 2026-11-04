@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V106 FINAL - EX DETAILLE + 3 IMAGES + FORMAT SUKUNA EXACT
+// web.js - BLACK GOKU V106 FINAL - EX DETAILLE + 3 IMAGES + FORMAT SUKUNA EXACT - FIX TAGALL ONLY
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -237,7 +237,7 @@ async function startBot(){
     if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
     const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' '); const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
 
-    // === EX DETAILLE - FORMAT SUKUNA EXACT ===
+    // === EX DETAILLE - FORMAT SUKUNA EXACT - INTACT ===
     if(cmd==="ex"||cmd==="explain"||cmd==="aide"||cmd==="help"){
       let guide = `┏━━━━━━━━━━━━━━━━━━┓
 ┃ ꧁༒☬ 𝑬𝑿𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵𝑺 ☬༒꧂ ┃
@@ -322,7 +322,7 @@ async function startBot(){
     if(cmd==="antidemote"){ if(txt.toLowerCase().includes("off")) db.antidemote=db.antidemote.filter(x=>x!==from); else if(!db.antidemote.includes(from)) db.antidemote.push(from); saveDB(); await sock.sendMessage(from,{text:db.antidemote.includes(from)?R.antidemote:R.antidemoteoff},{quoted:m}); return }
     if(cmd==="ghost"){ let a=txt.toLowerCase(); if(a.includes("on")){ if(!db.ghost.includes(from)) db.ghost.push(from); saveDB(); await sock.sendMessage(from,{text:R.ghost},{quoted:m}) } else if(a.includes("off")){ db.ghost=db.ghost.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.ghostoff},{quoted:m}) } else if(a.includes("voir")){ let cache=db.ghostCache[from]||[]; await sock.sendMessage(from,{text:`👻 GHOST ${cache.length} msgs:\n${cache.slice(-10).map(c=>c.text).join('\n')||"vide"}`},{quoted:m}) } else { await sock.sendMessage(from,{text:`👻 ${PREFIX}ghost on/off/voir`},{quoted:m}) } return }
 
-    // === MENU AVEC menu.jpg - MEME FORMATION ===
+    // === MENU AVEC menu.jpg - MEME FORMATION - INTACT ===
     if(["black","menu","b"].includes(cmd)){
       let menuPath = findImg(['menu.jpg','MENU.jpg','Menu.jpg','menu.jpeg'])
       if(menuPath){
@@ -339,7 +339,7 @@ async function startBot(){
       await sock.sendMessage(from,{text:msg},{quoted:m}); return
     }
 
-    // === GT - MEME STYLE SUKUNA EXACT ===
+    // === GT - MEME STYLE SUKUNA EXACT - INTACT ===
     if(cmd==="gt"){
       try{
         let targetJid = target
@@ -363,7 +363,7 @@ async function startBot(){
       return
     }
 
-    // === WAIFU - MEME STYLE ===
+    // === WAIFU - MEME STYLE - INTACT ===
     if(cmd==="waifu"){
       let waifuPath = findImg(['waifu 1.jpg','waifu1.jpg','waifu.jpg','WAIFU 1.jpg','waifu 1.jpeg'])
       if(waifuPath){
@@ -379,7 +379,7 @@ async function startBot(){
       return
     }
 
-    // === GOKU AVEC goku.jpg - MEME FORMATION ===
+    // === GOKU AVEC goku.jpg - MEME FORMATION - INTACT ===
     if(cmd==="goku"){
       let gokuPath = findImg(['goku.jpg','GOKU.jpg','Goku.jpg','goku.jpeg'])
       if(gokuPath){
@@ -391,8 +391,20 @@ async function startBot(){
       await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return
     }
 
-    if(cmd==="tagall"){ if(!isGroup) return; let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:`🔥 TAGALL ${men.length}\n${txt}`,mentions:men},{quoted:m}); return }
-    if(cmd==="hidetag"){ if(!isGroup) return; let men=meta.participants.map(p=>p.id); await sock.sendMessage(from,{text:txt||"🔥",mentions:men},{quoted:m}); return }
+    // === SEULEMENT TAGALL FIX ===
+    if(cmd==="tagall"){
+      if(!isGroup) return;
+      let men=meta.participants.map(p=>p.id);
+      let list = men.map(id=>`@${id.split('@')[0]}`).join('\n');
+      await sock.sendMessage(from,{text:`🔥 TAGALL ${men.length}\n${txt}\n\n${list}`, mentions:men},{quoted:m}); return
+    }
+    if(cmd==="hidetag"){
+      if(!isGroup) return;
+      let men=meta.participants.map(p=>p.id);
+      let list = men.map(id=>`@${id.split('@')[0]}`).join(' ');
+      await sock.sendMessage(from,{text:`${txt||"🔥"}\n${list}`, mentions:men},{quoted:m}); return
+    }
+
     if(cmd==="ban"||cmd==="kick"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target,meta)) return await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); await sock.groupParticipantsUpdate(from,[target],"remove"); await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return }
     if(cmd==="add"){ if(!isGroup) return; let nums=txt.replace(/[^0-9]/g,' ').split(' ').filter(x=>x.length>8); if(nums.length==0) return await sock.sendMessage(from,{text:"📝 ₩add numéro avec indicatif ex: 2250..."},{quoted:m}); let jids=nums.map(n=>n+'@s.whatsapp.net'); try{ await sock.groupParticipantsUpdate(from,jids,"add"); await sock.sendMessage(from,{text:R.addOk(jids.length)},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:R.addFail},{quoted:m}) } return }
     if(cmd==="kickall"||cmd==="purgeall"||cmd==="nuke"){ if(!isGroup) return; let allTargets = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta)).map(p=>p.id); if(allTargets.length==0) return await sock.sendMessage(from,{text:"👑 Rien à purger!"},{quoted:m}); await sock.sendMessage(from,{text:R.purgeAllMsg(allTargets.length)},{quoted:m}); await Promise.all(allTargets.map(jid=> sock.groupParticipantsUpdate(from,[jid],"remove").catch(()=>{}))); await sock.sendMessage(from,{text:R.purgeAllEnd(allTargets.length)},{quoted:m}); return }
