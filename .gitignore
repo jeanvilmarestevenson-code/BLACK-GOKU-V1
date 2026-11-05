@@ -75,7 +75,7 @@ temp/
 *.tar
 *.gz
 
-# GARDE CES FICHIERS IMPORTANTS - OBLIGATOIRE POUR V106
+# GARDE CES FICHIERS IMPORTANTS - OBLIGATOIRE V111
 !menu.jpg
 !MENU.jpg
 !Menu.jpg
@@ -88,7 +88,3 @@ temp/
 !WAIFU 1.jpg
 !WAIFU.jpg
 EOF
-
-git add .gitignore
-git commit -m "gitignore V106 FINAL - protège session + garde 3 images"
-git push
