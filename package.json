@@ -1,35 +1,19 @@
-
 {
   "name": "black-goku-v1",
   "version": "111.0.0",
-  "description": "BLACK GOKU V111 - WELCOME BYE PP BLANC + H24 + APOCALYPSE SANS KICK - THE GOAT",
+  "description": "BLACK GOKU V111 - Welcome/Bye avec PP + image blanche + H24 + Apocalypse + Web Stylé",
   "main": "web.js",
   "scripts": {
-    "start": "node web.js",
-    "dev": "nodemon web.js"
+    "start": "node web.js"
   },
-  "keywords": [
-    "whatsapp",
-    "bot",
-    "baileys",
-    "black-goku",
-    "h24",
-    "welcome",
-    "bye"
-  ],
-  "author": "THE GOAT BLACK GOKU",
-  "license": "MIT",
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.8",
     "express": "^4.18.2",
     "pino": "^8.17.2",
     "node-cache": "^5.1.2",
     "qrcode": "^1.5.3",
-    "sharp": "^0.33.4",
-    "axios": "^1.7.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.3"
+    "sharp": "^0.33.2",
+    "axios": "^1.6.7"
   },
   "engines": {
     "node": ">=18.0.0"
