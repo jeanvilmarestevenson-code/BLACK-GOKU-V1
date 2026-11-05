@@ -1,7 +1,7 @@
 {
   "name": "black-goku-v1",
   "version": "111.0.0",
-  "description": "BLACK GOKU V111 - Welcome/Bye avec PP + image blanche + H24 + Apocalypse + Web Stylé",
+  "description": "BLACK GOKU V111 STYLÉ - Welcome Bye PP Blanche + H24 + Web stylé",
   "main": "web.js",
   "scripts": {
     "start": "node web.js"
