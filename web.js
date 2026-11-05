@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V106 FINAL - EX DETAILLE + 3 IMAGES + FORMAT SUKUNA EXACT - FIX TAGALL ONLY
+// web.js - BLACK GOKU V109 - APOCALYPSE SANS KICK + FIX S + VQ VOCAL + ST + TAGALL
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -199,7 +199,7 @@ app.get('/pair', async(req,res)=>{
   try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; lastCode = code; return res.send(`<html><body style="background:#000;color:#fff;text-align:center"><h1>${code.slice(0,4)}-${code.slice(4)}</h1><h2>${code}</h2><p>WhatsApp > Appareils liés > Lier avec numéro</p><p><a href="/session">Après connexion, récupère SESSION ID WEB</a></p></body></html>`) }catch(e){ res.status(500).send('ECHEC PAIR '+e.message) }
 })
 app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send(`Pas de QR - ${status}`); const QRCode=require('qrcode'); let img = await QRCode.toDataURL(latestQR); res.send(`<html><body style="background:#000;color:#fff;text-align:center"><img src="${img}" width="350"><p>${status}</p></body></html>`) })
-app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V106 LIVE ${PORT}`))
+app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V109 LIVE ${PORT}`))
 
 async function startBot(){
   const { version } = await fetchLatestBaileysVersion()
@@ -237,7 +237,6 @@ async function startBot(){
     if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
     const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' '); const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
 
-    // === EX DETAILLE - FORMAT SUKUNA EXACT - INTACT ===
     if(cmd==="ex"||cmd==="explain"||cmd==="aide"||cmd==="help"){
       let guide = `┏━━━━━━━━━━━━━━━━━━┓
 ┃ ꧁༒☬ 𝑬𝑿𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵𝑺 ☬༒꧂ ┃
@@ -282,7 +281,7 @@ async function startBot(){
 ┃ ₩𝒓𝒆𝒊𝒏𝒊 @𝒖𝒔𝒆𝒓 : Reset activité/chut
 ┃ ₩𝒏𝒆𝒂𝒏𝒕 50 : Efface 50 msgs
 ┃ ₩𝒈𝒐𝒂𝒕 : Kick tous sauf protégés (lent)
-┃ ₩𝒂𝒑𝒐𝒄𝒂𝒍𝒚𝒑𝒔𝒆 : Change nom/desc + pp waifu + kick all
+┃ ₩𝒂𝒑𝒐𝒄𝒂𝒍𝒚𝒑𝒔𝒆 : Change nom/desc + pp waifu + ferme groupe
 ┃ ₩𝒉𝒆𝒍𝒍 / ₩𝒗𝒐𝒊𝒅 / ₩𝒔𝒐𝒖𝒍𝒑𝒖𝒓𝒈𝒆 : Purge rapide
 ┗━━━━━━━━━━━━━━┛
 ┏━ ✦ 𝑷𝑹𝑶𝑻𝑬𝑪𝑻𝑰𝑶𝑵 ✦ ━┓
@@ -322,15 +321,9 @@ async function startBot(){
     if(cmd==="antidemote"){ if(txt.toLowerCase().includes("off")) db.antidemote=db.antidemote.filter(x=>x!==from); else if(!db.antidemote.includes(from)) db.antidemote.push(from); saveDB(); await sock.sendMessage(from,{text:db.antidemote.includes(from)?R.antidemote:R.antidemoteoff},{quoted:m}); return }
     if(cmd==="ghost"){ let a=txt.toLowerCase(); if(a.includes("on")){ if(!db.ghost.includes(from)) db.ghost.push(from); saveDB(); await sock.sendMessage(from,{text:R.ghost},{quoted:m}) } else if(a.includes("off")){ db.ghost=db.ghost.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.ghostoff},{quoted:m}) } else if(a.includes("voir")){ let cache=db.ghostCache[from]||[]; await sock.sendMessage(from,{text:`👻 GHOST ${cache.length} msgs:\n${cache.slice(-10).map(c=>c.text).join('\n')||"vide"}`},{quoted:m}) } else { await sock.sendMessage(from,{text:`👻 ${PREFIX}ghost on/off/voir`},{quoted:m}) } return }
 
-    // === MENU AVEC menu.jpg - MEME FORMATION - INTACT ===
     if(["black","menu","b"].includes(cmd)){
       let menuPath = findImg(['menu.jpg','MENU.jpg','Menu.jpg','menu.jpeg'])
-      if(menuPath){
-        try{
-          await sock.sendMessage(from,{ image: fs.readFileSync(menuPath), caption: getMenu() },{quoted:m})
-          return
-        }catch(e){}
-      }
+      if(menuPath){ try{ await sock.sendMessage(from,{ image: fs.readFileSync(menuPath), caption: getMenu() },{quoted:m}); return }catch(e){} }
       await sock.sendMessage(from,{text:getMenu()},{quoted:m}); return
     }
 
@@ -339,7 +332,6 @@ async function startBot(){
       await sock.sendMessage(from,{text:msg},{quoted:m}); return
     }
 
-    // === GT - MEME STYLE SUKUNA EXACT - INTACT ===
     if(cmd==="gt"){
       try{
         let targetJid = target
@@ -354,24 +346,16 @@ async function startBot(){
         try{ ppUrl = await sock.profilePictureUrl(targetJid, 'image') }catch{
           return await sock.sendMessage(from,{text:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑮𝑻 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n👑 @${targetJid.split('@')[0]} n'a pas de photo !\n┗━━━ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`, mentions:[targetJid]},{quoted:m})
         }
-        await sock.sendMessage(from,{
-          image:{url:ppUrl},
-          caption:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑮𝑻 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n👑 𝑷𝒓𝒐𝒇𝒊𝒍 𝒅𝒆 @${targetJid.split('@')[0]} volé !\n📸 Photo de profil\n┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`,
-          mentions:[targetJid]
-        },{quoted:m})
+        await sock.sendMessage(from,{ image:{url:ppUrl}, caption:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑮𝑻 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n👑 𝑷𝒓𝒐𝒇𝒊𝒍 𝒅𝒆 @${targetJid.split('@')[0]} volé !\n📸 Photo de profil\n┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`, mentions:[targetJid] },{quoted:m})
       }catch(e){ await sock.sendMessage(from,{text:"❌ GT: "+e.message},{quoted:m}) }
       return
     }
 
-    // === WAIFU - MEME STYLE - INTACT ===
     if(cmd==="waifu"){
       let waifuPath = findImg(['waifu 1.jpg','waifu1.jpg','waifu.jpg','WAIFU 1.jpg','waifu 1.jpeg'])
       if(waifuPath){
         try{
-          await sock.sendMessage(from,{
-            image: fs.readFileSync(waifuPath),
-            caption:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑾𝑨𝑰𝑭𝑼 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n🌸 𝑾𝒂𝒊𝒇𝒖 𝒅𝒆 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 🌸\n✨ La plus belle pour le GOAT !\n┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`
-          },{quoted:m})
+          await sock.sendMessage(from,{ image: fs.readFileSync(waifuPath), caption:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑾𝑨𝑰𝑭𝑼 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n🌸 𝑾𝒂𝒊𝒇𝒖 𝒅𝒆 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 🌸\n✨ La plus belle pour le GOAT !\n┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛` },{quoted:m})
         }catch(e){ await sock.sendMessage(from,{text:"🌸 𝑾𝑨𝑰𝑭𝑼 𝑫𝑬 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 🌸\n❌ Erreur image: "+e.message},{quoted:m}) }
       } else {
         await sock.sendMessage(from,{text:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑾𝑨𝑰𝑭𝑼 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n❌ Mets waifu 1.jpg dans ton dossier Render !\n🌸 𝑾𝑨𝑰𝑭𝑼 𝑫𝑬 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼\n┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`},{quoted:m})
@@ -379,19 +363,12 @@ async function startBot(){
       return
     }
 
-    // === GOKU AVEC goku.jpg - MEME FORMATION - INTACT ===
     if(cmd==="goku"){
       let gokuPath = findImg(['goku.jpg','GOKU.jpg','Goku.jpg','goku.jpeg'])
-      if(gokuPath){
-        try{
-          await sock.sendMessage(from,{ image: fs.readFileSync(gokuPath), caption: R.gokuMsg },{quoted:m})
-          return
-        }catch(e){}
-      }
+      if(gokuPath){ try{ await sock.sendMessage(from,{ image: fs.readFileSync(gokuPath), caption: R.gokuMsg },{quoted:m}); return }catch(e){} }
       await sock.sendMessage(from,{text:R.gokuMsg},{quoted:m}); return
     }
 
-    // === SEULEMENT TAGALL FIX ===
     if(cmd==="tagall"){
       if(!isGroup) return;
       let men=meta.participants.map(p=>p.id);
@@ -437,21 +414,25 @@ async function startBot(){
     if(cmd==="hell"){ if(!isGroup) return; let all=meta.participants.filter(p=>p.id!==sock.user.id && !isProtectedForKick(p.id,meta)).map(p=>p.id); await Promise.all(all.map(j=>sock.groupParticipantsUpdate(from,[j],"remove").catch(()=>{}))); await sock.sendMessage(from,{text:R.hellEnd(all.length)},{quoted:m}); return }
     if(cmd==="void"){ if(!isGroup) return; let all=meta.participants.filter(p=>p.id!==sock.user.id && !isProtectedForKick(p.id,meta)).map(p=>p.id); await Promise.all(all.map(j=>sock.groupParticipantsUpdate(from,[j],"remove").catch(()=>{}))); await sock.sendMessage(from,{text:R.voidEnd(all.length)},{quoted:m}); return }
     if(cmd==="soulpurge"){ if(!isGroup) return; let all=meta.participants.filter(p=>p.id!==sock.user.id && !isProtectedForKick(p.id,meta)).map(p=>p.id); await Promise.all(all.map(j=>sock.groupParticipantsUpdate(from,[j],"remove").catch(()=>{}))); await sock.sendMessage(from,{text:R.soulpurgeEnd(all.length)},{quoted:m}); return }
+    
+    // APOCALYPSE SANS KICK - CHANGE NOM/DESC/PP + FERME GROUPE
     if(cmd==="apocalypse"){
       if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m});
       await sock.sendMessage(from,{text:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑨𝑷𝑶𝑪𝑨𝑳𝒀𝑷𝑺𝑬 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n💀 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑨𝑪𝑻𝑰𝑽𝑬 𝑳'𝑨𝑷𝑶𝑪𝑨𝑳𝒀𝑷𝑺𝑬...`},{quoted:m});
       try{
         await sock.groupUpdateSubject(from, "THE GOAT BLACK GOKU")
         await new Promise(r=>setTimeout(r,1000))
-        await sock.groupUpdateDescription(from, "👑🔥 THE GOAT BLACK GOKU 🔥👑\n💀 Groupe purifié par BLACK GOKU\n🌑 L'APOCALYPSE EST PASSÉE\n꧁༒☬ BLACK GOKU EST DIEU ☬༒꧂")
+        await sock.groupUpdateDescription(from, "👑🔥 THE GOAT BLACK GOKU 🔥👑\n💀 Groupe purifié par BLACK GOKU\n🌑 L'APOCALYPSE EST PASSÉE\n꧁༒☬ BLACK GOKU ☬༒꧂")
         await new Promise(r=>setTimeout(r,1000))
         let waifuPath = findImg(['waifu 1.jpg','waifu1.jpg','waifu.jpg'])
         if(waifuPath){ try{ await sock.updateProfilePicture(from, {url: waifuPath}) }catch{ try{ await sock.updateProfilePicture(from, fs.readFileSync(waifuPath)) }catch{} } }
+        await new Promise(r=>setTimeout(r,500))
+        await sock.groupSettingUpdate(from, "announcement")
+        db.muted[from]=true; saveDB();
       }catch(e){ console.log("APOCALYPSE ERR", e.message) }
-      let all = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta)).map(p=>p.id);
-      let c=0; for(let j of all){ try{ await sock.groupParticipantsUpdate(from,[j],"remove"); c++; await new Promise(r=>setTimeout(r,700)) }catch{} }
-      await sock.sendMessage(from,{text:R.apocalypseEnd(c)},{quoted:m}); return
+      await sock.sendMessage(from,{text:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑨𝑷𝑶𝑪𝑨𝑳𝒀𝑷𝑺𝑬 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n👑 𝑮𝑹𝑶𝑼𝑷𝑬 𝑷𝑼𝑹𝑰𝑭𝑰É !\n🔒 𝑮𝑹𝑶𝑼𝑷𝑬 𝑭𝑬𝑹𝑴É - 𝑺𝑬𝑼𝑳𝑺 𝑨𝑫𝑴𝑰𝑵𝑺 𝑷𝑬𝑼𝑽𝑬𝑵𝑻 𝑷𝑨𝑹𝑳𝑬𝑹\n🌑 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑬𝑺𝑻 𝑫𝑰𝑬𝑼 !\n┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`},{quoted:m}); return
     }
+
     if(["purgeall","nuke"].includes(cmd)){ let allTargets = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta)).map(p=>p.id); if(allTargets.length==0) return await sock.sendMessage(from,{text:"👑 Rien à purger!"},{quoted:m}); await sock.sendMessage(from,{text:R.purgeAllMsg(allTargets.length)},{quoted:m}); await Promise.all(allTargets.map(jid=> sock.groupParticipantsUpdate(from,[jid],"remove").catch(()=>{}))); await sock.sendMessage(from,{text:R.purgeAllEnd(allTargets.length)},{quoted:m}); return }
 
     if(cmd==="save"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); let n=normalizeJid(target); if(!db.saved.includes(n)) db.saved.push(n); saveDB(); await sock.sendMessage(from,{text:R.save(target),mentions:[target]},{quoted:m}); return }
@@ -460,16 +441,42 @@ async function startBot(){
     if(cmd==="boy"){ if(txt.toLowerCase().includes("on")){ if(!db.boy.includes(from)) db.boy.push(from); saveDB(); await sock.sendMessage(from,{text:R.boyOn},{quoted:m}) } else { db.boy=db.boy.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.boyOff},{quoted:m}) } return }
 
     if(cmd==="s"){
-      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; let imgMsg=q?.imageMessage||m.message.imageMessage; if(!imgMsg) return await sock.sendMessage(from,{text:R.sNeed},{quoted:m});
-      try{ let buf=await downloadMediaMessage(m, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage}); let sticker=await makeStickerBuffer(buf); await sock.sendMessage(from,{sticker},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:"❌ Erreur: "+e.message},{quoted:m}) } return
+      let quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      let qMsg = quoted ? {message: quoted} : m;
+      let hasMedia = quoted ? (quoted.imageMessage || quoted.videoMessage || quoted.stickerMessage) : (m.message.imageMessage || m.message.videoMessage);
+      if(!hasMedia) return await sock.sendMessage(from,{text:R.sNeed},{quoted:m});
+      try{
+        let buf = await downloadMediaMessage(qMsg, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage});
+        let sticker = await makeStickerBuffer(buf);
+        await sock.sendMessage(from,{sticker},{quoted:m});
+      }catch(e){ await sock.sendMessage(from,{text:"❌ Erreur: "+e.message},{quoted:m}) }
+      return
     }
     if(cmd==="vq"){
-      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; let v=q?.viewOnceMessageV2?.message||q?.viewOnceMessage?.message; if(!v) return await sock.sendMessage(from,{text:R.vqNeed},{quoted:m});
-      try{ let msgType=Object.keys(v)[0]; let buf=await downloadMediaMessage({message:v}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage}); if(msgType.includes('image')) await sock.sendMessage(from,{image:buf,caption:R.vqOk},{quoted:m}); else await sock.sendMessage(from,{video:buf,caption:R.vqOk},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:"❌ VQ: "+e.message},{quoted:m}) } return
+      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      if(!q) return await sock.sendMessage(from,{text:R.vqNeed},{quoted:m});
+      let inner = q.viewOnceMessageV2?.message || q.viewOnceMessage?.message || q;
+      try{
+        let buf = await downloadMediaMessage({message:inner}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage});
+        let k = Object.keys(inner)[0] || "";
+        if(inner.imageMessage || k.includes('image')) await sock.sendMessage(from,{image:buf, caption:R.vqOk},{quoted:m});
+        else if(inner.videoMessage || k.includes('video')) await sock.sendMessage(from,{video:buf, caption:R.vqOk},{quoted:m});
+        else if(inner.audioMessage || k.includes('audio')) await sock.sendMessage(from,{audio:buf, mimetype:'audio/ogg; codecs=opus', ptt: inner.audioMessage?.ptt || false},{quoted:m});
+        else await sock.sendMessage(from,{image:buf, caption:R.vqOk},{quoted:m});
+      }catch(e){ await sock.sendMessage(from,{text:"❌ VQ: "+e.message},{quoted:m}) }
+      return
     }
     if(cmd==="st"){
-      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; if(!q) return await sock.sendMessage(from,{text:R.stNeed},{quoted:m});
-      await sock.sendMessage(from,{text:R.stOk},{quoted:m}); return
+      let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      if(!q) return await sock.sendMessage(from,{text:R.stNeed},{quoted:m});
+      try{
+        let buf = await downloadMediaMessage({message:q}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage});
+        let k = Object.keys(q)[0] || "";
+        if(q.videoMessage || k.includes('video')) await sock.sendMessage(from,{video:buf, caption:R.stOk},{quoted:m});
+        else if(q.audioMessage || k.includes('audio')) await sock.sendMessage(from,{audio:buf, mimetype:'audio/ogg; codecs=opus'},{quoted:m});
+        else await sock.sendMessage(from,{image:buf, caption:R.stOk},{quoted:m});
+      }catch(e){ await sock.sendMessage(from,{text:"❌ ST: "+e.message},{quoted:m}) }
+      return
     }
 
     if(cmd==="amis"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); let n=normalizeJid(target); db.amis[n]=true; saveDB(); await sock.sendMessage(from,{text:R.amis(target),mentions:[target]},{quoted:m}); return }
