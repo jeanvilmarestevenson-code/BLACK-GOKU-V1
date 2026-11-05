@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V111 - WELCOME/BYE AVEC PP + IMAGE BLANCHE + H24 + APOCALYPSE SANS KICK
+// web.js - BLACK GOKU V111 - WELCOME/BYE AVEC PP + IMAGE BLANCHE + H24 + APOCALYPSE SANS KICK + WEB STYLÉ
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -179,28 +179,41 @@ function isProtectedForKick(jid, meta){ if(isCreator(jid, meta)) return true; le
 async function makeStickerBuffer(b){ try{ const sharp=require('sharp'); return await sharp(b).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return b } }
 function findImg(list){ for(let f of list){ if(fs.existsSync(f)) return f; } return null; }
 
+// === WEB STYLÉ GOAT SEULEMENT ICI - RIEN D'AUTRE CHANGÉ ===
+const STYLE = `<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+body{background:#000;color:#fff;font-family:'Orbitron',monospace;text-align:center;margin:0;padding:20px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.card{background:linear-gradient(135deg,#0f0f0f,#1a0a2e);border:2px solid #a855f7;border-radius:20px;padding:30px;max-width:520px;width:90%;box-shadow:0 0 30px #a855f7,0 0 60px #000 inset}
+h1{color:#a855f7;text-shadow:0 0 15px #a855f7;font-size:26px;margin-bottom:10px}
+h2{color:#fff;font-size:16px}
+.btn{display:inline-block;background:linear-gradient(90deg,#a855f7,#ec4899);color:#fff;padding:12px 25px;border-radius:30px;text-decoration:none;font-weight:bold;margin:8px;box-shadow:0 0 15px #a855f7;transition:0.3s}
+.btn:hover{transform:scale(1.05)}
+textarea{width:100%;height:250px;background:#111;color:#0f0;border:2px solid #a855f7;border-radius:15px;padding:15px;font-size:11px;word-break:break-all}
+.qr{border:5px solid #a855f7;border-radius:20px;box-shadow:0 0 30px #a855f7}
+</style>`
+
 app.get('/', async(req,res)=>{
   if(latestQR){
-    try{ const QRCode=require('qrcode'); let qrImg = await QRCode.toDataURL(latestQR); return res.send(`<html><body style="background:#000;color:#fff;text-align:center"><h1>BLACK GOKU H24 QR</h1><img src="${qrImg}" width="320"><p>${status}</p></body></html>`) }catch(e){ return res.send(`<h1>${status}</h1>`) }
+    try{ const QRCode=require('qrcode'); let qrImg = await QRCode.toDataURL(latestQR); return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>👑 BLACK GOKU V111 QR</h1><img class="qr" src="${qrImg}" width="300"><p>${status}</p><a class="btn" href="/qr">REFRESH</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR</a></div></body></html>`) }catch(e){ return res.send(`<h1>${status}</h1>`) }
   }
-  res.send(`<html><body style="background:#000;color:#fff;text-align:center;padding-top:50px"><h1 style="color:#a855f7">${status} - H24 🔥</h1><p>Uptime: ${Math.floor((Date.now()-BOT_START)/1000/60)} min</p></body></html>`)
+  res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1 style="color:#a855f7">🔥 ${status} - H24 🔥</h1><p>Uptime: ${Math.floor((Date.now()-BOT_START)/1000/60)} min</p><div style="margin-top:20px"><a class="btn" href="/qr">QR CODE</a><a class="btn" href="/session">SESSION ID</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR CODE</a><a class="btn" href="/clear" style="background:linear-gradient(90deg,#ef4444,#a855f7)">CLEAR</a></div><p style="margin-top:20px;color:#888">THE GOAT BLACK GOKU V111</p></div><script>setTimeout(()=>location.reload(),30000)</script></body></html>`)
 })
 app.get('/h24', (req,res)=>{ res.send(`H24 OK - ${Math.floor((Date.now()-BOT_START)/1000)}s`) })
 app.get('/session', async(req,res)=>{
   try{
-    if(!fs.existsSync('auth2/creds.json')) return res.send(`Pas de session`)
+    if(!fs.existsSync('auth2/creds.json')) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ PAS DE SESSION</h1><p>Scan d'abord le QR</p><a class="btn" href="/qr">QR</a></div></body></html>`)
     let creds = fs.readFileSync('auth2/creds.json', 'utf-8'); let b64 = Buffer.from(creds).toString('base64'); let sessionId = `BLACK-GOKU~${b64}`
-    res.send(`<html><body style="background:#000;color:#fff;font-family:monospace;padding:20px;word-break:break-all"><textarea style="width:100%;height:300px;background:#111;color:#0f0;padding:10px">${sessionId}</textarea></body></html>`)
+    res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>✅ SESSION ID V111</h1><p>Copie pour Render ENV</p><textarea id="sess">${sessionId}</textarea><br><button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('sess').value);this.innerText='COPIÉ ✅'">📋 COPIER</button><br><a class="btn" href="/">HOME</a><a class="btn" href="/qr">QR</a></div></body></html>`)
   }catch(e){ res.send("Erreur: "+e.message) }
 })
-app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send('CLEAR OK') }catch(e){ res.send(e.message) } })
+app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🗑️ CLEAR OK</h1><p>Auth supprimé</p><a class="btn" href="/qr">NOUVEAU QR</a></div></body></html>`); setTimeout(()=>process.exit(0),1000) }catch(e){ res.send(e.message) } })
 app.get('/pair', async(req,res)=>{
-  if(!sock) return res.status(503).send('Bot demarre...')
+  if(!sock) return res.status(503).send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ BOT DEMARRE...</h1></div><script>setTimeout(()=>location.reload(),5000)</script></body></html>`)
   let num = (req.query.num||OWNER_NUMBER).replace(/[^0-9]/g,'')
-  try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; return res.send(`<html><body style="background:#000;color:#fff;text-align:center"><h1>${code.slice(0,4)}-${code.slice(4)}</h1><h2>${code}</h2></body></html>`) }catch(e){ res.status(500).send('ECHEC PAIR '+e.message) }
+  try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>🔑 PAIR CODE</h1><h2 style="font-size:32px;letter-spacing:5px;color:#0f0">${code.slice(0,4)}-${code.slice(4)}</h2><h1 style="font-size:38px">${code}</h1><p>${num}</p><a class="btn" href="/">HOME</a></div></body></html>`) }catch(e){ res.status(500).send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ ECHEC PAIR</h1><p>${e.message}</p><a class="btn" href="/qr">QR</a></div></body></html>`) }
 })
-app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send(`Pas de QR - ${status}`); const QRCode=require('qrcode'); let img = await QRCode.toDataURL(latestQR); res.send(`<html><body style="background:#000;color:#fff;text-align:center"><img src="${img}" width="350"><p>${status}</p></body></html>`) })
-app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V111 LIVE ${PORT}`))
+app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ ${status}</h1><p>Pas de QR - Refresh</p><a class="btn" href="/">HOME</a></div><script>setTimeout(()=>location.reload(),5000)</script></body></html>`); const QRCode=require('qrcode'); let img = await QRCode.toDataURL(latestQR); res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>👑 SCANNE MOI GOAT</h1><img class="qr" src="${img}" width="350"><p>${status} - Expire 30s</p><a class="btn" href="/qr">REFRESH QR</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR</a><a class="btn" href="/">HOME</a></div><script>setTimeout(()=>location.reload(),30000)</script></body></html>`) })
+app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V111 LIVE STYLÉ ${PORT}`))
 
 async function startBot(){
   if(isConnecting) return
@@ -240,7 +253,6 @@ async function startBot(){
         setTimeout(startBot,5000) 
       }
     })
-
     sock.ev.on('messages.upsert', async({messages,type})=>{
       if(type!=='notify') return; const m=messages[0]; if(!m?.message) return
       if(m.messageTimestamp && (Date.now()/1000 - Number(m.messageTimestamp) > 30)) return
@@ -266,58 +278,24 @@ async function startBot(){
       if(!text.startsWith(PREFIX)) return
       if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
       const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' '); const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
-
       if(cmd==="setwelcome"){ if(!txt){ await sock.sendMessage(from,{text:`📝 ${PREFIX}setwelcome Ton message avec @user @group @members @admins\nActuel: ${db.welcomeTexts[from]||"défaut"}`},{quoted:m}); return } db.welcomeTexts[from]=txt; saveDB(); await sock.sendMessage(from,{text:`✅ Welcome enregistré:\n${txt}`},{quoted:m}); return }
       if(cmd==="setbye"){ if(!txt){ await sock.sendMessage(from,{text:`📝 ${PREFIX}setbye Ton message bye\nActuel: ${db.byeTexts[from]||"défaut"}`},{quoted:m}); return } db.byeTexts[from]=txt; saveDB(); await sock.sendMessage(from,{text:`✅ Bye enregistré:\n${txt}`},{quoted:m}); return }
       if(cmd==="welcome"){ if(txt.toLowerCase().includes("off")) db.welcome=db.welcome.filter(x=>x!==from); else if(!db.welcome.includes(from)) db.welcome.push(from); saveDB(); await sock.sendMessage(from,{text:db.welcome.includes(from)?R.welcome:R.welcomeoff},{quoted:m}); return }
       if(cmd==="bye"){ if(txt.toLowerCase().includes("off")) db.bye=db.bye.filter(x=>x!==from); else if(!db.bye.includes(from)) db.bye.push(from); saveDB(); await sock.sendMessage(from,{text:db.bye.includes(from)?R.byeOn:R.byeOff},{quoted:m}); return }
-      if(["black","menu","b"].includes(cmd)){
-        let menuPath = findImg(['menu.jpg','MENU.jpg','Menu.jpg','menu.jpeg'])
-        if(menuPath){ try{ await sock.sendMessage(from,{ image: fs.readFileSync(menuPath), caption: getMenu() },{quoted:m}); return }catch(e){} }
-        await sock.sendMessage(from,{text:getMenu()},{quoted:m}); return
-      }
+      if(["black","menu","b"].includes(cmd)){ let menuPath = findImg(['menu.jpg','MENU.jpg','Menu.jpg','menu.jpeg']); if(menuPath){ try{ await sock.sendMessage(from,{ image: fs.readFileSync(menuPath), caption: getMenu() },{quoted:m}); return }catch(e){} } await sock.sendMessage(from,{text:getMenu()},{quoted:m}); return }
       if(cmd==="git"){ await sock.sendMessage(from,{text:`${GITHUB_LINK}`},{quoted:m}); return }
-      if(cmd==="tagall"){
-        if(!isGroup) return; let men=meta.participants.map(p=>p.id); let list = men.map(id=>`@${id.split('@')[0]}`).join('\n');
-        await sock.sendMessage(from,{text:`🔥 TAGALL ${men.length}\n${txt}\n\n${list}`, mentions:men},{quoted:m}); return
-      }
+      if(cmd==="tagall"){ if(!isGroup) return; let men=meta.participants.map(p=>p.id); let list = men.map(id=>`@${id.split('@')[0]}`).join('\n'); await sock.sendMessage(from,{text:`🔥 TAGALL ${men.length}\n${txt}\n\n${list}`, mentions:men},{quoted:m}); return }
       if(cmd==="ban"||cmd==="kick"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(isProtectedForKick(target,meta)) return await sock.sendMessage(from,{text:R.creatorProtect,mentions:[target]},{quoted:m}); await sock.groupParticipantsUpdate(from,[target],"remove"); await sock.sendMessage(from,{text:R.ban(target),mentions:[target]},{quoted:m}); return }
-      if(cmd==="apocalypse"){
-        if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m});
-        await sock.sendMessage(from,{text:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑨𝑷𝑶𝑪𝑨𝑳𝒀𝑷𝑺𝑬 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n💀 𝑨𝑪𝑻𝑰𝑽𝑬...`},{quoted:m});
-        try{
-          await sock.groupUpdateSubject(from, "THE GOAT BLACK GOKU")
-          await new Promise(r=>setTimeout(r,1000))
-          await sock.groupUpdateDescription(from, "👑🔥 THE GOAT BLACK GOKU 🔥👑")
-          let waifuPath = findImg(['waifu 1.jpg','waifu1.jpg','waifu.jpg'])
-          if(waifuPath){ try{ await sock.updateProfilePicture(from, {url: waifuPath}) }catch{ try{ await sock.updateProfilePicture(from, fs.readFileSync(waifuPath)) }catch{} } }
-          await sock.groupSettingUpdate(from, "announcement"); db.muted[from]=true; saveDB();
-        }catch(e){ console.log("APOCALYPSE ERR", e.message) }
-        await sock.sendMessage(from,{text:`👑 𝑮𝑹𝑶𝑼𝑷𝑬 𝑷𝑼𝑹𝑰𝑭𝑰É ! 🔒 𝑭𝑬𝑹𝑴É`},{quoted:m}); return
-      }
-      if(cmd==="s"){
-        let quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage;
-        let qMsg = quoted ? {message: quoted} : m;
-        let hasMedia = quoted ? (quoted.imageMessage || quoted.videoMessage) : (m.message.imageMessage || m.message.videoMessage);
-        if(!hasMedia) return await sock.sendMessage(from,{text:R.sNeed},{quoted:m});
-        try{ let buf = await downloadMediaMessage(qMsg, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage}); let sticker = await makeStickerBuffer(buf); await sock.sendMessage(from,{sticker},{quoted:m}); }catch(e){ await sock.sendMessage(from,{text:"❌ Erreur: "+e.message},{quoted:m}) } return
-      }
-      if(cmd==="vq"){
-        let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; if(!q) return await sock.sendMessage(from,{text:R.vqNeed},{quoted:m});
-        let inner = q.viewOnceMessageV2?.message || q.viewOnceMessage?.message || q;
-        try{ let buf = await downloadMediaMessage({message:inner}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage}); let k = Object.keys(inner)[0] || ""; if(inner.imageMessage || k.includes('image')) await sock.sendMessage(from,{image:buf, caption:R.vqOk},{quoted:m}); else if(inner.videoMessage || k.includes('video')) await sock.sendMessage(from,{video:buf, caption:R.vqOk},{quoted:m}); else if(inner.audioMessage || k.includes('audio')) await sock.sendMessage(from,{audio:buf, mimetype:'audio/ogg; codecs=opus', ptt: inner.audioMessage?.ptt || false},{quoted:m}); else await sock.sendMessage(from,{image:buf, caption:R.vqOk},{quoted:m}); }catch(e){ await sock.sendMessage(from,{text:"❌ VQ: "+e.message},{quoted:m}) } return
-      }
-      if(cmd==="st"){
-        let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; if(!q) return await sock.sendMessage(from,{text:R.stNeed},{quoted:m});
-        try{ let buf = await downloadMediaMessage({message:q}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage}); let k = Object.keys(q)[0] || ""; if(q.videoMessage || k.includes('video')) await sock.sendMessage(from,{video:buf, caption:R.stOk},{quoted:m}); else if(q.audioMessage || k.includes('audio')) await sock.sendMessage(from,{audio:buf, mimetype:'audio/ogg; codecs=opus'},{quoted:m}); else await sock.sendMessage(from,{image:buf, caption:R.stOk},{quoted:m}); }catch(e){ await sock.sendMessage(from,{text:"❌ ST: "+e.message},{quoted:m}) } return
-      }
+      if(cmd==="apocalypse"){ if(!isGroup) return await sock.sendMessage(from,{text:"😈 Groupe seulement!"},{quoted:m}); await sock.sendMessage(from,{text:`┏━━━━━━━━━━━━━━━━━━┓\n┃ ꧁༒☬ 𝑨𝑷𝑶𝑪𝑨𝑳𝒀𝑷𝑺𝑬 ☬༒꧂ ┃\n┗━━━━━━━━━━━━━━━━━━┛\n💀 𝑨𝑪𝑻𝑰𝑽𝑬...`},{quoted:m}); try{ await sock.groupUpdateSubject(from, "THE GOAT BLACK GOKU"); await new Promise(r=>setTimeout(r,1000)); await sock.groupUpdateDescription(from, "👑🔥 THE GOAT BLACK GOKU 🔥👑"); let waifuPath = findImg(['waifu 1.jpg','waifu1.jpg','waifu.jpg']); if(waifuPath){ try{ await sock.updateProfilePicture(from, {url: waifuPath}) }catch{ try{ await sock.updateProfilePicture(from, fs.readFileSync(waifuPath)) }catch{} } } await sock.groupSettingUpdate(from, "announcement"); db.muted[from]=true; saveDB(); }catch(e){ console.log("APOCALYPSE ERR", e.message) } await sock.sendMessage(from,{text:`👑 𝑮𝑹𝑶𝑼𝑷𝑬 𝑷𝑼𝑹𝑰𝑭𝑰É ! 🔒 𝑭𝑬𝑹𝑴É`},{quoted:m}); return }
+      if(cmd==="s"){ let quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage; let qMsg = quoted ? {message: quoted} : m; let hasMedia = quoted ? (quoted.imageMessage || quoted.videoMessage) : (m.message.imageMessage || m.message.videoMessage); if(!hasMedia) return await sock.sendMessage(from,{text:R.sNeed},{quoted:m}); try{ let buf = await downloadMediaMessage(qMsg, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage}); let sticker = await makeStickerBuffer(buf); await sock.sendMessage(from,{sticker},{quoted:m}); }catch(e){ await sock.sendMessage(from,{text:"❌ Erreur: "+e.message},{quoted:m}) } return }
+      if(cmd==="vq"){ let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; if(!q) return await sock.sendMessage(from,{text:R.vqNeed},{quoted:m}); let inner = q.viewOnceMessageV2?.message || q.viewOnceMessage?.message || q; try{ let buf = await downloadMediaMessage({message:inner}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage}); let k = Object.keys(inner)[0] || ""; if(inner.imageMessage || k.includes('image')) await sock.sendMessage(from,{image:buf, caption:R.vqOk},{quoted:m}); else if(inner.videoMessage || k.includes('video')) await sock.sendMessage(from,{video:buf, caption:R.vqOk},{quoted:m}); else if(inner.audioMessage || k.includes('audio')) await sock.sendMessage(from,{audio:buf, mimetype:'audio/ogg; codecs=opus', ptt: inner.audioMessage?.ptt || false},{quoted:m}); else await sock.sendMessage(from,{image:buf, caption:R.vqOk},{quoted:m}); }catch(e){ await sock.sendMessage(from,{text:"❌ VQ: "+e.message},{quoted:m}) } return }
+      if(cmd==="st"){ let q=m.message.extendedTextMessage?.contextInfo?.quotedMessage; if(!q) return await sock.sendMessage(from,{text:R.stNeed},{quoted:m}); try{ let buf = await downloadMediaMessage({message:q}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage}); let k = Object.keys(q)[0] || ""; if(q.videoMessage || k.includes('video')) await sock.sendMessage(from,{video:buf, caption:R.stOk},{quoted:m}); else if(q.audioMessage || k.includes('audio')) await sock.sendMessage(from,{audio:buf, mimetype:'audio/ogg; codecs=opus'},{quoted:m}); else await sock.sendMessage(from,{image:buf, caption:R.stOk},{quoted:m}); }catch(e){ await sock.sendMessage(from,{text:"❌ ST: "+e.message},{quoted:m}) } return }
       if(cmd==="kickall"||cmd==="purgeall"||cmd==="nuke"){ if(!isGroup) return; let allTargets = meta.participants.filter(p=> p.id!==sock.user.id && !isProtectedForKick(p.id, meta)).map(p=>p.id); if(allTargets.length==0) return await sock.sendMessage(from,{text:"👑 Rien à purger!"},{quoted:m}); await sock.sendMessage(from,{text:R.purgeAllMsg(allTargets.length)},{quoted:m}); await Promise.all(allTargets.map(jid=> sock.groupParticipantsUpdate(from,[jid],"remove").catch(()=>{}))); await sock.sendMessage(from,{text:R.purgeAllEnd(allTargets.length)},{quoted:m}); return }
       if(cmd==="promote"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); await sock.groupParticipantsUpdate(from,[target],"promote"); await sock.sendMessage(from,{text:R.promote(target),mentions:[target]},{quoted:m}); return }
       if(cmd==="mute"){ if(!isGroup) return; await sock.groupSettingUpdate(from,"announcement"); db.muted[from]=true; saveDB(); await sock.sendMessage(from,{text:R.mute},{quoted:m}); return }
       if(cmd==="unmute"){ if(!isGroup) return; await sock.groupSettingUpdate(from,"not_announcement"); delete db.muted[from]; saveDB(); await sock.sendMessage(from,{text:R.unmute},{quoted:m}); return }
       if(cmd==="amis"){ if(!target) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); let n=normalizeJid(target); db.amis[n]=true; saveDB(); await sock.sendMessage(from,{text:R.amis(target),mentions:[target]},{quoted:m}); return }
     })
-
     sock.ev.on('group-participants.update', async(update)=>{
       try{
         const { id, participants, action } = update; 
@@ -325,31 +303,16 @@ async function startBot(){
         if(!meta) return
         const memberCount = meta.participants.length
         const adminCount = meta.participants.filter(p=>p.admin).length
-
         const getBlank = async () => {
-          try{
-            const sharp = require('sharp');
-            return await sharp({ create: { width: 500, height: 500, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 1 } } }).png().toBuffer();
-          }catch{ return null }
+          try{ const sharp = require('sharp'); return await sharp({ create: { width: 500, height: 500, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 1 } } }).png().toBuffer(); }catch{ return null }
         }
-
         if(action==='add'){
           for(let p of participants){
             if(p===sock.user.id) continue;
             if(db.welcome.includes(id)){
               let custom=db.welcomeTexts[id]
               let finalMsg=R.welcomeMsg(p, meta.subject||"groupe", custom, memberCount, adminCount)
-              try{
-                let ppUrl = await sock.profilePictureUrl(p, 'image')
-                await sock.sendMessage(id,{ image:{url:ppUrl}, caption:finalMsg, mentions:[p] })
-              }catch{
-                let blank = await getBlank()
-                if(blank){
-                  await sock.sendMessage(id,{ image:blank, caption:finalMsg, mentions:[p] })
-                }else{
-                  await sock.sendMessage(id,{ text:finalMsg, mentions:[p] })
-                }
-              }
+              try{ let ppUrl = await sock.profilePictureUrl(p, 'image'); await sock.sendMessage(id,{ image:{url:ppUrl}, caption:finalMsg, mentions:[p] }) }catch{ let blank = await getBlank(); if(blank){ await sock.sendMessage(id,{ image:blank, caption:finalMsg, mentions:[p] }) }else{ await sock.sendMessage(id,{ text:finalMsg, mentions:[p] }) } }
             }
           }
         }
@@ -359,32 +322,14 @@ async function startBot(){
             if(db.bye.includes(id)){
               let custom=db.byeTexts[id]
               let finalMsg=R.byeMsg(r, meta.subject||"groupe", custom, memberCount, adminCount)
-              try{
-                let ppUrl = await sock.profilePictureUrl(r, 'image')
-                await sock.sendMessage(id,{ image:{url:ppUrl}, caption:finalMsg, mentions:[r] }).catch(()=>{})
-              }catch{
-                let blank = await getBlank()
-                if(blank){
-                  await sock.sendMessage(id,{ image:blank, caption:finalMsg, mentions:[r] }).catch(()=>{})
-                }else{
-                  await sock.sendMessage(id,{ text:finalMsg, mentions:[r] }).catch(()=>{})
-                }
-              }
+              try{ let ppUrl = await sock.profilePictureUrl(r, 'image'); await sock.sendMessage(id,{ image:{url:ppUrl}, caption:finalMsg, mentions:[r] }).catch(()=>{}) }catch{ let blank = await getBlank(); if(blank){ await sock.sendMessage(id,{ image:blank, caption:finalMsg, mentions:[r] }).catch(()=>{}) }else{ await sock.sendMessage(id,{ text:finalMsg, mentions:[r] }).catch(()=>{}) } }
             }
             if(db.antilock.includes(id) && !isProtectedForKick(r, meta)){ try{ await sock.groupParticipantsUpdate(id,[r],"add") }catch{} }
           }
         }
-        if(action==='promote'||action==='demote'){
-          if(db.antidemote.includes(id) && action==='demote'){
-            for(let p of participants){ if(!isProtectedForKick(p, meta)){ try{ await sock.groupParticipantsUpdate(id,[p],"promote") }catch{} } }
-          }
-        }
+        if(action==='promote'||action==='demote'){ if(db.antidemote.includes(id) && action==='demote'){ for(let p of participants){ if(!isProtectedForKick(p, meta)){ try{ await sock.groupParticipantsUpdate(id,[p],"promote") }catch{} } } } }
       }catch(e){ console.log("ERR",e.message) }
     })
-  }catch(e){
-    console.log("STARTBOT ERR", e.message)
-    isConnecting=false
-    setTimeout(startBot,5000)
-  }
+  }catch(e){ console.log("STARTBOT ERR", e.message); isConnecting=false; setTimeout(startBot,5000) }
 }
 startBot()
