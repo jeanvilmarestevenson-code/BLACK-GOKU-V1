@@ -1,7 +1,8 @@
+cat > package.json << 'EOF'
 {
   "name": "black-goku-v1",
-  "version": "106.0.0",
-  "description": "BLACK GOKU V106 - GT VOLE PP + WAIFU IMAGE + SESSION ID WEB - THE GOAT",
+  "version": "111.0.0",
+  "description": "BLACK GOKU V111 - WELCOME BYE PP BLANC + H24 + APOCALYPSE SANS KICK - THE GOAT",
   "main": "web.js",
   "scripts": {
     "start": "node web.js",
@@ -13,8 +14,8 @@
     "baileys",
     "black-goku",
     "h24",
-    "gt",
-    "waifu"
+    "welcome",
+    "bye"
   ],
   "author": "THE GOAT BLACK GOKU",
   "license": "MIT",
@@ -34,3 +35,4 @@
     "node": ">=18.0.0"
   }
 }
+EOF
