@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V111 - COMPLET GT PP + GIT PP + TOUTES COMMANDES + STYLE
+// web.js - BLACK GOKU V111 - CORRIGÉ ERREURS H24 SEULEMENT
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -17,9 +17,9 @@ const msgRetryCounterCache = new NodeCache()
 
 process.on('uncaughtException', e => console.log('H24:', e.message))
 process.on('unhandledRejection', e => console.log('H24:', e))
-process.on('SIGTERM', () => console.log('H24 SIGTERM ignoré'))
-setInterval(() => { console.log(`👑 BLACK GOKU H24 - ${new Date().toLocaleTimeString()}`); if(process.env.RENDER_EXTERNAL_URL){ https.get(process.env.RENDER_EXTERNAL_URL).on('error', ()=>{}).on('data', ()=>{}) } }, 4*60*1000)
-setInterval(() => { http.get(`http://localhost:${PORT}/`).on('error', ()=>{}) }, 2*60*1000)
+
+setInterval(() => { if(process.env.RENDER_EXTERNAL_URL){ https.get(process.env.RENDER_EXTERNAL_URL).on('error',()=>{}).on('data',()=>{}) } }, 4*60*1000)
+setInterval(() => { http.get(`http://localhost:${PORT}/`).on('error',()=>{}) }, 2*60*1000)
 
 function loadSessionFromId(){
   if(!SESSION_ID) return false
@@ -31,12 +31,12 @@ function loadSessionFromId(){
   }catch(e){ console.log("❌ SESSION ID ERR:", e.message) }
   return false
 }
-if(!fs.existsSync('auth2') || (fs.existsSync('auth2') && fs.readdirSync('auth2').length===0)){ if(SESSION_ID) loadSessionFromId() }
+if(!fs.existsSync('auth2') || fs.readdirSync('auth2').length===0){ if(SESSION_ID) loadSessionFromId() }
 
 let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], welcomeTexts:{}, bye:[], byeTexts:{}, ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], ownerLids:[], privateMode:false, botOff:false, activity:{}, groupCache:{}, muted:{}, styles:{} }
 if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!db.welcomeTexts) db.welcomeTexts={}; if(!db.byeTexts) db.byeTexts={}; if(!db.bye) db.bye=[]; if(!db.muted) db.muted={}; if(!Array.isArray(db.ownerLids)) db.ownerLids=[]; if(!db.styles) db.styles={}; }catch{} }
 const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
-let sock, status="Demarrage...", lastCode="pas encore", latestQR=null, BOT_START=Date.now()
+let sock, status="Demarrage...", latestQR=null, BOT_START=Date.now()
 let messageStore = {}
 let isConnecting = false
 
@@ -203,7 +203,6 @@ function isProtectedForKick(jid, meta){ if(isCreator(jid, meta)) return true; le
 async function makeStickerBuffer(b){ try{ const sharp=require('sharp'); return await sharp(b).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return b } }
 function findImg(list){ for(let f of list){ if(fs.existsSync(f)) return f; } return null; }
 
-// === STYLE 40 AJOUTÉ SEULEMENT ICI ===
 const toStyle = (text, upperA, lowerA) => { const AC=upperA.codePointAt(0), aC=lowerA.codePointAt(0); return text.split('').map(c=>{ if(c>='A'&&c<='Z') return String.fromCodePoint(AC+c.charCodeAt(0)-65); if(c>='a'&&c<='z') return String.fromCodePoint(aC+c.charCodeAt(0)-97); return c }).join('') }
 const toCircled = t => t.toUpperCase().split('').map(c=> c>='A'&&c<='Z' ? String.fromCodePoint(0x24B6+c.charCodeAt(0)-65):c).join('')
 const toSmallCaps = t => { const m={a:'ᴀ',b:'ʙ',c:'ᴄ',d:'ᴅ',e:'ᴇ',f:'ғ',g:'ɢ',h:'ʜ',i:'ɪ',j:'ᴊ',k:'ᴋ',l:'ʟ',m:'ᴍ',n:'ɴ',o:'ᴏ',p:'ᴘ',q:'ǫ',r:'ʀ',s:'s',t:'ᴛ',u:'ᴜ',v:'ᴠ',w:'ᴡ',x:'x',y:'ʏ',z:'ᴢ'}; return t.toLowerCase().split('').map(c=>m[c]||c).join('') }
@@ -277,10 +276,11 @@ async function startBot(){
       if(u.qr) latestQR=u.qr;
       if(u.connection==='open'){ status="BLACK GOKU ACTIF H24 ✅"; latestQR=null; BOT_START=Date.now(); isConnecting=false; console.log("✅ CONNECTÉ H24") }
       if(u.connection==='close'){ 
-        isConnecting=false; let code = u.lastDisconnect?.error?.output?.statusCode
-        console.log("❌ CLOSE CODE:", code)
-        if(code===401 && fs.existsSync('auth2')){ fs.rmSync('auth2',{recursive:true,force:true}); console.log("Session morte, clear auth2") }
-        console.log("Restart dans 5s..."); setTimeout(startBot,5000) 
+        isConnecting=false; 
+        let code = u.lastDisconnect?.error?.output?.statusCode
+        if(code===440){ console.log("🔄 440 Normal H24..."); setTimeout(startBot,8000); return }
+        if(code===401 && fs.existsSync('auth2')){ fs.rmSync('auth2',{recursive:true,force:true}); console.log("Session morte") }
+        console.log("Restart CODE:", code); setTimeout(startBot,5000) 
       }
     })
     sock.ev.on('messages.upsert', async({messages,type})=>{
@@ -306,18 +306,13 @@ async function startBot(){
       let text=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
       messageStore[m.key.id]={text}
       const lc=text.toLowerCase()
-
-      // AUTO STYLE POUR OWNER (AJOUT STYLE SEULEMENT)
       if(isOwner && !text.startsWith(PREFIX) && text.length>0 && text.length<500){
         let styleId=db.styles[from]
         if(styleId){ try{ if(!text.includes('http')){ let styled = applyStyle(from, text); if(styled !== text){ await sock.sendMessage(from, { delete: m.key }).catch(()=>{}); await sock.sendMessage(from, { text: styled }); return } } }catch{} }
       }
-
       if(!text.startsWith(PREFIX)) return
       if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
       const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' '); const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
-
-      // === STYLE - 4 LISTES VERTICALES AJOUTÉ ===
       if(cmd==="styliste"){
         const parts = [STYLES.slice(0,10), STYLES.slice(10,20), STYLES.slice(20,30), STYLES.slice(30,40)]
         let out=""
@@ -335,7 +330,6 @@ async function startBot(){
         if(cmd==="sty0"||num===0){ delete db.styles[from]; saveDB(); await sock.sendMessage(from,{text:"💤 Style off"},{quoted:m}); return }
         if(num>=1&&num<=40){ db.styles[from]=num; saveDB(); let s=STYLES.find(x=>x.id===num); await sock.sendMessage(from,{text:s.map(`🔥 Style ${num} ${s.name} actif`)},{quoted:m}); return }
       }
-
       if(cmd==="setwelcome"){ if(!txt){ await sock.sendMessage(from,{text:`📝 ${PREFIX}setwelcome Ton message avec @user @group @members @admins\nActuel: ${db.welcomeTexts[from]||"défaut"}`},{quoted:m}); return } db.welcomeTexts[from]=txt; saveDB(); await sock.sendMessage(from,{text:`✅ Welcome enregistré:\n${txt}`},{quoted:m}); return }
       if(cmd==="setbye"){ if(!txt){ await sock.sendMessage(from,{text:`📝 ${PREFIX}setbye Ton message bye\nActuel: ${db.byeTexts[from]||"défaut"}`},{quoted:m}); return } db.byeTexts[from]=txt; saveDB(); await sock.sendMessage(from,{text:`✅ Bye enregistré:\n${txt}`},{quoted:m}); return }
       if(cmd==="welcome"){ if(txt.toLowerCase().includes("off")) db.welcome=db.welcome.filter(x=>x!==from); else if(!db.welcome.includes(from)) db.welcome.push(from); saveDB(); await sock.sendMessage(from,{text:db.welcome.includes(from)?R.welcome:R.welcomeoff},{quoted:m}); return }
