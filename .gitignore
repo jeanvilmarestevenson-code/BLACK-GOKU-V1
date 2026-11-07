@@ -1,14 +1,36 @@
-node_modules/
+# SESSIONS - TRÈS IMPORTANT
 auth2/
+auth/
+auth_info/
+*.json
+!package.json
+!package-lock.json
 black_db.json
-.env
+
+# MODULES
+node_modules/
 npm-debug.log*
-.DS_Store
-.vscode/
+yarn-debug.log*
+yarn-error.log*
+
+# IMAGES LOCALES (garde les jpg si tu veux mais évite de push gros fichiers)
+# menu.jpg
+# waifu 1.jpg
+# Si tu veux les garder sur GitHub, supprime ces 2 lignes
+waifu 1.jpg
+menu.jpg
+
+# LOGS
+logs/
 *.log
-!menu.jpg
-!goku.jpg
-!waifu 1.jpg
-!waifu1.jpg
-!waifu.jpg
-!MENU.jpg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ENV
+.env
+.env.local
+
+# RENDER
+.render/
