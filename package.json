@@ -1,7 +1,7 @@
 {
-  "name": "black-goku-v1",
+  "name": "black-goku-v111",
   "version": "111.0.0",
-  "description": "BLACK GOKU V111 STYLÉ - Welcome Bye PP Blanche + H24 + Web stylé",
+  "description": "THE GOAT BLACK GOKU V111 - H24",
   "main": "web.js",
   "scripts": {
     "start": "node web.js"
@@ -9,11 +9,10 @@
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.8",
     "express": "^4.18.2",
-    "pino": "^8.17.2",
+    "pino": "^8.16.0",
     "node-cache": "^5.1.2",
     "qrcode": "^1.5.3",
-    "sharp": "^0.33.2",
-    "axios": "^1.6.7"
+    "sharp": "^0.32.6"
   },
   "engines": {
     "node": ">=18.0.0"
