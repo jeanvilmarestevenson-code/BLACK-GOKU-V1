@@ -13,13 +13,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# IMAGES LOCALES (garde les jpg si tu veux mais évite de push gros fichiers)
-# menu.jpg
-# waifu 1.jpg
-# Si tu veux les garder sur GitHub, supprime ces 2 lignes
-waifu 1.jpg
-menu.jpg
-
 # LOGS
 logs/
 *.log
