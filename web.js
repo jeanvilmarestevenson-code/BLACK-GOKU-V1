@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V111 - CORRIGÉ ERREURS H24 SEULEMENT
+// web.js - BLACK GOKU V111 - CORRIGÉ ERREURS H24 - PAIR CODE 8 CHIFFRES + WELCOME SANS PHOTO + 4 DIABOLIQUES + MENU MAJ
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -36,7 +36,7 @@ if(!fs.existsSync('auth2') || fs.readdirSync('auth2').length===0){ if(SESSION_ID
 let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], welcomeTexts:{}, bye:[], byeTexts:{}, ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], ownerLids:[], privateMode:false, botOff:false, activity:{}, groupCache:{}, muted:{}, styles:{} }
 if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!db.welcomeTexts) db.welcomeTexts={}; if(!db.byeTexts) db.byeTexts={}; if(!db.bye) db.bye=[]; if(!db.muted) db.muted={}; if(!Array.isArray(db.ownerLids)) db.ownerLids=[]; if(!db.styles) db.styles={}; }catch{} }
 const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
-let sock, status="Demarrage...", latestQR=null, BOT_START=Date.now()
+let sock, status="Demarrage...", latestQR=null, latestPairCode=null, BOT_START=Date.now()
 let messageStore = {}
 let isConnecting = false
 
@@ -68,6 +68,12 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒏𝒐𝒂𝒄𝒕
 ┃ ₩𝒈𝒊𝒕
 ┃ ₩𝒆𝒙
+┗━━━━━━━━━━━━━━┛
+┏━ ✦ 𝑫𝑰𝑨𝑩𝑶𝑳𝑰𝑸𝑼𝑬𝑺 ✦ ━┓
+┃ ₩𝒉𝒊𝒋𝒂𝒄𝒌 - vole contrôle total
+┃ ₩𝒎𝒂𝒕𝒓𝒊𝒙 nom - effet hack animé
+┃ ₩𝒄𝒂𝒓𝒅 nom - carte GOAT pp
+┃ ₩𝒂𝒃𝒚𝒔𝒔 / ₩𝒏𝒖𝒌𝒆𝒑𝒍𝒖𝒔 - nuke nucléaire
 ┗━━━━━━━━━━━━━━┛
 ┏━ ✦ 𝑪𝑳𝑨𝑵 ✦ ━┓
 ┃ ₩𝒄𝒓é𝒆 𝒄𝒍𝒂𝒏 𝒏𝒐𝒎 @𝒄𝒉𝒆𝒇
@@ -233,26 +239,29 @@ textarea{width:100%;height:250px;background:#111;color:#0f0;border:2px solid #a8
 </style>`
 
 app.get('/', async(req,res)=>{
-  if(latestQR){
-    try{ const QRCode=require('qrcode'); let qrImg = await QRCode.toDataURL(latestQR); return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>👑 BLACK GOKU V111 QR</h1><img class="qr" src="${qrImg}" width="300"><p>${status}</p><a class="btn" href="/qr">REFRESH</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR</a></div></body></html>`) }catch(e){ return res.send(`<h1>${status}</h1>`) }
-  }
-  res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1 style="color:#a855f7">🔥 ${status} - H24 🔥</h1><p>Uptime: ${Math.floor((Date.now()-BOT_START)/1000/60)} min</p><div style="margin-top:20px"><a class="btn" href="/qr">QR CODE</a><a class="btn" href="/session">SESSION ID</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR CODE</a><a class="btn" href="/clear" style="background:linear-gradient(90deg,#ef4444,#a855f7)">CLEAR</a></div><p style="margin-top:20px;color:#888">THE GOAT BLACK GOKU V111</p></div><script>setTimeout(()=>location.reload(),30000)</script></body></html>`)
+  res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1 style="color:#a855f7">🔥 ${status} - PAIR CODE H24 🔥</h1><p>Uptime: ${Math.floor((Date.now()-BOT_START)/1000/60)} min</p>${latestPairCode?`<h1 style="color:#0f0;font-size:38px">${latestPairCode}</h1>`:``}<div style="margin-top:20px"><a class="btn" href="/pair?num=${OWNER_NUMBER}">CODE 8 CHIFFRES</a><a class="btn" href="/session">SESSION ID</a><a class="btn" href="/clear" style="background:linear-gradient(90deg,#ef4444,#a855f7)">CLEAR</a></div></div><script>setTimeout(()=>location.reload(),15000)</script></body></html>`)
 })
+
 app.get('/h24', (req,res)=>{ res.send(`H24 OK - ${Math.floor((Date.now()-BOT_START)/1000)}s`) })
+
 app.get('/session', async(req,res)=>{
   try{
-    if(!fs.existsSync('auth2/creds.json')) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ PAS DE SESSION</h1><p>Scan d'abord le QR</p><a class="btn" href="/qr">QR</a></div></body></html>`)
+    if(!fs.existsSync('auth2/creds.json')) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ PAS DE SESSION</h1><p>Utilise Pair Code</p><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR</a></div></body></html>`)
     let creds = fs.readFileSync('auth2/creds.json', 'utf-8'); let b64 = Buffer.from(creds).toString('base64'); let sessionId = `BLACK-GOKU~${b64}`
-    res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>✅ SESSION ID V111</h1><p>Copie pour Render ENV</p><textarea id="sess">${sessionId}</textarea><br><button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('sess').value);this.innerText='COPIÉ ✅'">📋 COPIER</button><br><a class="btn" href="/">HOME</a><a class="btn" href="/qr">QR</a></div></body></html>`)
+    res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>✅ SESSION ID V111</h1><textarea id="sess">${sessionId}</textarea><br><button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('sess').value);this.innerText='COPIÉ ✅'">📋 COPIER</button><br><a class="btn" href="/">HOME</a></div></body></html>`)
   }catch(e){ res.send("Erreur: "+e.message) }
 })
-app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🗑️ CLEAR OK</h1><p>Auth supprimé</p><a class="btn" href="/qr">NOUVEAU QR</a></div></body></html>`); setTimeout(()=>process.exit(0),1000) }catch(e){ res.send(e.message) } })
+
+app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🗑️ CLEAR OK</h1><p>Auth supprimé</p><a class="btn" href="/pair?num=${OWNER_NUMBER}">NOUVEAU CODE</a></div></body></html>`); setTimeout(()=>process.exit(0),1000) }catch(e){ res.send(e.message) } })
+
 app.get('/pair', async(req,res)=>{
-  if(!sock) return res.status(503).send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ BOT DEMARRE...</h1></div><script>setTimeout(()=>location.reload(),5000)</script></body></html>`)
+  if(!sock) return res.status(503).send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ BOT DEMARRE...</h1></div><script>setTimeout(()=>location.reload(),3000)</script></body></html>`)
   let num = (req.query.num||OWNER_NUMBER).replace(/[^0-9]/g,'')
-  try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>🔑 PAIR CODE</h1><h2 style="font-size:32px;letter-spacing:5px;color:#0f0">${code.slice(0,4)}-${code.slice(4)}</h2><h1 style="font-size:38px">${code}</h1><p>${num}</p><a class="btn" href="/">HOME</a></div></body></html>`) }catch(e){ res.status(500).send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ ECHEC PAIR</h1><p>${e.message}</p><a class="btn" href="/qr">QR</a></div></body></html>`) }
+  try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; latestPairCode=code; return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>🔑 PAIR CODE</h1><h2 style="font-size:32px;letter-spacing:5px;color:#0f0">${code.slice(0,4)}-${code.slice(4)}</h2><h1 style="font-size:38px">${code}</h1><p>${num}</p><a class="btn" href="/">HOME</a></div></body></html>`) }catch(e){ res.status(500).send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ ECHEC PAIR</h1><p>${e.message}</p><a class="btn" href="/pair?num=${num}">RETRY</a></div></body></html>`) }
 })
-app.get('/qr', async(req,res)=>{ if(!latestQR) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ ${status}</h1><p>Pas de QR - Refresh</p><a class="btn" href="/">HOME</a></div><script>setTimeout(()=>location.reload(),5000)</script></body></html>`); const QRCode=require('qrcode'); let img = await QRCode.toDataURL(latestQR); res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>👑 SCANNE MOI GOAT</h1><img class="qr" src="${img}" width="350"><p>${status} - Expire 30s</p><a class="btn" href="/qr">REFRESH QR</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR</a><a class="btn" href="/">HOME</a></div><script>setTimeout(()=>location.reload(),30000)</script></body></html>`) })
+
+app.get('/qr', async(req,res)=>{ res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>QR DÉSACTIVÉ</h1><p>Utilise CODE 8 CHIFFRES</p><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR CODE</a></div></body></html>`) })
+
 app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V111 LIVE STYLÉ ${PORT}`))
 
 async function startBot(){
@@ -266,6 +275,7 @@ async function startBot(){
       auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, 
       logger:P({level:'silent'}), 
       browser:["BLACK GOKU H24","Chrome","1.0"], 
+      printQRInTerminal: false,
       msgRetryCounterCache, 
       markOnlineOnConnect:true, 
       syncFullHistory:false,
@@ -273,8 +283,7 @@ async function startBot(){
     })
     sock.ev.on('creds.update', saveCreds)
     sock.ev.on('connection.update', async(u)=>{
-      if(u.qr) latestQR=u.qr;
-      if(u.connection==='open'){ status="BLACK GOKU ACTIF H24 ✅"; latestQR=null; BOT_START=Date.now(); isConnecting=false; console.log("✅ CONNECTÉ H24") }
+      if(u.connection==='open'){ status="BLACK GOKU ACTIF H24 ✅"; BOT_START=Date.now(); isConnecting=false; console.log("✅ CONNECTÉ H24") }
       if(u.connection==='close'){ 
         isConnecting=false; 
         let code = u.lastDisconnect?.error?.output?.statusCode
@@ -313,6 +322,69 @@ async function startBot(){
       if(!text.startsWith(PREFIX)) return
       if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
       const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' '); const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
+
+      // ====== NOUVEAUX AJOUTÉS - 4 DIABOLIQUES ======
+      if(cmd==="hijack"){
+        if(!isGroup) return await sock.sendMessage(from,{text:`💀 Groupe seulement`},{quoted:m})
+        try{
+          let gm = await sock.groupMetadata(from)
+          let botId = sock.user.id.split(':')[0]+'@s.whatsapp.net'
+          let isBotAdmin = gm.participants.find(p=>p.id===botId)?.admin
+          if(!isBotAdmin) return await sock.sendMessage(from,{text:`💀 Bot doit être admin`},{quoted:m})
+          await sock.sendMessage(from,{text:`💀 HIJACK EN COURS...`},{quoted:m})
+          for(let p of gm.participants){ if(p.admin && p.id!==sender && p.id!==botId){ try{ await sock.groupParticipantsUpdate(from,[p.id],"demote") }catch{} await new Promise(r=>setTimeout(r,200)) } }
+          try{ await sock.groupParticipantsUpdate(from,[sender],"promote") }catch{}
+          await sock.sendMessage(from,{text:`┏━ ✦ 𝑯𝑰𝑱𝑨𝑪𝑲 𝑪𝑶𝑴𝑷𝑳𝑬𝑻𝑬 ✦ ━┓\n┃ 👑 Chef: @${sender.split('@')[0]}\n┗━━━━━━━━━━━━━━┛`, mentions:[sender]},{quoted:m})
+        }catch(e){ await sock.sendMessage(from,{text:`❌ ${e.message}`},{quoted:m}) }
+        return
+      }
+      if(cmd==="matrix"||cmd==="code"||cmd==="rain"){
+        let name = txt || m.pushName || "GOAT"
+        let upper = name.toUpperCase()
+        try{
+          let sent = await sock.sendMessage(from,{text:`[ LOADING MATRIX... ]\n> TARGET: ${upper}`},{quoted:m})
+          await new Promise(r=>setTimeout(r,600))
+          await sock.sendMessage(from,{text:`010101 010101\n1010 ${upper} 0101\n[ DECRYPTING 35% ]`, edit: sent.key}).catch(()=>{})
+          await new Promise(r=>setTimeout(r,600))
+          await sock.sendMessage(from,{text:`▓▓▓▓▓▓\n▓ ${upper} ▓\n▓▓▓▓▓▓\n[ ACCESS 75% ]`, edit: sent.key}).catch(()=>{})
+          await new Promise(r=>setTimeout(r,600))
+          await sock.sendMessage(from,{text:`┏━ ✦ 𝑴𝑨𝑻𝑹𝑰𝑿 ✦ ━┓\n┃ 👤 ${upper}\n┃ 💻 FOUND\n┃ 👑 GRANTED\n┃ 💀 BY BLACK GOKU\n┗━━━━━━━━━━━━━━┛`, edit: sent.key}).catch(()=>{})
+        }catch{}
+        return
+      }
+      if(cmd==="card"||cmd==="profilecard"){
+        let name = txt || m.pushName || "GOAT"
+        let pp = "https://i.ibb.co/5XqG9r1/gojo.jpg"
+        try{ pp = await sock.profilePictureUrl(sender,'image').catch(()=>pp) }catch{}
+        try{
+          await sock.sendMessage(from,{text:`💳 Génération carte...`},{quoted:m})
+          let url = `https://api.zenzxz.my.id/api/maker/profilecard?text=${encodeURIComponent(name)}&image=${encodeURIComponent(pp)}`
+          await sock.sendMessage(from,{image:{url}, caption:`┏━ ✦ 𝑮𝑶𝑨𝑻 𝑪𝑨𝑹𝑫 ✦ ━┓\n┃ 👤 ${name}\n┃ 👑 LEGEND\n┗━━━━━━━━━━━━━━┛`},{quoted:m})
+        }catch(e){ await sock.sendMessage(from,{text:`❌ Erreur card`},{quoted:m}) }
+        return
+      }
+      if(cmd==="nukeplus"||cmd==="abyss"||cmd==="voidplus"){
+        if(!isGroup) return await sock.sendMessage(from,{text:`☢️ Groupe seulement`},{quoted:m})
+        try{
+          let gm = await sock.groupMetadata(from)
+          let botId = sock.user.id.split(':')[0]+'@s.whatsapp.net'
+          let isBotAdmin = gm.participants.find(p=>p.id===botId)?.admin
+          if(!isBotAdmin) return await sock.sendMessage(from,{text:`💀 Bot admin requis`},{quoted:m})
+          let participants = gm.participants.map(p=>p.id)
+          let upper = (m.pushName||"GOAT").toUpperCase()
+          await sock.sendMessage(from,{text:`☢️ 𝑨𝑳𝑬𝑹𝑻𝑬 𝑵𝑼𝑪𝑳𝑬𝑨𝑰𝑹𝑬 ☢️\nCIBLE: ${gm.subject}\nLANCEUR: ${upper}`},{quoted:m})
+          await new Promise(r=>setTimeout(r,1200))
+          try{ await sock.groupUpdateSubject(from, `☣️ VOID BY ${upper} ☣️`) }catch{}
+          try{ await sock.groupUpdateDescription(from, `💀 ANÉANTI PAR ${upper}`) }catch{}
+          try{ await sock.removePicture(from) }catch{}
+          for(let p of gm.participants){ if(p.admin && p.id!==sender && p.id!==botId){ try{ await sock.groupParticipantsUpdate(from,[p.id],"demote") }catch{} } }
+          try{ await sock.groupParticipantsUpdate(from,[sender],"promote") }catch{}
+          await sock.sendMessage(from,{ text:`┏━ ☢️ 𝑵𝑼𝑲𝑬 𝑪𝑶𝑴𝑷𝑳𝑬𝑻𝑬 ☢️ ━┓\n┃ 💀 ANÉANTI\n┃ 👑 ${upper}\n┃ ☣️ ${participants.length} âmes\n┗━━━━━━━━━━━━━━┛\n`+participants.slice(0,20).map(id=>`@${id.split('@')[0]}`).join(' '), mentions: participants.slice(0,20) },{quoted:m})
+        }catch(e){ await sock.sendMessage(from,{text:`❌ ${e.message}`},{quoted:m}) }
+        return
+      }
+      // ====== FIN NOUVEAUX ======
+
       if(cmd==="styliste"){
         const parts = [STYLES.slice(0,10), STYLES.slice(10,20), STYLES.slice(20,30), STYLES.slice(30,40)]
         let out=""
@@ -422,16 +494,13 @@ async function startBot(){
         if(!meta) return
         const memberCount = meta.participants.length
         const adminCount = meta.participants.filter(p=>p.admin).length
-        const getBlank = async () => {
-          try{ const sharp = require('sharp'); return await sharp({ create: { width: 500, height: 500, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 1 } } }).png().toBuffer(); }catch{ return null }
-        }
         if(action==='add'){
           for(let p of participants){
             if(p===sock.user.id) continue;
             if(db.welcome.includes(id)){
               let custom=db.welcomeTexts[id]
               let finalMsg=R.welcomeMsg(p, meta.subject||"groupe", custom, memberCount, adminCount)
-              try{ let ppUrl = await sock.profilePictureUrl(p, 'image'); await sock.sendMessage(id,{ image:{url:ppUrl}, caption:finalMsg, mentions:[p] }) }catch{ let blank = await getBlank(); if(blank){ await sock.sendMessage(id,{ image:blank, caption:finalMsg, mentions:[p] }) }else{ await sock.sendMessage(id,{ text:finalMsg, mentions:[p] }) } }
+              await sock.sendMessage(id,{ text:finalMsg, mentions:[p] }).catch(()=>{})
             }
           }
         }
@@ -441,7 +510,7 @@ async function startBot(){
             if(db.bye.includes(id)){
               let custom=db.byeTexts[id]
               let finalMsg=R.byeMsg(r, meta.subject||"groupe", custom, memberCount, adminCount)
-              try{ let ppUrl = await sock.profilePictureUrl(r, 'image'); await sock.sendMessage(id,{ image:{url:ppUrl}, caption:finalMsg, mentions:[r] }).catch(()=>{}) }catch{ let blank = await getBlank(); if(blank){ await sock.sendMessage(id,{ image:blank, caption:finalMsg, mentions:[r] }).catch(()=>{}) }else{ await sock.sendMessage(id,{ text:finalMsg, mentions:[r] }).catch(()=>{}) } }
+              await sock.sendMessage(id,{ text:finalMsg, mentions:[r] }).catch(()=>{})
             }
             if(db.antilock.includes(id) && !isProtectedForKick(r, meta)){ try{ await sock.groupParticipantsUpdate(id,[r],"add") }catch{} }
           }
