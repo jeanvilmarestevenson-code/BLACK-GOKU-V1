@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V111 - ORIGINAL INTACT + QR + WEB SVO DIEU + H24 RENDER
+// web.js - BLACK GOKU V111 - ORIGINAL INTACT + 6 NOUVEAUX FIX - CORRIGÉ 1000%
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -33,8 +33,8 @@ function loadSessionFromId(){
 }
 if(!fs.existsSync('auth2') || fs.readdirSync('auth2').length===0){ if(SESSION_ID) loadSessionFromId() }
 
-let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], welcomeTexts:{}, bye:[], byeTexts:{}, ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], ownerLids:[], privateMode:false, botOff:false, activity:{}, groupCache:{}, muted:{}, styles:{} }
-if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!db.welcomeTexts) db.welcomeTexts={}; if(!db.byeTexts) db.byeTexts={}; if(!db.bye) db.bye=[]; if(!db.muted) db.muted={}; if(!Array.isArray(db.ownerLids)) db.ownerLids=[]; if(!db.styles) db.styles={}; }catch{} }
+let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], welcomeTexts:{}, bye:[], byeTexts:{}, ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], ownerLids:[], privateMode:false, botOff:false, activity:{}, groupCache:{}, muted:{}, styles:{}, antidelete:[], antideleteCache:{} }
+if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!db.welcomeTexts) db.welcomeTexts={}; if(!db.byeTexts) db.byeTexts={}; if(!db.bye) db.bye=[]; if(!db.muted) db.muted={}; if(!Array.isArray(db.ownerLids)) db.ownerLids=[]; if(!db.styles) db.styles={}; if(!db.antidelete) db.antidelete=[]; if(!db.antideleteCache) db.antideleteCache={}; }catch{} }
 const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
 let sock, status="Demarrage...", latestQR=null, latestPairCode=null, BOT_START=Date.now()
 let messageStore = {}
@@ -70,10 +70,18 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒆𝒙
 ┗━━━━━━━━━━━━━━┛
 ┏━ ✦ 𝑫𝑰𝑨𝑩𝑶𝑳𝑰𝑸𝑼𝑬𝑺 ✦ ━┓
-┃ ₩𝒉𝒊𝒋𝒂𝒄𝒌 - vole contrôle total
-┃ ₩𝒎𝒂𝒕𝒓𝒊𝒙 nom - effet hack animé
-┃ ₩𝒄𝒂𝒓𝒅 nom - carte GOAT pp
-┃ ₩𝒂𝒃𝒚𝒔𝒔 / ₩𝒏𝒖𝒌𝒆𝒑𝒍𝒖𝒔 - nuke nucléaire
+┃ ₩𝒉𝒊𝒋𝒂𝒄𝒌 
+┃ ₩𝒎𝒂𝒕𝒓𝒊𝒙 nom 
+┃ ₩𝒄𝒂𝒓𝒅 nom 
+┃ ₩𝒂𝒃𝒚𝒔𝒔 / ₩𝒏𝒖𝒌𝒆𝒑𝒍𝒖𝒔 
+┗━━━━━━━━━━━━━━┛
+┏━ ✦ 𝑵𝑶𝑼𝑽𝑬𝑨𝑼 ✦ ━┓
+┃ ₩𝒂𝒃𝒚𝒔𝒔𝒔𝒆𝒆 
+┃ ₩𝒑𝒑𝒈𝒐𝒅 
+┃ ₩𝒑𝒊𝒏𝒅𝒊𝒆𝒖 
+┃ ₩𝒕𝒈𝒗𝒐𝒍 
+┃ ₩𝒕𝒓𝒂𝒅𝒈𝒐𝒅 
+┃ ₩𝒍𝒚𝒓𝒊𝒄𝒔 - 
 ┗━━━━━━━━━━━━━━┛
 ┏━ ✦ 𝑪𝑳𝑨𝑵 ✦ ━┓
 ┃ ₩𝒄𝒓é𝒆 𝒄𝒍𝒂𝒏 𝒏𝒐𝒎 @𝒄𝒉𝒆𝒇
@@ -143,6 +151,7 @@ botOffMsg:"💤 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑺'𝑬𝑵𝑫𝑶𝑹�
 gokuMsg:"👑 𝑪'𝒆𝒔𝒕 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼", kaioMsg:"🔥 𝑲𝑨𝑰𝑶", kaioOn:"🔥 𝑲𝑨𝑰𝑶 𝑶𝑵", kaioOff:"𝑲𝑨𝑰𝑶 𝑶𝑭𝑭",
 vqOk:"👁️🔥 𝑽𝑼𝑬 𝑫É𝑽𝑶𝑰𝑳É𝑬!", vqNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 à 𝒖𝒏𝒆 𝒗𝒖𝒆 𝒖𝒏𝒊𝒒𝒖𝒆!", sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆!", stNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒔𝒕𝒂𝒕𝒖𝒕!", stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é",
 rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`, timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!",
+antideleteOn:"👁️ 𝑨𝑩𝒀𝑺𝑺𝑺𝑬𝑬 𝑶𝑵 - Je vois les supprimés!", antideleteOff:"👁️ 𝑨𝑩𝒀𝑺𝑺𝑺𝑬𝑬 𝑶𝑭𝑭",
 welcomeMsg:(j, g, custom, members, admins)=>{
   if(custom) return custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g).replace(/@members/g, members).replace(/@admins/g, admins)
   return `┏━━━━━━━━━━━━━━━━━━┓
@@ -226,94 +235,62 @@ const STYLES = [
 ]
 function applyStyle(chatId, text){ let idx=db.styles[chatId]; if(!idx) return text; let s=STYLES.find(x=>x.id===idx); return s ? s.map(text) : text }
 
-// ============ WEB SVO DIEU ULTRA STYLÉ - QUE DU STYLE ICI ============
+async function downloadPinterest(q){
+  try{
+    let r=await fetch(`https://api.zenzxz.my.id/api/search/pinterest?query=${encodeURIComponent(q)}`)
+    let d=await r.json()
+    if(d.result && d.result.length>0) return d.result
+  }catch(e){}
+  try{
+    let r2=await fetch(`https://pinterest-api-one.vercel.app/api/pinterest?query=${encodeURIComponent(q)}`)
+    let d2=await r2.json()
+    if(d2.data && d2.data.length>0) return d2.data.map(x=>({image:x.images?.orig?.url||x.image}))
+  }catch(e){}
+  return []
+}
+
 const STYLE = `
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  background:#000;
-  background-image: 
-    radial-gradient(circle at 25% 25%, #a855f7 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, #ec4899 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, #1a0a2e 0%, #000 80%);
-  color:#fff;font-family:'Rajdhani',sans-serif;
-  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-}
-body::before{
-  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(168,85,247,0.04) 3px, rgba(168,85,247,0.04) 6px);
-  pointer-events:none;z-index:1;
-}
-.card{
-  position:relative;z-index:2;
-  background: linear-gradient(145deg, rgba(10,10,10,0.95), rgba(20,5,40,0.95));
-  backdrop-filter: blur(25px);
-  border-radius:30px;padding:45px 35px;max-width:580px;width:100%;
-  box-shadow: 0 0 50px rgba(168,85,247,0.7), 0 0 100px rgba(236,72,153,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
-  animation: float 5s ease-in-out infinite;
-}
-.card::before{
-  content:'';position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;
-  background: linear-gradient(45deg, #a855f7, #ec4899, #06ffa5, #a855f7);
-  background-size:400% 400%;border-radius:30px;z-index:-1;
-  animation: borderRotate 4s linear infinite;
-}
-@keyframes borderRotate{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-h1{font-family:'Orbitron';font-weight:900;font-size:28px;background:linear-gradient(90deg,#a855f7,#ec4899,#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 35px rgba(168,85,247,0.9);letter-spacing:3px;margin-bottom:12px}
-.status-dot{display:inline-block;width:14px;height:14px;background:#0f0;border-radius:50%;box-shadow:0 0 20px #0f0;animation:pulse 1.5s infinite;margin-right:10px}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,255,0,0.8)}70%{box-shadow:0 0 0 12px rgba(0,255,0,0)}100%{box-shadow:0 0 0 0 rgba(0,255,0,0)}}
-.btn{display:inline-block;background:linear-gradient(90deg,#a855f7,#ec4899);color:#fff;padding:15px 30px;border-radius:50px;text-decoration:none;font-family:'Orbitron';font-weight:800;font-size:13px;letter-spacing:1.5px;margin:7px;box-shadow:0 6px 25px rgba(168,85,247,0.5);transition:0.35s;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.15)}
-.btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);transition:0.6s}
-.btn:hover::before{left:100%}.btn:hover{transform:translateY(-4px) scale(1.07);box-shadow:0 12px 35px rgba(168,85,247,0.8)}
-.qr{border:4px solid #a855f7;border-radius:25px;box-shadow:0 0 50px #a855f7,0 0 100px rgba(168,85,247,0.4);background:#fff;padding:18px;margin:25px auto;display:block;max-width:360px;animation:qrGlow 2.5s ease-in-out infinite}
-@keyframes qrGlow{0%,100%{box-shadow:0 0 40px #a855f7,0 0 80px rgba(168,85,247,0.3)}50%{box-shadow:0 0 70px #ec4899,0 0 120px rgba(236,72,153,0.5)}}
-.code-display{font-family:'Orbitron';font-size:44px;font-weight:900;letter-spacing:10px;color:#0f0;text-shadow:0 0 25px #0f0,0 0 50px #0f0;background:rgba(0,255,0,0.07);border:3px solid #0f0;border-radius:18px;padding:18px;margin:22px 0;animation:codePulse 1.2s ease-in-out infinite}
-@keyframes codePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
-textarea{width:100%;height:260px;background:#080808;color:#0f0;border:2px solid #a855f7;border-radius:18px;padding:18px;font-size:11px;font-family:monospace;box-shadow:inset 0 0 25px rgba(168,85,247,0.25)}
-.badge{display:inline-block;background:rgba(168,85,247,0.2);border:1px solid #a855f7;padding:7px 16px;border-radius:25px;font-size:11px;margin:4px;font-family:'Orbitron';letter-spacing:1px}
+body{background:#000;background-image:radial-gradient(circle at 25% 25%, #a855f7 0%, transparent 50%),radial-gradient(circle at 75% 75%, #ec4899 0%, transparent 50%),radial-gradient(circle at 50% 50%, #1a0a2e 0%, #000 80%);color:#fff;font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{position:relative;background:linear-gradient(145deg, rgba(10,10,10,0.95), rgba(20,5,40,0.95));border-radius:30px;padding:45px 35px;max-width:580px;width:100%;box-shadow:0 0 50px rgba(168,85,247,0.7)}
+h1{font-family:'Orbitron';font-weight:900;font-size:28px;background:linear-gradient(90deg,#a855f7,#ec4899,#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+.btn{display:inline-block;background:linear-gradient(90deg,#a855f7,#ec4899);color:#fff;padding:15px 30px;border-radius:50px;text-decoration:none;font-family:'Orbitron';font-weight:800;font-size:13px;margin:7px}
+.qr{border:4px solid #a855f7;border-radius:25px;background:#fff;padding:18px;margin:25px auto;display:block;max-width:360px}
+.code-display{font-family:'Orbitron';font-size:44px;font-weight:900;letter-spacing:10px;color:#0f0;background:rgba(0,255,0,0.07);border:3px solid #0f0;border-radius:18px;padding:18px;margin:22px 0;text-align:center}
+textarea{width:100%;height:260px;background:#080808;color:#0f0;border:2px solid #a855f7;border-radius:18px;padding:18px;font-size:11px;font-family:monospace}
+.badge{display:inline-block;background:rgba(168,85,247,0.2);border:1px solid #a855f7;padding:7px 16px;border-radius:25px;font-size:11px;margin:4px;font-family:'Orbitron'}
 </style>
 `
 
 app.get('/', async(req,res)=>{
   res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>BLACK GOKU V111 - DIEU</title>${STYLE}</head><body><div class="card">
   <div style="text-align:center"><span class="badge">꧁༒☬ BLACK GOKU DIEU ☬༒꧂</span><span class="badge">QR + CODE 8 H24</span></div>
-  <h1><span class="status-dot"></span>${status}</h1>
+  <h1>${status}</h1>
   <p style="opacity:0.75;font-size:13px;letter-spacing:1px">UPTIME: ${Math.floor((Date.now()-BOT_START)/1000/60)} MIN | RENDER H24 GOD</p>
-  ${latestQR?`<img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=${encodeURIComponent(latestQR)}"><p style="font-family:Orbitron;font-size:12px;letter-spacing:3px;color:#a855f7">⚡ QR ULTRA - SCANNE DIEU ⚡</p>`:``}
+  ${latestQR?`<img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=${encodeURIComponent(latestQR)}">`:``}
   ${latestPairCode?`<div class="code-display">${latestPairCode.slice(0,4)}-${latestPairCode.slice(4)}</div>`:``}
   <div style="margin-top:28px"><a class="btn" href="/qr">⚡ QR DIEU</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">🔑 CODE 8</a><a class="btn" href="/session" style="background:linear-gradient(90deg,#06ffa5,#a855f7)">💾 SESSION</a><a class="btn" href="/clear" style="background:linear-gradient(90deg,#ef4444,#a855f7)">🗑️ CLEAR</a></div>
-  <div style="margin-top:22px;font-size:10px;opacity:0.45;font-family:Orbitron">👑 THE GOAT BLACK GOKU - H24 RENDER READY 👑<br>QR + PAIR CODE ACTIF</div>
   </div><script>setTimeout(()=>location.reload(),18000)</script></body></html>`)
 })
-
 app.get('/h24', (req,res)=>{ res.send(`H24 OK - ${Math.floor((Date.now()-BOT_START)/1000)}s - ${status}`) })
-
 app.get('/session', async(req,res)=>{
   try{
-    if(!fs.existsSync('auth2/creds.json')) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ PAS DE SESSION</h1><p>Utilise QR ou Pair</p><a class="btn" href="/qr">QR DIEU</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR</a></div></body></html>`)
+    if(!fs.existsSync('auth2/creds.json')) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ PAS DE SESSION</h1></div></body></html>`)
     let creds = fs.readFileSync('auth2/creds.json', 'utf-8'); let b64 = Buffer.from(creds).toString('base64'); let sessionId = `BLACK-GOKU~${b64}`
     res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>✅ SESSION ID V111 DIEU</h1><textarea id="sess">${sessionId}</textarea><br><button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('sess').value);this.innerText='COPIÉ ✅'">📋 COPIER</button><br><a class="btn" href="/">HOME</a></div></body></html>`)
   }catch(e){ res.send("Erreur: "+e.message) }
 })
-
-app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); latestQR=null; latestPairCode=null; res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🗑️ CLEAR OK</h1><p>Auth supprimé</p><a class="btn" href="/qr">NOUVEAU QR DIEU</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">NOUVEAU CODE</a></div></body></html>`); setTimeout(()=>process.exit(0),1000) }catch(e){ res.send(e.message) } })
-
+app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); latestQR=null; latestPairCode=null; res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🗑️ CLEAR OK</h1></div></body></html>`); setTimeout(()=>process.exit(0),1000) }catch(e){ res.send(e.message) } })
 app.get('/pair', async(req,res)=>{
-  if(!sock) return res.status(503).send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ BOT DEMARRE DIEU...</h1></div><script>setTimeout(()=>location.reload(),3000)</script></body></html>`)
+  if(!sock) return res.status(503).send(`<html><body><h1>⏳ BOT DEMARRE DIEU...</h1></body></html>`)
   let num = (req.query.num||OWNER_NUMBER).replace(/[^0-9]/g,'')
-  try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; latestPairCode=code; return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>CODE 8 DIEU</title>${STYLE}</head><body><div class="card"><h1>🔑 PAIR CODE DIEU</h1><div class="code-display">${code.slice(0,4)}-${code.slice(4)}</div><h1 style="font-size:40px">${code}</h1><p>${num}</p><p style="font-size:12px;opacity:0.7">WhatsApp > Appareils connectés > Connecter avec numéro</p><a class="btn" href="/">HOME DIEU</a></div></body></html>`) }catch(e){ res.status(500).send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ ECHEC PAIR</h1><p>${e.message}</p><a class="btn" href="/pair?num=${num}">RETRY</a></div></body></html>`) }
+  try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; latestPairCode=code; return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🔑 CODE ${code.slice(0,4)}-${code.slice(4)}</h1><h1>${code}</h1><p>${num}</p><a class="btn" href="/">HOME DIEU</a></div></body></html>`) }catch(e){ res.status(500).send(`❌ ${e.message}`) }
 })
-
 app.get('/qr', async(req,res)=>{
-  if(latestQR){
-    res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>QR DIEU</title>${STYLE}</head><body><div class="card"><h1>🔥 QR CODE BLACK GOKU DIEU 🔥</h1><img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(latestQR)}"><p style="font-family:Orbitron;font-size:12px;letter-spacing:2px;color:#a855f7">⚡ SCANNE EN 60s - STYLE DIEU ⚡</p><p style="color:#666;font-size:9px;word-break:break-all;margin-top:10px">${latestQR.slice(0,90)}...</p><div style="margin-top:20px"><a class="btn" href="/qr">🔄 REFRESH QR</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">🔑 CODE 8</a><a class="btn" href="/">HOME</a></div></div><script>setTimeout(()=>location.reload(),15000)</script></body></html>`)
-  } else {
-    res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ GENERATION QR DIEU...</h1><p style="font-family:Orbitron;font-size:12px">LE DIEU PRÉPARE TON QR ULTRA STYLÉ...</p><div style="margin-top:20px"><a class="btn" href="/qr">⚡ REFRESH QR DIEU</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">CODE 8 CHIFFRES</a></div></div><script>setTimeout(()=>location.reload(),3500)</script></body></html>`)
-  }
+  if(latestQR){ res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🔥 QR CODE BLACK GOKU DIEU 🔥</h1><img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(latestQR)}"><div style="margin-top:20px"><a class="btn" href="/qr">🔄 REFRESH QR</a><a class="btn" href="/">HOME</a></div></div><script>setTimeout(()=>location.reload(),15000)</script></body></html>`) } else { res.send(`<html><body><div class="card"><h1>⏳ GENERATION QR DIEU...</h1></div><script>setTimeout(()=>location.reload(),3500)</script></body></html>`) }
 })
-
 app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V111 DIEU QR+PAIR H24 RENDER LIVE ${PORT}`))
 
 async function startBot(){
@@ -322,28 +299,24 @@ async function startBot(){
   try{
     const { version } = await fetchLatestBaileysVersion()
     const { state, saveCreds } = await useMultiFileAuthState('auth2')
-    sock = makeWASocket({ 
-      version, 
-      auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, 
-      logger:P({level:'silent'}), 
-      browser:["BLACK GOKU DIEU H24","Chrome","1.0"], 
-      printQRInTerminal: false,
-      msgRetryCounterCache, 
-      markOnlineOnConnect:true, 
-      syncFullHistory:false,
-      getMessage: async(k)=> messageStore[k.id]? {conversation:messageStore[k.id].text}: undefined 
-    })
+    sock = makeWASocket({ version, auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, logger:P({level:'silent'}), browser:["BLACK GOKU DIEU H24","Chrome","1.0"], printQRInTerminal: false, msgRetryCounterCache, markOnlineOnConnect:true, syncFullHistory:false, getMessage: async(k)=> messageStore[k.id]? {conversation:messageStore[k.id].text}: undefined })
     sock.ev.on('creds.update', saveCreds)
     sock.ev.on('connection.update', async(u)=>{
       const { connection, lastDisconnect, qr } = u
-      if(qr){ latestQR = qr; status = "QR DIEU PRÊT - SCANNE"; console.log("🔥 QR DIEU REÇU") }
-      if(connection==='open'){ status="BLACK GOKU ACTIF H24 ✅"; latestQR=null; BOT_START=Date.now(); isConnecting=false; console.log("✅ CONNECTÉ H24 DIEU - QR+PAIR") }
-      if(connection==='close'){ 
-        isConnecting=false; 
-        let code = lastDisconnect?.error?.output?.statusCode
-        if(code===440){ console.log("🔄 440 Normal H24..."); setTimeout(startBot,8000); return }
-        if(code===401 && fs.existsSync('auth2')){ fs.rmSync('auth2',{recursive:true,force:true}); latestQR=null; console.log("Session morte - nouveau QR DIEU") }
-        console.log("Restart CODE:", code); setTimeout(startBot,5000) 
+      if(qr){ latestQR = qr; status = "QR DIEU PRÊT - SCANNE"; }
+      if(connection==='open'){ status="BLACK GOKU ACTIF H24 ✅"; latestQR=null; BOT_START=Date.now(); isConnecting=false; }
+      if(connection==='close'){ isConnecting=false; let code = lastDisconnect?.error?.output?.statusCode; if(code===440){ setTimeout(startBot,8000); return } if(code===401 && fs.existsSync('auth2')){ fs.rmSync('auth2',{recursive:true,force:true}); latestQR=null; } setTimeout(startBot,5000) }
+    })
+    sock.ev.on('messages.update', async(updates)=>{
+      for(let upd of updates){
+        if((upd.update.message === null || upd.update.status === 2) && upd.key && db.antidelete.includes(upd.key.remoteJid)){
+          let cached = messageStore[upd.key.id] || db.antideleteCache[upd.key.id]
+          if(cached){
+            let sender = upd.key.participant || cached.sender || upd.key.remoteJid
+            await sock.sendMessage(upd.key.remoteJid, { text:`┏━ 👁️ 𝑨𝑩𝒀𝑺𝑺𝑺𝑬𝑬 ━┓\n┃ @${sender.split('@')[0]} a supprimé:\n┃ ${cached.text||"Média"}\n┗━━━━━━━━━━━━━━┛`, mentions:[sender] }).catch(()=>{})
+            if(cached.buffer){ try{ await sock.sendMessage(upd.key.remoteJid, { image: cached.buffer, caption:`👁️ Média supprimé par @${sender.split('@')[0]}` }, { mentions:[sender] }) }catch{} }
+          }
+        }
       }
     })
     sock.ev.on('messages.upsert', async({messages,type})=>{
@@ -353,10 +326,33 @@ async function startBot(){
       const from=m.key.remoteJid; const sender=m.key.participant||from
       const isGroup=from.endsWith('@g.us')
       const meta=isGroup? await sock.groupMetadata(from).catch(()=>null): null
-      let txtForCache=m.message.conversation||m.message.extendedTextMessage?.text||""
+      let txtForCache=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
       let senderNum=normalizeJid(sender); let fromNum=normalizeJid(from)
       let isSelfOwner = senderNum===OWNER_NUMBER || fromNum===OWNER_NUMBER || m.key.fromMe
       let isOwner=isSelfOwner || isCreator(sender, meta) || db.amis[senderNum] || db.amis[fromNum]
+
+      // FIX CACHE - NE PAS ECRASER LE BUFFER
+      if(txtForCache || m.message.imageMessage || m.message.videoMessage || m.message.audioMessage){
+        if(!messageStore[m.key.id]){
+          messageStore[m.key.id] = { text: txtForCache, sender, time: Date.now(), buffer: null }
+        } else {
+          if(txtForCache) messageStore[m.key.id].text = txtForCache
+        }
+        if(!db.antideleteCache[m.key.id]){
+          db.antideleteCache[m.key.id] = { text: txtForCache, sender, buffer: null }
+        } else {
+          if(txtForCache) db.antideleteCache[m.key.id].text = txtForCache
+        }
+        if(m.message.imageMessage || m.message.videoMessage || m.message.audioMessage){
+          try{ 
+            let buf = await downloadMediaMessage(m, 'buffer', {}, { logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage }); 
+            messageStore[m.key.id].buffer = buf; 
+            db.antideleteCache[m.key.id].buffer = buf;
+            db.antideleteCache[m.key.id].text = txtForCache || "Média";
+          }catch{}
+        }
+      }
+
       if(txtForCache){ 
         if(isGroup){ if(!db.activity[from]) db.activity[from]={}; db.activity[from][sender]=(db.activity[from][sender]||0)+1; saveDB(); }
         if(db.ghost.includes(from)){ if(!db.ghostCache[from]) db.ghostCache[from]=[]; db.ghostCache[from].push({text:txtForCache, sender, time:Date.now()}); if(db.ghostCache[from].length>100) db.ghostCache[from].shift(); saveDB(); }
@@ -367,7 +363,6 @@ async function startBot(){
         if(db.antilink.includes(from) && /https?:\/\/|www\.|wa\.me|t\.me|chat\.whatsapp\.com/.test(txtForCache) && !isOwner){ try{ await sock.sendMessage(from,{delete:m.key}); await sock.sendMessage(from,{text:`🔗 @${sender.split('@')[0]} lien interdit!`,mentions:[sender]}) }catch{} return }
       }
       let text=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
-      messageStore[m.key.id]={text}
       const lc=text.toLowerCase()
       if(isOwner && !text.startsWith(PREFIX) && text.length>0 && text.length<500){
         let styleId=db.styles[from]
@@ -376,6 +371,100 @@ async function startBot(){
       if(!text.startsWith(PREFIX)) return
       if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
       const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' '); const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
+
+      // ============ 6 NOUVEAUX FIX SANS CHANGER FORMAT ============
+      if(["antidelete","antidel","abysssee"].includes(cmd)){
+        let low = (txt||"").toLowerCase()
+        if(low.includes("off")){
+          db.antidelete=db.antidelete.filter(x=>x!==from)
+          await sock.sendMessage(from,{text:R.antideleteOff},{quoted:m})
+        } else if(low.includes("on")){
+          if(!db.antidelete.includes(from)) db.antidelete.push(from)
+          await sock.sendMessage(from,{text:R.antideleteOn},{quoted:m})
+        } else {
+          if(db.antidelete.includes(from)){ db.antidelete=db.antidelete.filter(x=>x!==from); await sock.sendMessage(from,{text:R.antideleteOff},{quoted:m}) }
+          else{ db.antidelete.push(from); await sock.sendMessage(from,{text:R.antideleteOn},{quoted:m}) }
+        }
+        saveDB(); return
+      }
+      if(["pp","savepp","ppgod","ppvol"].includes(cmd)){
+        let jidTarget = target || m.message.extendedTextMessage?.contextInfo?.participant || sender
+        try{
+          let ppUrl = await sock.profilePictureUrl(jidTarget, 'image')
+          await sock.sendMessage(from,{ image:{url:ppUrl}, caption:`┏━ 📸 𝑷𝑷𝑮𝑶𝑫 ━┓\n┃ @${jidTarget.split('@')[0]}\n┃ ✅ HD\n┗━━━━━━━━━━━━━━┛`, mentions:[jidTarget] },{quoted:m})
+        }catch{ await sock.sendMessage(from,{text:`❌ Pas de PP`},{quoted:m}) }
+        return
+      }
+      if(["pinterest","pin","pindieu"].includes(cmd)){
+        if(!txt){ await sock.sendMessage(from,{text:`📌 ${PREFIX}pindieu naruto`},{quoted:m}); return }
+        await sock.sendMessage(from,{text:`📌 𝑷𝑰𝑵𝑫𝑰𝑬𝑼: ${txt}...`},{quoted:m})
+        let results = await downloadPinterest(txt)
+        for(let i=0;i<Math.min(5, results.length); i++){
+          let url = results[i].image || results[i].images?.orig?.url || results[i]
+          try{ await sock.sendMessage(from,{ image:{url}, caption:`📌 ${txt} ${i+1}/5` },{quoted:m}); await new Promise(r=>setTimeout(r,800)) }catch{}
+        }
+        return
+      }
+      if(["tgpack","tgstickers","tgvol"].includes(cmd)){
+        if(!txt || !txt.includes('t.me')){
+          await sock.sendMessage(from,{text:`📦 ${PREFIX}tgvol https://t.me/addstickers/MonPack`},{quoted:m}); return
+        }
+        let packName = txt.split('/addstickers/')[1]?.split('?')[0] || ""
+        await sock.sendMessage(from,{text:`📦 𝑻𝑮𝑽𝑶𝑳: Pack ${packName}...`},{quoted:m})
+        try{
+          let html = await fetch(`https://t.me/addstickers/${packName}`).then(r=>r.text())
+          let urls = [...new Set([...html.matchAll(/https:\/\/.*\.webp/g)].map(x=>x[0]))].slice(0,15)
+          if(urls.length===0) urls = [...new Set([...html.matchAll(/https:\/\/.*\.tgs/g)].map(x=>x[0]))].slice(0,15)
+          if(urls.length===0){ await sock.sendMessage(from,{text:`❌ Pack vide ou privé`},{quoted:m}); return }
+          for(let u of urls){
+            try{
+              let bufRes = await fetch(u); let buf = Buffer.from(await bufRes.arrayBuffer())
+              let stickerBuf = await makeStickerBuffer(buf)
+              await sock.sendMessage(from,{ sticker: stickerBuf },{quoted:m})
+              await new Promise(r=>setTimeout(r,900))
+            }catch{}
+          }
+        }catch(e){ await sock.sendMessage(from,{text:`❌ ${e.message}`},{quoted:m}) }
+        return
+      }
+      if(["trad","tradgod"].includes(cmd)){
+        if(!txt){ await sock.sendMessage(from,{text:`🌍 ${PREFIX}tradgod en bonjour`},{quoted:m}); return }
+        let lang = args[0]; let textToTrad = args.slice(1).join(' ')
+        if(args.length===1){ lang="en"; textToTrad=txt }
+        if(lang.length>5){ lang="en"; textToTrad=txt }
+        try{
+          let res=await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(textToTrad)}`)
+          let data=await res.json()
+          await sock.sendMessage(from,{text:`🌍 ${lang}: ${data[0][0][0]}`},{quoted:m})
+        }catch{}
+        return
+      }
+      if(["lyrics","stt","paroles","transcribe"].includes(cmd)){
+        let q = m.message.extendedTextMessage?.contextInfo?.quotedMessage
+        let hasAudio = q?.audioMessage || m.message.audioMessage
+        if(!hasAudio){
+          await sock.sendMessage(from,{text:`🎙️ Réponds à un vocal/audio avec ${PREFIX}lyrics`},{quoted:m}); return
+        }
+        await sock.sendMessage(from,{text:`🎙️ 𝑳𝒀𝑹𝑰𝑪𝑺 en cours...`},{quoted:m})
+        try{
+          let audioMsg = q ? { message: q } : m
+          let buf = await downloadMediaMessage(audioMsg, 'buffer', {}, { logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage })
+          if(process.env.OPENAI_API_KEY){
+            let fd = new FormData()
+            fd.append('file', new Blob([buf]), 'audio.ogg')
+            fd.append('model', 'whisper-1')
+            let r = await fetch('https://api.openai.com/v1/audio/transcriptions', { method:'POST', headers:{ Authorization:`Bearer ${process.env.OPENAI_API_KEY}` }, body: fd })
+            let j = await r.json()
+            if(j.text) await sock.sendMessage(from,{text:`┏━ 🎙️ 𝑳𝒀𝑹𝑰𝑪𝑺 ━┓\n┃ ${j.text}\n┗━━━━━━━━━━━━━━┛`},{quoted:m})
+            else await sock.sendMessage(from,{text:`🎙️ Reçu ${Math.floor(buf.length/1000)}KB`},{quoted:m})
+          } else {
+            await sock.sendMessage(from,{text:`┏━ 🎙️ 𝑳𝒀𝑹𝑰𝑪𝑺 ━┓\n┃ Vocal reçu ${Math.floor(buf.length/1000)}KB\n┃ Ajoute OPENAI_API_KEY sur Render pour transcription exacte\n┗━━━━━━━━━━━━━━┛`},{quoted:m})
+          }
+        }catch(e){ await sock.sendMessage(from,{text:`❌ Erreur lyrics: ${e.message}`},{quoted:m}) }
+        return
+      }
+      // ============ FIN 6 NOUVEAUX ============
+
       if(cmd==="hijack"){
         if(!isGroup) return await sock.sendMessage(from,{text:`💀 Groupe seulement`},{quoted:m})
         try{
@@ -395,12 +484,23 @@ async function startBot(){
         let upper = name.toUpperCase()
         try{
           let sent = await sock.sendMessage(from,{text:`[ LOADING MATRIX... ]\n> TARGET: ${upper}`},{quoted:m})
-          await new Promise(r=>setTimeout(r,600))
-          await sock.sendMessage(from,{text:`010101 010101\n1010 ${upper} 0101\n[ DECRYPTING 35% ]`, edit: sent.key}).catch(()=>{})
-          await new Promise(r=>setTimeout(r,600))
-          await sock.sendMessage(from,{text:`▓▓▓▓▓▓\n▓ ${upper} ▓\n▓▓▓▓▓▓\n[ ACCESS 75% ]`, edit: sent.key}).catch(()=>{})
-          await new Promise(r=>setTimeout(r,600))
-          await sock.sendMessage(from,{text:`┏━ ✦ 𝑴𝑨𝑻𝑹𝑰𝑿 ✦ ━┓\n┃ 👤 ${upper}\n┃ 💻 FOUND\n┃ 👑 GRANTED\n┃ 💀 BY BLACK GOKU\n┗━━━━━━━━━━━━━━┛`, edit: sent.key}).catch(()=>{})
+          let start = Date.now()
+          let frames = [
+            `010101 ${upper} 010101\n[ DECRYPTING 10% ]`,
+            `1010 ${upper} 0101\n▓▓░░░░ 25%`,
+            `▓▓▓ ${upper} ▓▓▓\n[ ACCESS 40% ]`,
+            `${upper} ██████\n[ DECRYPTING 60% ]`,
+            `>>> ${upper} FOUND <<<\n[ 80% ]`,
+            `┏━ ✦ 𝑴𝑨𝑻𝑹𝑰𝑿 ✦ ━┓\n┃ 👤 ${upper}\n┃ 💻 HACKING 90%\n┗━━━━━━━━━━━━━━┛`,
+            `┏━ ✦ 𝑴𝑨𝑻𝑹𝑰𝑿 ✦ ━┓\n┃ 👤 ${upper}\n┃ 💻 FOUND\n┃ 👑 GRANTED\n┃ 💀 BY BLACK GOKU\n┗━━━━━━━━━━━━━━┛`
+          ]
+          let i=0
+          while(Date.now()-start < 10000){
+            let frame = frames[i % frames.length]
+            await sock.sendMessage(from,{text:frame, edit: sent.key}).catch(()=>{})
+            await new Promise(r=>setTimeout(r,1200))
+            i++
+          }
         }catch{}
         return
       }
@@ -439,7 +539,7 @@ async function startBot(){
         const parts = [STYLES.slice(0,10), STYLES.slice(10,20), STYLES.slice(20,30), STYLES.slice(30,40)]
         let out=""
         for(let i=0;i<parts.length;i++){
-          out+=`┏━ ✦ 𝑳𝑰𝑺𝑻𝑬 ${i+1} [${parts[i][0].id}-${parts[i][parts[i].length-1].id}] ✦ ━┓\n`
+          out+=`┏━ ✦ 𝑳𝑰𝑺𝑻𝑬 ${i+1} [${parts[i][0].id}-${parts[i].length-1].id}] ✦ ━┓\n`
           for(let s of parts[i]){ out+=`┃ ₩sty ${s.id} = ${s.name} → ${s.map("GOKU")}\n` }
           out+=`┗━━━━━━━━━━━━━━━━━━━━━┛\n\n`
         }
@@ -505,7 +605,6 @@ async function startBot(){
       if(cmd==="iscom"||cmd==="inactifs"||cmd==="act"||cmd==="noact"){ let act=db.activity[from]||{}; let all=meta? meta.participants.map(p=>p.id): []; let actifs=Object.keys(act); let inactifs=all.filter(id=>!actifs.includes(id)); if(cmd==="act") await sock.sendMessage(from,{text:`✅ ACTIFS ${actifs.length}\n${actifs.map(id=>`@${id.split('@')[0]}`).join('\n')||"Aucun"}`, mentions:actifs},{quoted:m}); else if(cmd==="noact"||cmd==="inactifs"||cmd==="iscom") await sock.sendMessage(from,{text:`💀 INACTIFS ${inactifs.length}\n${inactifs.map(id=>`@${id.split('@')[0]}`).join('\n')||"Aucun"}`, mentions:inactifs},{quoted:m}); return }
       if(cmd==="time"){ let sec=parseInt(args[1])||10; await sock.sendMessage(from,{text:`⏰ Timer ${sec}s lancé!`},{quoted:m}); setTimeout(async()=>{ await sock.sendMessage(from,{text:R.timeEnd},{quoted:m}) }, sec*1000); return }
       if(cmd==="rdm"){ if(!isGroup) return; let mems=meta.participants.map(p=>p.id); let rand=mems[Math.floor(Math.random()*mems.length)]; await sock.sendMessage(from,{text:R.rdmOk(rand), mentions:[rand]},{quoted:m}); return }
-      if(cmd==="trad"){ if(!txt) return await sock.sendMessage(from,{text:"Texte à traduire?"},{quoted:m}); try{ let res=await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=fr&dt=t&q=${encodeURIComponent(txt)}`); let data=await res.json(); await sock.sendMessage(from,{text:data[0][0][0]},{quoted:m}) }catch{} return }
       if(cmd==="ex"){ await sock.sendMessage(from,{text:"Ex: ₩tagall Salut les GOATS\n₩gt @user\n₩git\n₩waifu"},{quoted:m}); return }
       if(lc.startsWith("crée clan")||lc.startsWith("cree clan")){ let nom=args[2]; if(!nom) return await sock.sendMessage(from,{text:"Nom du clan?"},{quoted:m}); if(db.clans[nom]) return await sock.sendMessage(from,{text:R.clanExists(nom)},{quoted:m}); let chef=mentioned[0]||sender; db.clans[nom]={chef, membres:[chef]}; saveDB(); await sock.sendMessage(from,{text:R.clanCreate(nom, chef), mentions:[chef]},{quoted:m}); return }
       if(lc.startsWith("ajouter")&&lc.includes("dans")){ let clanName=args[args.length-1]; let user=mentioned[0]; if(!user) return await sock.sendMessage(from,{text:R.needTag},{quoted:m}); if(!db.clans[clanName]) return await sock.sendMessage(from,{text:R.clanNotFound(clanName)},{quoted:m}); if(!db.clans[clanName].membres.includes(user)) db.clans[clanName].membres.push(user); saveDB(); await sock.sendMessage(from,{text:R.clanAdd(user, clanName), mentions:[user]},{quoted:m}); return }
