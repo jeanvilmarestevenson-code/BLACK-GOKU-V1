@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V111 - CORRIGÉ ERREURS H24 - PAIR CODE 8 CHIFFRES + WELCOME SANS PHOTO + 4 DIABOLIQUES + MENU MAJ
+// web.js - BLACK GOKU V111 - ORIGINAL INTACT + QR + WEB SVO DIEU + H24 RENDER
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -226,43 +226,95 @@ const STYLES = [
 ]
 function applyStyle(chatId, text){ let idx=db.styles[chatId]; if(!idx) return text; let s=STYLES.find(x=>x.id===idx); return s ? s.map(text) : text }
 
-const STYLE = `<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-body{background:#000;color:#fff;font-family:'Orbitron',monospace;text-align:center;margin:0;padding:20px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.card{background:linear-gradient(135deg,#0f0f0f,#1a0a2e);border:2px solid #a855f7;border-radius:20px;padding:30px;max-width:520px;width:90%;box-shadow:0 0 30px #a855f7,0 0 60px #000 inset}
-h1{color:#a855f7;text-shadow:0 0 15px #a855f7;font-size:26px;margin-bottom:10px}
-h2{color:#fff;font-size:16px}
-.btn{display:inline-block;background:linear-gradient(90deg,#a855f7,#ec4899);color:#fff;padding:12px 25px;border-radius:30px;text-decoration:none;font-weight:bold;margin:8px;box-shadow:0 0 15px #a855f7;transition:0.3s}
-.btn:hover{transform:scale(1.05)}
-textarea{width:100%;height:250px;background:#111;color:#0f0;border:2px solid #a855f7;border-radius:15px;padding:15px;font-size:11px;word-break:break-all}
-.qr{border:5px solid #a855f7;border-radius:20px;box-shadow:0 0 30px #a855f7}
-</style>`
+// ============ WEB SVO DIEU ULTRA STYLÉ - QUE DU STYLE ICI ============
+const STYLE = `
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:#000;
+  background-image: 
+    radial-gradient(circle at 25% 25%, #a855f7 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, #ec4899 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, #1a0a2e 0%, #000 80%);
+  color:#fff;font-family:'Rajdhani',sans-serif;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(168,85,247,0.04) 3px, rgba(168,85,247,0.04) 6px);
+  pointer-events:none;z-index:1;
+}
+.card{
+  position:relative;z-index:2;
+  background: linear-gradient(145deg, rgba(10,10,10,0.95), rgba(20,5,40,0.95));
+  backdrop-filter: blur(25px);
+  border-radius:30px;padding:45px 35px;max-width:580px;width:100%;
+  box-shadow: 0 0 50px rgba(168,85,247,0.7), 0 0 100px rgba(236,72,153,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+  animation: float 5s ease-in-out infinite;
+}
+.card::before{
+  content:'';position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;
+  background: linear-gradient(45deg, #a855f7, #ec4899, #06ffa5, #a855f7);
+  background-size:400% 400%;border-radius:30px;z-index:-1;
+  animation: borderRotate 4s linear infinite;
+}
+@keyframes borderRotate{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+h1{font-family:'Orbitron';font-weight:900;font-size:28px;background:linear-gradient(90deg,#a855f7,#ec4899,#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 35px rgba(168,85,247,0.9);letter-spacing:3px;margin-bottom:12px}
+.status-dot{display:inline-block;width:14px;height:14px;background:#0f0;border-radius:50%;box-shadow:0 0 20px #0f0;animation:pulse 1.5s infinite;margin-right:10px}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,255,0,0.8)}70%{box-shadow:0 0 0 12px rgba(0,255,0,0)}100%{box-shadow:0 0 0 0 rgba(0,255,0,0)}}
+.btn{display:inline-block;background:linear-gradient(90deg,#a855f7,#ec4899);color:#fff;padding:15px 30px;border-radius:50px;text-decoration:none;font-family:'Orbitron';font-weight:800;font-size:13px;letter-spacing:1.5px;margin:7px;box-shadow:0 6px 25px rgba(168,85,247,0.5);transition:0.35s;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.15)}
+.btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);transition:0.6s}
+.btn:hover::before{left:100%}.btn:hover{transform:translateY(-4px) scale(1.07);box-shadow:0 12px 35px rgba(168,85,247,0.8)}
+.qr{border:4px solid #a855f7;border-radius:25px;box-shadow:0 0 50px #a855f7,0 0 100px rgba(168,85,247,0.4);background:#fff;padding:18px;margin:25px auto;display:block;max-width:360px;animation:qrGlow 2.5s ease-in-out infinite}
+@keyframes qrGlow{0%,100%{box-shadow:0 0 40px #a855f7,0 0 80px rgba(168,85,247,0.3)}50%{box-shadow:0 0 70px #ec4899,0 0 120px rgba(236,72,153,0.5)}}
+.code-display{font-family:'Orbitron';font-size:44px;font-weight:900;letter-spacing:10px;color:#0f0;text-shadow:0 0 25px #0f0,0 0 50px #0f0;background:rgba(0,255,0,0.07);border:3px solid #0f0;border-radius:18px;padding:18px;margin:22px 0;animation:codePulse 1.2s ease-in-out infinite}
+@keyframes codePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+textarea{width:100%;height:260px;background:#080808;color:#0f0;border:2px solid #a855f7;border-radius:18px;padding:18px;font-size:11px;font-family:monospace;box-shadow:inset 0 0 25px rgba(168,85,247,0.25)}
+.badge{display:inline-block;background:rgba(168,85,247,0.2);border:1px solid #a855f7;padding:7px 16px;border-radius:25px;font-size:11px;margin:4px;font-family:'Orbitron';letter-spacing:1px}
+</style>
+`
 
 app.get('/', async(req,res)=>{
-  res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1 style="color:#a855f7">🔥 ${status} - PAIR CODE H24 🔥</h1><p>Uptime: ${Math.floor((Date.now()-BOT_START)/1000/60)} min</p>${latestPairCode?`<h1 style="color:#0f0;font-size:38px">${latestPairCode}</h1>`:``}<div style="margin-top:20px"><a class="btn" href="/pair?num=${OWNER_NUMBER}">CODE 8 CHIFFRES</a><a class="btn" href="/session">SESSION ID</a><a class="btn" href="/clear" style="background:linear-gradient(90deg,#ef4444,#a855f7)">CLEAR</a></div></div><script>setTimeout(()=>location.reload(),15000)</script></body></html>`)
+  res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>BLACK GOKU V111 - DIEU</title>${STYLE}</head><body><div class="card">
+  <div style="text-align:center"><span class="badge">꧁༒☬ BLACK GOKU DIEU ☬༒꧂</span><span class="badge">QR + CODE 8 H24</span></div>
+  <h1><span class="status-dot"></span>${status}</h1>
+  <p style="opacity:0.75;font-size:13px;letter-spacing:1px">UPTIME: ${Math.floor((Date.now()-BOT_START)/1000/60)} MIN | RENDER H24 GOD</p>
+  ${latestQR?`<img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=${encodeURIComponent(latestQR)}"><p style="font-family:Orbitron;font-size:12px;letter-spacing:3px;color:#a855f7">⚡ QR ULTRA - SCANNE DIEU ⚡</p>`:``}
+  ${latestPairCode?`<div class="code-display">${latestPairCode.slice(0,4)}-${latestPairCode.slice(4)}</div>`:``}
+  <div style="margin-top:28px"><a class="btn" href="/qr">⚡ QR DIEU</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">🔑 CODE 8</a><a class="btn" href="/session" style="background:linear-gradient(90deg,#06ffa5,#a855f7)">💾 SESSION</a><a class="btn" href="/clear" style="background:linear-gradient(90deg,#ef4444,#a855f7)">🗑️ CLEAR</a></div>
+  <div style="margin-top:22px;font-size:10px;opacity:0.45;font-family:Orbitron">👑 THE GOAT BLACK GOKU - H24 RENDER READY 👑<br>QR + PAIR CODE ACTIF</div>
+  </div><script>setTimeout(()=>location.reload(),18000)</script></body></html>`)
 })
 
-app.get('/h24', (req,res)=>{ res.send(`H24 OK - ${Math.floor((Date.now()-BOT_START)/1000)}s`) })
+app.get('/h24', (req,res)=>{ res.send(`H24 OK - ${Math.floor((Date.now()-BOT_START)/1000)}s - ${status}`) })
 
 app.get('/session', async(req,res)=>{
   try{
-    if(!fs.existsSync('auth2/creds.json')) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ PAS DE SESSION</h1><p>Utilise Pair Code</p><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR</a></div></body></html>`)
+    if(!fs.existsSync('auth2/creds.json')) return res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ PAS DE SESSION</h1><p>Utilise QR ou Pair</p><a class="btn" href="/qr">QR DIEU</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR</a></div></body></html>`)
     let creds = fs.readFileSync('auth2/creds.json', 'utf-8'); let b64 = Buffer.from(creds).toString('base64'); let sessionId = `BLACK-GOKU~${b64}`
-    res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>✅ SESSION ID V111</h1><textarea id="sess">${sessionId}</textarea><br><button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('sess').value);this.innerText='COPIÉ ✅'">📋 COPIER</button><br><a class="btn" href="/">HOME</a></div></body></html>`)
+    res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>✅ SESSION ID V111 DIEU</h1><textarea id="sess">${sessionId}</textarea><br><button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('sess').value);this.innerText='COPIÉ ✅'">📋 COPIER</button><br><a class="btn" href="/">HOME</a></div></body></html>`)
   }catch(e){ res.send("Erreur: "+e.message) }
 })
 
-app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🗑️ CLEAR OK</h1><p>Auth supprimé</p><a class="btn" href="/pair?num=${OWNER_NUMBER}">NOUVEAU CODE</a></div></body></html>`); setTimeout(()=>process.exit(0),1000) }catch(e){ res.send(e.message) } })
+app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); if(fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE); latestQR=null; latestPairCode=null; res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🗑️ CLEAR OK</h1><p>Auth supprimé</p><a class="btn" href="/qr">NOUVEAU QR DIEU</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">NOUVEAU CODE</a></div></body></html>`); setTimeout(()=>process.exit(0),1000) }catch(e){ res.send(e.message) } })
 
 app.get('/pair', async(req,res)=>{
-  if(!sock) return res.status(503).send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ BOT DEMARRE...</h1></div><script>setTimeout(()=>location.reload(),3000)</script></body></html>`)
+  if(!sock) return res.status(503).send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ BOT DEMARRE DIEU...</h1></div><script>setTimeout(()=>location.reload(),3000)</script></body></html>`)
   let num = (req.query.num||OWNER_NUMBER).replace(/[^0-9]/g,'')
-  try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; latestPairCode=code; return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1">${STYLE}</head><body><div class="card"><h1>🔑 PAIR CODE</h1><h2 style="font-size:32px;letter-spacing:5px;color:#0f0">${code.slice(0,4)}-${code.slice(4)}</h2><h1 style="font-size:38px">${code}</h1><p>${num}</p><a class="btn" href="/">HOME</a></div></body></html>`) }catch(e){ res.status(500).send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ ECHEC PAIR</h1><p>${e.message}</p><a class="btn" href="/pair?num=${num}">RETRY</a></div></body></html>`) }
+  try{ let code = await sock.requestPairingCode(num); code = code?.toUpperCase().replace(/[^A-Z0-9]/g,'') || code; latestPairCode=code; return res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>CODE 8 DIEU</title>${STYLE}</head><body><div class="card"><h1>🔑 PAIR CODE DIEU</h1><div class="code-display">${code.slice(0,4)}-${code.slice(4)}</div><h1 style="font-size:40px">${code}</h1><p>${num}</p><p style="font-size:12px;opacity:0.7">WhatsApp > Appareils connectés > Connecter avec numéro</p><a class="btn" href="/">HOME DIEU</a></div></body></html>`) }catch(e){ res.status(500).send(`<html><head>${STYLE}</head><body><div class="card"><h1>❌ ECHEC PAIR</h1><p>${e.message}</p><a class="btn" href="/pair?num=${num}">RETRY</a></div></body></html>`) }
 })
 
-app.get('/qr', async(req,res)=>{ res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>QR DÉSACTIVÉ</h1><p>Utilise CODE 8 CHIFFRES</p><a class="btn" href="/pair?num=${OWNER_NUMBER}">PAIR CODE</a></div></body></html>`) })
+app.get('/qr', async(req,res)=>{
+  if(latestQR){
+    res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>QR DIEU</title>${STYLE}</head><body><div class="card"><h1>🔥 QR CODE BLACK GOKU DIEU 🔥</h1><img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(latestQR)}"><p style="font-family:Orbitron;font-size:12px;letter-spacing:2px;color:#a855f7">⚡ SCANNE EN 60s - STYLE DIEU ⚡</p><p style="color:#666;font-size:9px;word-break:break-all;margin-top:10px">${latestQR.slice(0,90)}...</p><div style="margin-top:20px"><a class="btn" href="/qr">🔄 REFRESH QR</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">🔑 CODE 8</a><a class="btn" href="/">HOME</a></div></div><script>setTimeout(()=>location.reload(),15000)</script></body></html>`)
+  } else {
+    res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ GENERATION QR DIEU...</h1><p style="font-family:Orbitron;font-size:12px">LE DIEU PRÉPARE TON QR ULTRA STYLÉ...</p><div style="margin-top:20px"><a class="btn" href="/qr">⚡ REFRESH QR DIEU</a><a class="btn" href="/pair?num=${OWNER_NUMBER}">CODE 8 CHIFFRES</a></div></div><script>setTimeout(()=>location.reload(),3500)</script></body></html>`)
+  }
+})
 
-app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V111 LIVE STYLÉ ${PORT}`))
+app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V111 DIEU QR+PAIR H24 RENDER LIVE ${PORT}`))
 
 async function startBot(){
   if(isConnecting) return
@@ -274,7 +326,7 @@ async function startBot(){
       version, 
       auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, 
       logger:P({level:'silent'}), 
-      browser:["BLACK GOKU H24","Chrome","1.0"], 
+      browser:["BLACK GOKU DIEU H24","Chrome","1.0"], 
       printQRInTerminal: false,
       msgRetryCounterCache, 
       markOnlineOnConnect:true, 
@@ -283,12 +335,14 @@ async function startBot(){
     })
     sock.ev.on('creds.update', saveCreds)
     sock.ev.on('connection.update', async(u)=>{
-      if(u.connection==='open'){ status="BLACK GOKU ACTIF H24 ✅"; BOT_START=Date.now(); isConnecting=false; console.log("✅ CONNECTÉ H24") }
-      if(u.connection==='close'){ 
+      const { connection, lastDisconnect, qr } = u
+      if(qr){ latestQR = qr; status = "QR DIEU PRÊT - SCANNE"; console.log("🔥 QR DIEU REÇU") }
+      if(connection==='open'){ status="BLACK GOKU ACTIF H24 ✅"; latestQR=null; BOT_START=Date.now(); isConnecting=false; console.log("✅ CONNECTÉ H24 DIEU - QR+PAIR") }
+      if(connection==='close'){ 
         isConnecting=false; 
-        let code = u.lastDisconnect?.error?.output?.statusCode
+        let code = lastDisconnect?.error?.output?.statusCode
         if(code===440){ console.log("🔄 440 Normal H24..."); setTimeout(startBot,8000); return }
-        if(code===401 && fs.existsSync('auth2')){ fs.rmSync('auth2',{recursive:true,force:true}); console.log("Session morte") }
+        if(code===401 && fs.existsSync('auth2')){ fs.rmSync('auth2',{recursive:true,force:true}); latestQR=null; console.log("Session morte - nouveau QR DIEU") }
         console.log("Restart CODE:", code); setTimeout(startBot,5000) 
       }
     })
@@ -322,8 +376,6 @@ async function startBot(){
       if(!text.startsWith(PREFIX)) return
       if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
       const args=text.slice(PREFIX.length).trim().split(/ +/); const cmd=args[0].toLowerCase(); const txt=args.slice(1).join(' '); const mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
-
-      // ====== NOUVEAUX AJOUTÉS - 4 DIABOLIQUES ======
       if(cmd==="hijack"){
         if(!isGroup) return await sock.sendMessage(from,{text:`💀 Groupe seulement`},{quoted:m})
         try{
@@ -383,8 +435,6 @@ async function startBot(){
         }catch(e){ await sock.sendMessage(from,{text:`❌ ${e.message}`},{quoted:m}) }
         return
       }
-      // ====== FIN NOUVEAUX ======
-
       if(cmd==="styliste"){
         const parts = [STYLES.slice(0,10), STYLES.slice(10,20), STYLES.slice(20,30), STYLES.slice(30,40)]
         let out=""
