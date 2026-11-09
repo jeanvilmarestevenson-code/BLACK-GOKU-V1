@@ -1,23 +1,37 @@
-# SESSIONS - NE PAS PUSH
+# SESSIONS - NE JAMAIS PUSH
 auth2/
 auth/
-auth_info/
-auth_info_baileys/
-SESSION_ID
+creds.json
+*auth*
 
-# DB - Local seulement
+# DB
 black_db.json
+*db.json
 
 # MODULES
 node_modules/
-npm-debug.log*
+package-lock.json
+yarn.lock
 
 # LOGS
-logs/
+npm-debug.log*
 *.log
+logs/
 
 # ENV
 .env
+.env.local
+
+# RENDER / CACHE
+.render/
+tmp/
+temp/
+
+# IMAGES WAIFU
+waifu*.jpg
+waifu*.jpeg
+menu.jpg
+MENU.jpg
 
 # OS
 .DS_Store
