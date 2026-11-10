@@ -1,37 +1,29 @@
-# SESSIONS - NE JAMAIS PUSH
+# Auth - NE JAMAIS PUSH
 auth2/
-auth/
-creds.json
-*auth*
-
-# DB
+auth_info/
+*.json
+!package.json
 black_db.json
-*db.json
 
-# MODULES
+# Node
 node_modules/
-package-lock.json
-yarn.lock
-
-# LOGS
 npm-debug.log*
-*.log
-logs/
+yarn-debug.log*
+yarn-error.log*
+
+# Images locales
+*.jpg
+*.jpeg
+*.png
+*.mp4
+!menu.jpg
 
 # ENV
 .env
-.env.local
 
-# RENDER / CACHE
-.render/
-tmp/
-temp/
-
-# IMAGES WAIFU
-waifu*.jpg
-waifu*.jpeg
-menu.jpg
-MENU.jpg
+# Logs
+logs
+*.log
 
 # OS
 .DS_Store
