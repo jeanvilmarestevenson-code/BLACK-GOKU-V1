@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V112 - FINAL FIX - 0 ERREUR - AUTOREPLY PAS DISPO
+// web.js - BLACK GOKU V112 - FINAL ALL FIX
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -9,7 +9,7 @@ const http = require('http')
 const app = express()
 const PORT = process.env.PORT || 10000
 const OWNER_NUMBER = process.env.OWNER_NUMBER || "5551982215198"
-const PREFIX = "₩"
+const PREFIX = process.env.PREFIX || "₩"
 const DB_FILE = './black_db.json'
 const GITHUB_LINK = "https://github.com/jeanvilmarestevenson-code/BLACK-GOKU-V1/"
 const SESSION_ID = process.env.SESSION_ID || ""
@@ -33,8 +33,8 @@ function loadSessionFromId(){
 }
 if(!fs.existsSync('auth2') || fs.readdirSync('auth2').length===0){ if(SESSION_ID) loadSessionFromId() }
 
-let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], welcomeTexts:{}, bye:[], byeTexts:{}, ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], ownerLids:[], privateMode:false, botOff:false, activity:{}, groupCache:{}, muted:{}, styles:{}, antidelete:[], antideleteCache:{}, autoreply:[], autoreplyGroupe:[] }
-if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!db.welcomeTexts) db.welcomeTexts={}; if(!db.byeTexts) db.byeTexts={}; if(!db.bye) db.bye=[]; if(!db.muted) db.muted={}; if(!Array.isArray(db.ownerLids)) db.ownerLids=[]; if(!db.styles) db.styles={}; if(!db.antidelete) db.antidelete=[]; if(!db.antideleteCache) db.antideleteCache={}; if(!db.autoreply) db.autoreply=[]; if(!db.autoreplyGroupe) db.autoreplyGroupe=[]; }catch{} }
+let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], welcomeTexts:{}, bye:[], byeTexts:{}, ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:{}, boy:[], boyUsers:[], ownerLids:[], privateMode:false, botOff:false, activity:{}, groupCache:{}, muted:{}, styles:{}, antidelete:[], antideleteCache:{}, autoreply:[], autoreplyGroupe:[], autoreplyGroupeAll:false }
+if(fs.existsSync(DB_FILE)){ try{ let o=JSON.parse(fs.readFileSync(DB_FILE)); db={...db,...o}; if(!db.clans) db.clans={}; if(!db.welcomeTexts) db.welcomeTexts={}; if(!db.byeTexts) db.byeTexts={}; if(!db.bye) db.bye=[]; if(!db.muted) db.muted={}; if(!Array.isArray(db.ownerLids)) db.ownerLids=[]; if(!db.styles) db.styles={}; if(!db.antidelete) db.antidelete=[]; if(!db.antideleteCache) db.antideleteCache={}; if(!db.autoreply) db.autoreply=[]; if(!db.autoreplyGroupe) db.autoreplyGroupe=[]; if(typeof db.autoreplyGroupeAll==='undefined') db.autoreplyGroupeAll=false; }catch{} }
 const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
 let sock, status="Demarrage...", latestQR=null, latestPairCode=null, BOT_START=Date.now()
 let messageStore = {}
@@ -118,7 +118,7 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┃ ₩𝒃𝒚𝒆
 ┃ ₩𝒈𝒉𝒐𝒔𝒕 𝒐𝒏/𝒐𝒇𝒇/𝒗𝒐𝒊𝒓
 ┃ ₩𝒂𝒖𝒕𝒐𝒓𝒆𝒑𝒍𝒚 𝒐𝒏/𝒐𝒇𝒇
-┃ ₩𝒂𝒖𝒕𝒐𝒓𝒆𝒑𝒍𝒚𝒈𝒓𝒐𝒖𝒑𝒆 𝒐𝒏/𝒐𝒇𝒇
+┃ ₩𝒂𝒖𝒕𝒐𝒓𝒆𝒑𝒍𝒚𝒈𝒓𝒐𝒖𝒑𝒆 𝒐𝒏/𝒐𝒇𝒇/𝒐𝒏 𝒂𝒍𝒍/𝒐𝒇𝒇 𝒂𝒍𝒍
 ┗━━━━━━━━━━━━━━┛
 ┏━ ✦ 𝑺𝑻𝑰𝑪𝑲𝑬𝑹 ✦ ━┓
 ┃ ₩𝒔
@@ -155,8 +155,9 @@ gokuMsg:"👑 𝑪'𝒆𝒔𝒕 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼", kaioMsg:
 vqOk:"👁️🔥 𝑽𝑼𝑬 𝑫É𝑽𝑶𝑰𝑳É𝑬!", vqNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 à 𝒖𝒏𝒆 𝒗𝒖𝒆 𝒖𝒏𝒊𝒒𝒖𝒆!", sNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒊𝒎𝒂𝒈𝒆!", stNeed:"😈 𝑹é𝒑𝒐𝒏𝒅𝒔 𝒔𝒕𝒂𝒕𝒖𝒕!", stOk:"👁️ 𝑺𝒕𝒂𝒕𝒖𝒕 𝒗𝒐𝒍é",
 rdmOk:(j)=>`🎲 @${j.split('@')[0]}!`, timeEnd:"⏰ 𝑻𝑰𝑴𝑬 𝑭𝑰𝑵𝑰!",
 antideleteOn:"👁️ 𝑨𝑩𝒀𝑺𝑺𝑺𝑬𝑬 𝑶𝑵 - Je vois les supprimés!", antideleteOff:"👁️ 𝑨𝑩𝒀𝑺𝑺𝑺𝑬𝑬 𝑶𝑭𝑭",
-autoreplyOn:"🤖 𝑨𝑼𝑻𝑶𝑹𝑬𝑷𝑳𝒀 𝑶𝑵", autoreplyOff:"🤖 𝑨𝑼𝑻𝑶𝑹𝑬𝑷𝑳𝒀 𝑶𝑭𝑭",
+autoreplyOn:"🤖 𝑨𝑼𝑻𝑶𝑹𝑬𝑷𝑳𝒀 𝑶𝑵 (PV seulement)", autoreplyOff:"🤖 𝑨𝑼𝑻𝑶𝑹𝑬𝑷𝑳𝒀 𝑶𝑭𝑭",
 autoreplyGroupeOn:"👑 𝑨𝑼𝑻𝑶𝑹𝑬𝑷𝑳𝒀𝑮𝑹𝑶𝑼𝑷𝑬 𝑶𝑵", autoreplyGroupeOff:"👑 𝑨𝑼𝑻𝑶𝑹𝑬𝑷𝑳𝒀𝑮𝑹𝑶𝑼𝑷𝑬 𝑶𝑭𝑭",
+autoreplyGroupeOnAll:"👑 𝑨𝑼𝑻𝑶𝑹𝑬𝑷𝑳𝒀𝑮𝑹𝑶𝑼𝑷𝑬 𝑶𝑵 𝑨𝑳𝑳 - Actif dans TOUS les groupes!", autoreplyGroupeOffAll:"👑 𝑨𝑼𝑻𝑶𝑹𝑬𝑷𝑳𝒀𝑮𝑹𝑶𝑼𝑷𝑬 𝑶𝑭𝑭 𝑨𝑳𝑳",
 welcomeMsg:(j, g, custom, members, admins)=>{
   if(custom) return custom.replace(/@user/g, `@${j.split('@')[0]}`).replace(/@group/g, g).replace(/@members/g, members).replace(/@admins/g, admins)
   return `┏━━━━━━━━━━━━━━━━━━┓
@@ -362,9 +363,11 @@ async function startBot(){
         if(db.ghost.includes(from)){ if(!db.ghostCache[from]) db.ghostCache[from]=[]; db.ghostCache[from].push({text:txtForCache, sender, time:Date.now()}); if(db.ghostCache[from].length>100) db.ghostCache[from].shift(); saveDB(); }
       }
       let text=m.message.conversation||m.message.extendedTextMessage?.text||m.message.imageMessage?.caption||m.message.videoMessage?.caption||""
-      // AUTOREPLY DIGNE - PAS DISPO
+      
+      // ===== AUTOREPLY LOGIC FINAL =====
       if(!m.key.fromMe && text && !text.startsWith(PREFIX)){
-        if(db.autoreply.includes(from) && !isGroup){
+        // AUTOREPLY PV - seulement en PV, à tout message
+        if(!isGroup && db.autoreply.includes(from)){
           await sock.sendMessage(from,{ text:`┏━━━━━━━━━━━━━━━━━━┓
 ┃ ꧁𓊈𒆜BLACK GOKU𒆜𓊉꧂ ┃
 ┗━━━━━━━━━━━━━━━━━━┛
@@ -375,12 +378,14 @@ async function startBot(){
 
 📩 𝑳𝒂𝒊𝒔𝒔𝒆 𝒕𝒐𝒏 𝒎𝒆𝒔𝒔𝒂𝒈𝒆, 𝒋𝒆 𝒕𝒆 𝒓é𝒑𝒐𝒏𝒅𝒓𝒂𝒊 𝒅è𝒔 𝒒𝒖𝒆 𝒑𝒐𝒔𝒔𝒊𝒃𝒍𝒆.
 🔥 𝑴𝒆𝒓𝒄𝒊 𝒅𝒆 𝒕𝒂 𝒑𝒂𝒕𝒊𝒆𝒏𝒄𝒆.
-
 ┗━━━ 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ━━━┛`, mentions:[sender] },{quoted:m}).catch(()=>{})
         }
-        if(isGroup && db.autoreplyGroupe.includes(from)){
+        // AUTOREPLY GROUPE - quand on tag @꧁𓊈𒆜BLACK GOKU𒆜𓊉꧂ ou dit black goku
+        if(isGroup && (db.autoreplyGroupeAll || db.autoreplyGroupe.includes(from))){
           let lower=text.toLowerCase()
-          if(lower.includes("black goku") || lower.includes("black") || text.includes("꧁𓊈𒆜BLACK GOKU𒆜𓊉꧂") || text.includes("@꧁𓊈𒆜BLACK GOKU𒆜𓊉꧂")){
+          let isTagged = lower.includes("black goku") || text.includes("꧁𓊈𒆜BLACK GOKU𒆜𓊉꧂") || text.includes("@꧁𓊈𒆜BLACK GOKU𒆜𓊉꧂") || (m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]).length>0
+          // On vérifie si le bot est mentionné ou si le texte contient le tag
+          if(isTagged){
             await sock.sendMessage(from,{ text:`┏━━━━━━━━━━━━━━━━━━┓
 ┃ @꧁𓊈𒆜BLACK GOKU𒆜𓊉꧂ ┃
 ┗━━━━━━━━━━━━━━━━━━┛
@@ -394,6 +399,7 @@ async function startBot(){
           }
         }
       }
+
       if(isGroup){
         if(db.chut[from]?.includes(sender)){ try{ await sock.sendMessage(from,{delete:m.key}) }catch{} return }
         if(db.muted[from]){ if(!isOwner){ try{ await sock.sendMessage(from,{delete:m.key}) }catch{} return } }
@@ -406,17 +412,21 @@ async function startBot(){
       if(!text.startsWith(PREFIX)) return
       if(!isOwner){ await sock.sendMessage(from,{text:R.noPerm},{quoted:m}); return }
       let args=text.slice(PREFIX.length).trim().split(/ +/); let cmd=args[0].toLowerCase(); let txt=args.slice(1).join(' '); let mentioned=m.message.extendedTextMessage?.contextInfo?.mentionedJid||[]; let target=mentioned[0];
-      let lc=text.slice(PREFIX.length).toLowerCase()
+      let lc=text.slice(PREFIX.length).toLowerCase().trim()
       if(cmd==="trad") cmd="tradgod"
       if(cmd==="kickall") cmd="purgeall"
       if(cmd==="abyss") cmd="nukeplus"
       if(cmd==="kick") cmd="ban"
 
+      // FIX COMMANDES AUTOREPLY - TOUTES LES VARIANTES
       if(lc.startsWith("autoreplygroupe")){
         let low=(txt||"").toLowerCase()
+        if(low.includes("off") && low.includes("all")){ db.autoreplyGroupeAll=false; db.autoreplyGroupe=[]; saveDB(); await sock.sendMessage(from,{text:R.autoreplyGroupeOffAll},{quoted:m}); return }
+        if(low.includes("on") && low.includes("all")){ db.autoreplyGroupeAll=true; saveDB(); await sock.sendMessage(from,{text:R.autoreplyGroupeOnAll},{quoted:m}); return }
         if(low.includes("off")){ db.autoreplyGroupe=db.autoreplyGroupe.filter(x=>x!==from); saveDB(); await sock.sendMessage(from,{text:R.autoreplyGroupeOff},{quoted:m}); return }
         if(low.includes("on")){ if(!db.autoreplyGroupe.includes(from)) db.autoreplyGroupe.push(from); saveDB(); await sock.sendMessage(from,{text:R.autoreplyGroupeOn},{quoted:m}); return }
-        if(db.autoreplyGroupe.includes(from)){ db.autoreplyGroupe=db.autoreplyGroupe.filter(x=>x!==from); await sock.sendMessage(from,{text:R.autoreplyGroupeOff},{quoted:m}) } else { db.autoreplyGroupe.push(from); await sock.sendMessage(from,{text:R.autoreplyGroupeOn},{quoted:m}) }
+        // toggle
+        if(db.autoreplyGroupe.includes(from) || db.autoreplyGroupeAll){ db.autoreplyGroupe=db.autoreplyGroupe.filter(x=>x!==from); if(db.autoreplyGroupe.length===0) db.autoreplyGroupeAll=false; await sock.sendMessage(from,{text:R.autoreplyGroupeOff},{quoted:m}) } else { db.autoreplyGroupe.push(from); await sock.sendMessage(from,{text:R.autoreplyGroupeOn},{quoted:m}) }
         saveDB(); return
       }
       if(lc.startsWith("autoreply")){
