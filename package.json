@@ -1,17 +1,18 @@
 {
-  "name": "black-goku-v112",
-  "version": "112.0.0",
-  "description": "BLACK GOKU V112 - THE GOAT",
+  "name": "black-goku-v115",
+  "version": "115.0.0",
+  "description": "BLACK GOKU V115 - THE GOAT - FIX TAG ONLY + NEW COMMANDS",
   "main": "web.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node web.js"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.8",
-    "pino": "^8.17.0",
+    "@whiskeysockets/baileys": "^6.7.18",
+    "pino": "^8.21.0",
     "express": "^4.18.2",
     "node-cache": "^5.1.2",
-    "sharp": "^0.33.2"
+    "sharp": "^0.33.4"
   },
   "engines": {
     "node": ">=18.0.0"
