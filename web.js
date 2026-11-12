@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V115 - COMPLET - MENU ORIGINAL GARDÉ - FIX TAG ONLY
+// web.js - BLACK GOKU V115 - FIX SYNTAX + SANS DIEU - MENU ORIGINAL GARDÉ
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -249,7 +249,6 @@ const STYLES = [
 ]
 function applyStyle(chatId, text){ let idx=db.styles[chatId]; if(!idx) return text; let s=STYLES.find(x=>x.id===idx); return s ? s.map(text) : text }
 
-// ===== FIX NOUVELLES APIS - REMPLACE ANCIENNE FONCTION MORTE =====
 async function downloadPinterest(q){
   try{
     let r=await fetch(`https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(q)}`, {headers:{"User-Agent":"Mozilla/5.0"}})
@@ -284,7 +283,7 @@ textarea{width:100%;height:280px;background:#080808;color:#0f0;border:2px solid 
 `
 
 app.get('/', async(req,res)=>{
-  res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>BLACK GOKU V112</title>${STYLE}</head><body><div class="card">
+  res.send(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>BLACK GOKU V115</title>${STYLE}</head><body><div class="card">
   <h1>${status}</h1>
   <p>⏱️ UPTIME: ${Math.floor((Date.now()-BOT_START)/1000/60)} MIN</p>
   ${latestQR?`<img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=${encodeURIComponent(latestQR)}">`:``}
@@ -309,7 +308,7 @@ app.get('/pair', async(req,res)=>{
 app.get('/qr', async(req,res)=>{
   if(latestQR){ res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>🔥 QR CODE 🔥</h1><img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(latestQR)}"></div><script>setTimeout(()=>location.reload(),15000)</script></body></html>`) } else { res.send(`<html><head>${STYLE}</head><body><div class="card"><h1>⏳ GENERATION QR...</h1></div><script>setTimeout(()=>location.reload(),3500)</script></body></html>`) }
 })
-app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V112 LIVE ${PORT}`))
+app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 BLACK GOKU V115 LIVE ${PORT}`))
 
 async function startBot(){
   if(isConnecting) return
@@ -317,7 +316,7 @@ async function startBot(){
   try{
     const { version } = await fetchLatestBaileysVersion()
     const { state, saveCreds } = await useMultiFileAuthState('auth2')
-    sock = makeWASocket({ version, auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, logger:P({level:'silent'}), browser:["BLACK GOKU DIEU","Chrome","1.0"], printQRInTerminal: false, msgRetryCounterCache, markOnlineOnConnect:true, syncFullHistory:false, getMessage: async(k)=> messageStore[k.id]? {conversation:messageStore[k.id].text}: undefined })
+    sock = makeWASocket({ version, auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, logger:P({level:'silent'}), browser:["Ubuntu","Chrome","20.0"], printQRInTerminal: false, msgRetryCounterCache, markOnlineOnConnect:true, syncFullHistory:false, getMessage: async(k)=> messageStore[k.id]? {conversation:messageStore[k.id].text}: undefined })
     sock.ev.on('creds.update', saveCreds)
     sock.ev.on('connection.update', async(u)=>{
       const { connection, lastDisconnect, qr } = u
@@ -453,7 +452,6 @@ async function startBot(){
 ┗━━━━━━━━━━━━━━┛`, mentions:[jidTarget] },{quoted:m}) }catch{ await sock.sendMessage(from,{text:`❌ Pas de PP`},{quoted:m}) }
         return
       }
-      // ===== PINDIEU FIXÉ =====
       if(["pinterest","pin","pindieu"].includes(cmd)){
         if(!txt){ await sock.sendMessage(from,{text:`📌 ${PREFIX}pindieu naruto`},{quoted:m}); return }
         await sock.sendMessage(from,{text:`📌 𝑷𝑰𝑵𝑫𝑰𝑬𝑼: ${txt}...`},{quoted:m})
@@ -462,7 +460,6 @@ async function startBot(){
         for(let i=0;i<Math.min(5, results.length); i++){ let url = results[i]; if(!url) continue; try{ await sock.sendMessage(from,{ image:{url:url}, caption:`📌 ${txt} ${i+1}/5` },{quoted:m}); await new Promise(r=>setTimeout(r,900)) }catch{} }
         return
       }
-      // ===== TGVOL FIXÉ =====
       if(["tgpack","tgstickers","tgvol"].includes(cmd)){
         if(!txt || !txt.includes('t.me')){ await sock.sendMessage(from,{text:`📦 ${PREFIX}tgvol https://t.me/addstickers/MonPack`},{quoted:m}); return }
         let packName = txt.split('/addstickers/')[1]?.split('?')[0] || txt.split('/').pop()
@@ -485,7 +482,6 @@ async function startBot(){
         try{ let res=await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(textToTrad)}`); let data=await res.json(); let trad=data[0]?.map(x=>x[0]).join('')||""; await sock.sendMessage(from,{text:`┏━ 🌍 𝑻𝑹𝑨𝑫𝑮𝑶𝑫 ━┓\n┃ ${textToTrad} → ${lang}\n┃ ${trad}\n┗━━━━━━━━━━━━━━┛`},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:`❌ Trad error`},{quoted:m}) }
         return
       }
-      // ===== LYRICS FIXÉ AVEC FALLBACK GRATUIT =====
       if(["lyrics","stt","paroles","transcribe"].includes(cmd)){
         let q = m.message.extendedTextMessage?.contextInfo?.quotedMessage
         let hasAudio = q?.audioMessage || m.message.audioMessage
@@ -502,7 +498,6 @@ async function startBot(){
               if(j.text){ await sock.sendMessage(from,{text:`┏━ 🎙️ 𝑳𝒀𝑹𝑰𝑪𝑺 ━┓\n┃ ${j.text}\n┗━━━━━━━━━━━━━━┛`},{quoted:m}); return }
             }catch{}
           }
-          // Fallback gratuit si pas de clé ou crédit vide
           let fd2 = new FormData(); fd2.append('file', new Blob([buf]), 'audio.ogg')
           let r2 = await fetch('https://api.siputzx.my.id/api/tools/transcribe', {method:'POST', body: fd2})
           let j2 = await r2.json()
@@ -534,7 +529,6 @@ async function startBot(){
         }catch{}
         return
       }
-      // ===== CARD FIXÉ - NE PLANTE PLUS =====
       if(cmd==="card"||cmd==="profilecard"){
         let name = txt || m.pushName || "GOAT"
         try{ 
@@ -576,7 +570,9 @@ async function startBot(){
         const parts = [STYLES.slice(0,10), STYLES.slice(10,20), STYLES.slice(20,30), STYLES.slice(30,40)]
         let out=""
         for(let i=0;i<parts.length;i++){
-          out+=`┏━ ✦ 𝑳𝑰𝑺𝑻𝑬 ${i+1} [${parts[i][0].id}-${parts[i].parts[i].length-1].id}] ✦ ━┓\n`
+          let firstId = parts[i][0].id
+          let lastId = parts[i][parts[i].length-1].id
+          out+=`┏━ ✦ 𝑳𝑰𝑺𝑻𝑬 ${i+1} [${firstId}-${lastId}] ✦ ━┓\n`
           for(let s of parts[i]){ out+=`┃ ₩sty ${s.id} = ${s.name} → ${s.map("GOKU")}\n` }
           out+=`┗━━━━━━━━━━━━━━━━━━━━━┛\n\n`
         }
