@@ -1,39 +1,37 @@
-# Auth - NE JAMAIS PUSH
+# SESSIONS ET DB
 auth2/
-auth_info/
 auth_info_baileys/
+black_db.json
+*auth*.json
 creds.json
-*.json
-!package.json
-!package-lock.json
 
-# On garde la DB sur Render pour pas perdre les configs
-!black_db.json
-
-# Node
+# NODE
 node_modules/
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+package-lock.json
+yarn.lock
 
-# Images locales - on garde menu.jpg
-*.jpg
-*.jpeg
-*.png
-*.mp4
-*.webp
-!menu.jpg
-!waifu.jpg
-!waifu 1.jpg
-
-# ENV
+# RENDER / ENV
 .env
 .env.local
-
-# Logs
-logs/
-*.log
+.env.development.local
+.env.test.local
+.env.production.local
 
 # OS
 .DS_Store
 Thumbs.db
+
+# IMAGES TEMP
+*.webp
+*.mp4
+*.jpg
+*.jpeg
+*.png
+tmp/
+temp/
+
+# LOGS
+logs/
+*.log
