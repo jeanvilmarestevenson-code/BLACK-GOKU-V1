@@ -1,7 +1,7 @@
 {
   "name": "black-goku-v115",
-  "version": "115.0.0",
-  "description": "BLACK GOKU V115 - THE GOAT - FIX TAG ONLY + NEW COMMANDS",
+  "version": "115.6.0",
+  "description": "BLACK GOKU V115.6 - STYLE SUKUNA EXACT + FFMPEG",
   "main": "web.js",
   "type": "commonjs",
   "scripts": {
@@ -12,7 +12,9 @@
     "pino": "^8.21.0",
     "express": "^4.18.2",
     "node-cache": "^5.1.2",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.4",
+    "fluent-ffmpeg": "^2.1.3",
+    "ffmpeg-static": "^5.2.0"
   },
   "engines": {
     "node": ">=18.0.0"
