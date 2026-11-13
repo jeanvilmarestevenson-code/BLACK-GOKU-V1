@@ -1,7 +1,7 @@
 {
   "name": "black-goku-v115",
-  "version": "115.6.0",
-  "description": "BLACK GOKU V115.6 - STYLE SUKUNA EXACT + FFMPEG",
+  "version": "115.8.0",
+  "description": "BLACK GOKU V115.8 - STYLE SUKUNA EXACT + FFMPEG",
   "main": "web.js",
   "type": "commonjs",
   "scripts": {
