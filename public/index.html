@@ -3,68 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLACK GOKU V118 CONTROL</title>
+<title>BLACK GOKU V118.1 ULTRA CONTROL</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap');
 *{font-family:Orbitron,monospace;box-sizing:border-box}
-body{margin:0;background:#000;color:#fff;min-height:100vh}
-.bg{position:fixed;inset:0;background:url('https://wallpapercave.com/wp/wp11253673.jpg') center/cover;filter:brightness(0.25);z-index:-1}
-.container{max-width:1100px;margin:auto;padding:12px}
-h1{text-align:center;color:#ff0040;text-shadow:0 0 15px red;font-size:18px;padding:10px;border:2px solid #ff0040;border-radius:12px;background:rgba(0,0,0,0.8)}
-.card{background:rgba(0,0,0,0.9);border:2px solid #ff0040;border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 0 12px rgba(255,0,64,0.4)}
-.status{padding:12px;border-radius:8px;text-align:center;font-weight:bold;font-size:13px}
-.online{background:rgba(0,255,100,0.15);border:1px solid #0f0;color:#0f0}
-.offline{background:rgba(255,0,64,0.25);border:1px solid red;color:red}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px;margin-top:8px}
-button{padding:10px;border:none;border-radius:8px;background:linear-gradient(45deg,#ff0040,#500);color:#fff;font-weight:bold;cursor:pointer;font-size:11px}
-button.on{background:linear-gradient(45deg,#00ff88,#005522);color:#000}
-button.off{background:linear-gradient(45deg,#222,#000);border:1px solid #555;color:#888}
-.switch{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1a1a1a}
-.switch span{font-size:11px}
-.section-title{color:#ff0040;font-size:13px;margin:15px 0 5px 0;border-left:3px solid #ff0040;padding-left:8px}
-.badge{font-size:9px;padding:3px 6px;border-radius:10px;background:#ff0040;margin-left:5px}
-input{width:100%;padding:10px;background:#111;color:#fff;border:1px solid #ff0040;border-radius:6px;margin:5px 0;font-size:12px}
-#qrBox{display:none;background:#fff;padding:10px;border-radius:10px;margin-top:10px;text-align:center;color:#000}
+body{margin:0;background:#000;color:#fff;min-height:100vh;overflow-x:hidden}
+.bg{position:fixed;inset:0;background:url('https://wallpapercave.com/wp/wp11253673.jpg') center/cover;filter:brightness(0.18) contrast(1.2);z-index:-2}
+.bg2{position:fixed;inset:0;background:radial-gradient(circle at 50% 0%, rgba(255,0,64,0.3), transparent 70%);z-index:-1}
+.container{max-width:1150px;margin:auto;padding:12px;animation:fadeIn 0.8s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 12px rgba(255,0,64,0.6)}50%{box-shadow:0 0 35px rgba(255,0,64,1), 0 0 60px rgba(255,0,64,0.3)}}
+@keyframes pulseOff{0%,100%{box-shadow:0 0 10px red}50%{box-shadow:0 0 45px red, 0 0 80px red}}
+@keyframes glitch{0%{text-shadow:0 0 5px red}20%{text-shadow:2px 0 red, -2px 0 cyan}40%{text-shadow:-2px 0 red, 2px 0 cyan}60%{text-shadow:0 0 15px red}100%{text-shadow:0 0 15px red}}
+.intro{text-align:center;padding:20px;margin:12px 0;background:linear-gradient(180deg, rgba(255,0,64,0.18), rgba(0,0,0,0.92));border:2px solid #ff0040;border-radius:16px;animation:pulse 2.5s infinite}
+.intro h1{margin:0;font-size:22px;color:#ff0040;animation:glitch 3s infinite;letter-spacing:3px;font-weight:800}
+.intro .sub{margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#ffaaaa;letter-spacing:1px}
+.intro .quote{margin-top:14px;text-align:left;background:rgba(255,0,64,0.08);border-left:4px solid #ff0040;padding:10px 12px;border-radius:0 10px 10px 0;font-size:11px;line-height:1.5;color:#fff;font-style:italic}
+.intro .quote b{color:#ff0040;font-style:normal}
+.card{background:rgba(0,0,0,0.92);border:2px solid #ff0040;border-radius:14px;padding:13px;margin:12px 0;box-shadow:0 0 14px rgba(255,0,64,0.4);backdrop-filter:blur(5px);transition:0.3s}
+.card:hover{box-shadow:0 0 22px rgba(255,0,64,0.7);transform:translateY(-1px)}
+.status{padding:14px;border-radius:10px;text-align:center;font-weight:bold;font-size:12px;letter-spacing:1px}
+.online{background:linear-gradient(135deg, rgba(0,255,100,0.15), rgba(0,50,0,0.6));border:2px solid #0f0;color:#0f0;box-shadow:0 0 15px rgba(0,255,0,0.25)}
+.offline{background:linear-gradient(135deg, rgba(255,0,64,0.35), rgba(80,0,0,0.7));border:2px solid red;color:#ffaaaa;animation:pulseOff 1s infinite}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin-top:10px}
+button{padding:11px;border:none;border-radius:9px;background:linear-gradient(145deg,#ff0040,#7a0020);color:#fff;font-weight:800;cursor:pointer;font-size:11px;transition:0.2s;box-shadow:0 3px 10px rgba(255,0,64,0.35)}
+button:hover{transform:scale(1.05);box-shadow:0 0 18px rgba(255,0,64,0.8)}
+button:active{transform:scale(0.95)}
+button.on{background:linear-gradient(145deg,#00ff88,#008844);color:#000;box-shadow:0 0 12px rgba(0,255,136,0.5)}
+button.off{background:linear-gradient(145deg,#222,#000);border:1px solid #444;color:#666;box-shadow:none}
+.switch{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #1a1a1a;transition:0.2s}
+.switch:hover{background:rgba(255,0,64,0.07);padding-left:6px;border-radius:6px}
+.switch span{font-size:11px;display:flex;align-items:center;gap:6px}
+.section-title{color:#ff0040;font-size:13px;margin:18px 0 8px 0;border-left:4px solid #ff0040;padding:6px 0 6px 12px;background:linear-gradient(90deg, rgba(255,0,64,0.15), transparent);border-radius:0 8px 8px 0;font-weight:800;letter-spacing:1px}
+.badge{font-size:8px;padding:4px 8px;border-radius:20px;background:linear-gradient(145deg,#ff0040,#aa0028);margin-left:6px;font-weight:800;box-shadow:0 0 8px rgba(255,0,64,0.5)}
+.badge-green{background:linear-gradient(145deg,#00ff88,#008844);color:#000}
+input{width:100%;padding:12px;background:rgba(17,17,17,0.9);color:#fff;border:2px solid #ff0040;border-radius:8px;margin:6px 0;font-size:12px}
+input:focus{outline:none;box-shadow:0 0 15px rgba(255,0,64,0.6)}
+#qrBox{display:none;background:#fff;padding:12px;border-radius:12px;margin-top:12px;text-align:center;color:#000;animation:fadeIn 0.4s}
+.footer{text-align:center;font-size:9px;color:#666;margin-top:12px;line-height:1.7}
+.footer a{color:#ff0040;text-decoration:none}
 </style>
 </head>
 <body>
-<div class="bg"></div>
+<div class="bg"></div><div class="bg2"></div>
 <div class="container">
-<h1>꧁༒☬ BLACK GOKU V118 CONTROL ☬༒꧂</h1>
-<div id="statusBox" class="card status">Chargement...</div>
+
+<div class="intro">
+<h1>꧁༒☬ BLACK GOKU V118.1 ULTRA ☬༒꧂</h1>
+<div class="sub">⚡ SINGLE OWNER - 5551982215198 - CODE 8 CHIFFRES - H24 IMMORTEL ⚡</div>
+<div class="quote">
+<b>💀 PHRASE DU DIEU NOIR :</b><br>
+"Je ne suis pas venu pour régner. Je suis venu pour effacer. Chaque groupe qui m'accueille devient mon royaume, chaque mortel qui me défie devient poussière. Mon nom est <b>BLACK GOKU</b>, et votre silence sera ma plus belle victoire. Agenouillez-vous... ou disparaissez."<br>
+<span style="float:right;color:#ff0040;margin-top:6px;font-style:normal;font-weight:800">— BLACK GOKU, Le Dieu Noir de l'Apocalypse</span>
+</div>
+</div>
+
+<div id="statusBox" class="card status">🔄 Invocation du Ki Noir...</div>
 
 <div class="card">
-<h3>🔌 BOT POWER</h3>
+<h3>🔌 ⚡ POWER CORE - COEUR DU DIEU</h3>
 <div class="grid">
 <button id="botBtn" onclick="toggleBot()">...</button>
 <button onclick="loadQR()">📱 QR CODE</button>
 <button onclick="pairCode()">🔢 CODE 8</button>
 <button onclick="getSession()">🔑 SESSION</button>
-<button onclick="if(confirm('Vider auth2 ?')) fetch('/clear').then(()=>alert('CLEAR OK - Bot va redémarrer'))">🗑️ CLEAR AUTH</button>
+<button onclick="if(confirm('💀 Vider auth2 ?')) fetch('/clear').then(()=>alert('☠️ CLEAR OK'))">🗑️ CLEAR AUTH</button>
 </div>
 <div id="qrBox"></div>
-<div style="margin-top:10px">
-<input id="numInput" placeholder="Numéro pour code: 5551982215198" value="5551982215198">
-</div>
+<div style="margin-top:12px"><input id="numInput" value="5551982215198" placeholder="Numéro pour code"></div>
 </div>
 
 <div class="card">
-<h3>🛡️ PROTECTIONS GROUPES</h3>
+<h3>🛡️ DEFENSE MATRIX - BOUCLIER NOIR</h3>
 <div id="protections"></div>
 </div>
 
 <div class="card">
-<h3>📋 COMMANDES - ON / OFF <span class="badge">CLIQUE POUR DESACTIVER</span></h3>
-<div class="section-title">MEMBRES</div><div id="cmds-membres"></div>
-<div class="section-title">DIABOLIQUES</div><div id="cmds-diaboliques"></div>
-<div class="section-title">PUNITIONS / PURGE</div><div id="cmds-punitions"></div>
-<div class="section-title">PROTECTION / WELCOME</div><div id="cmds-protection"></div>
-<div class="section-title">STICKER / FUN</div><div id="cmds-sticker"></div>
-<div class="section-title">OWNER / AUTRE</div><div id="cmds-owner"></div>
+<h3>📋 COMMAND CENTER <span class="badge">CLIQUE POUR BAN LA CMD</span> <span class="badge badge-green" id="totalOn">0 ON</span></h3>
+<div class="section-title">👥 MEMBRES - L'Armée</div><div id="cmds-membres"></div>
+<div class="section-title">😈 DIABOLIQUES - Pouvoirs Interdits</div><div id="cmds-diaboliques"></div>
+<div class="section-title">💀 PUNITIONS - Sentence Mortelle</div><div id="cmds-punitions"></div>
+<div class="section-title">🛡️ PROTECTION - Bouclier</div><div id="cmds-protection"></div>
+<div class="section-title">🎨 STICKER / FUN</div><div id="cmds-sticker"></div>
+<div class="section-title">👑 OWNER / SYSTEM</div><div id="cmds-owner"></div>
 </div>
 
 <div class="card">
-<h3>🤖 AUTOREPLY CONTROL</h3>
+<h3>🤖 AUTOREPLY - Messager Fantôme</h3>
 <div class="grid">
 <button onclick="api('/api/autoreplyAll/on')">PV ON ALL</button>
 <button onclick="api('/api/autoreplyAll/off')">PV OFF ALL</button>
@@ -73,13 +98,14 @@ input{width:100%;padding:10px;background:#111;color:#fff;border:1px solid #ff004
 </div>
 </div>
 
-<div class="card" style="text-align:center;font-size:10px;color:#666">
-BLACK GOKU V118 - OWNER 5551982215198<br>
-Panel compatible avec ton menu complet<br>
-<a href="/status" target="_blank" style="color:#ff0040">/status</a> | <a href="/h24" target="_blank" style="color:#ff0040">/h24</a>
-</div>
+<div class="card footer">
+🔥 BLACK GOKU V118.1 ULTRA - OWNER 5551982215198 🔥<br>
+"Quand le Dieu Noir s'éveille, les mondes tremblent."<br>
+<a href="/status">/status</a> • <a href="/h24">/h24</a> • <a href="/pair?number=5551982215198">/pair</a> • <a href="/qr">/qr</a><br>
+<span style="color:#ff0040">⚡ H24 IMMORTEL • INVINCIBLE • ÉTERNEL ⚡</span>
 </div>
 
+</div>
 <script>
 let DB=null;
 const MENUS = {
@@ -90,61 +116,24 @@ const MENUS = {
   "sticker": ["s","vq","st","pp","ppgod","ppvol","pindieu","tgvol","tradgod","lyrics"],
   "owner": ["amis","noami","bot","black","menu","b"]
 };
-
 function render(){
   if(!DB) return;
-  document.getElementById('statusBox').innerHTML = `${DB.status} | Uptime: ${Math.floor(DB.uptime/1000)}s | ${DB.botOff ? '🔴 BOT ÉTEINT' : '🟢 BOT ALLUMÉ'} | Groupes: ${Object.keys(DB.db.activity||{}).length} | Cmd OFF: ${(DB.disabledCmds||[]).length}`;
+  document.getElementById('statusBox').innerHTML = `💀 ${DB.status} 💀 | ⏱️ ${Math.floor(DB.uptime/1000)}s | ${DB.botOff ? '🔴 ÉTEINT - LE DIEU DORT' : '🟢 ALLUMÉ - LE DIEU EST ÉVEILLÉ'} | 🏰 ${Object.keys(DB.db.activity||{}).length} Groupes | 🚫 ${ (DB.disabledCmds||[]).length} CMD OFF`;
   document.getElementById('statusBox').className = 'card status ' + (DB.botOff ? 'offline' : 'online');
-  document.getElementById('botBtn').innerText = DB.botOff ? '🔴 BOT OFF - ALLUMER' : '🟢 BOT ON - ÉTEINDRE';
+  document.getElementById('botBtn').innerText = DB.botOff ? '🔴 OFF - RÉVEILLER' : '🟢 ON - ENDORMIR';
   document.getElementById('botBtn').className = DB.botOff ? 'off' : 'on';
-
-  // protections
+  document.getElementById('totalOn').innerText = `${Object.values(MENUS).flat().length - (DB.disabledCmds||[]).length} ON`;
   let pList = ["antilink","antilock","antidemote","welcome","bye","ghost","boy","zenkai","antidelete","kaio"];
-  let html='';
-  pList.forEach(p=>{
-    let count = (DB.db[p]||[]).length;
-    let on = count>0;
-    html+=`<div class="switch"><span>🛡️ ${p.toUpperCase()} <span class="badge">${count} groupes</span></span><div><button class="${on?'on':'off'}" onclick="api('/api/protect/${p}/on')">ON ALL</button> <button class="off" onclick="api('/api/protect/${p}/off')">OFF ALL</button></div></div>`;
-  });
-  document.getElementById('protections').innerHTML=html;
-
-  // commands par categorie
-  Object.keys(MENUS).forEach(cat=>{
-    let container = document.getElementById('cmds-'+cat);
-    if(!container) return;
-    let chtml='';
-    MENUS[cat].forEach(c=>{
-      let disabled = (DB.disabledCmds||[]).includes(c);
-      chtml+=`<div class="switch"><span>₩${c}</span><button class="${disabled?'off':'on'}" onclick="api('/api/cmd/${c}/toggle')">${disabled?'❌ OFF':'✅ ON'}</button></div>`;
-    });
-    container.innerHTML=chtml;
-  });
+  let html=''; pList.forEach(p=>{let c=(DB.db[p]||[]).length;let on=c>0;html+=`<div class="switch"><span>🛡️ ${p.toUpperCase()} <span class="badge ${on?'badge-green':''}">${c} ${on?'🟢':'⚫'}</span></span><div style="display:flex;gap:5px"><button class="${on?'on':'off'}" onclick="api('/api/protect/${p}/on')">ON ALL</button><button class="off" onclick="api('/api/protect/${p}/off')">OFF</button></div></div>`}); document.getElementById('protections').innerHTML=html;
+  Object.keys(MENUS).forEach(cat=>{let cont=document.getElementById('cmds-'+cat);if(!cont)return;let chtml='';MENUS[cat].forEach(c=>{let dis=(DB.disabledCmds||[]).includes(c);chtml+=`<div class="switch"><span>${dis?'💀':'⚡'} ₩${c}</span><button class="${dis?'off':'on'}" onclick="api('/api/cmd/${c}/toggle')">${dis?'❌ OFF':'✅ ON'}</button></div>`});cont.innerHTML=chtml;});
 }
-
-async function api(url){
-  let r = await fetch(url);
-  let j = await r.json();
-  DB=j; render();
-}
-async function toggleBot(){ let r=await fetch('/api/bot/toggle'); DB=await r.json(); render(); }
-async function load(){
-  let r = await fetch('/api/full'); DB=await r.json(); render();
-}
-function loadQR(){
-  fetch('/qr').then(r=>r.text()).then(t=>{
-    document.getElementById('qrBox').innerHTML=t;
-    document.getElementById('qrBox').style.display='block';
-  });
-}
-function pairCode(){
-  let num = document.getElementById('numInput').value || '5551982215198';
-  window.open('/pair?number='+num,'_blank');
-}
-function getSession(){
-  fetch('/session').then(r=>r.text()).then(t=>{ prompt('COPIE TA SESSION:',t); });
-}
-setInterval(load,4000);
-load();
+async function api(u){let r=await fetch(u);DB=await r.json();render();if(navigator.vibrate)navigator.vibrate(50)}
+async function toggleBot(){let r=await fetch('/api/bot/toggle');DB=await r.json();render();if(navigator.vibrate)navigator.vibrate([100,50,100])}
+async function load(){try{let r=await fetch('/api/full');DB=await r.json();render()}catch(e){document.getElementById('statusBox').innerHTML='❌ BOT HORS LIGNE';document.getElementById('statusBox').className='card status offline'}}
+function loadQR(){fetch('/qr').then(r=>r.text()).then(t=>{document.getElementById('qrBox').innerHTML=t;document.getElementById('qrBox').style.display='block'})}
+function pairCode(){let n=document.getElementById('numInput').value||'5551982215198';window.open('/pair?number='+n,'_blank')}
+function getSession(){fetch('/session').then(r=>r.text()).then(t=>prompt('🔑 SESSION:',t))}
+setInterval(load,3500);load();
 </script>
 </body>
 </html>
