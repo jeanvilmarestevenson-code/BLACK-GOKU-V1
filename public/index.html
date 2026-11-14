@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLACK GOKU V118</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#ff0040">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+body{margin:0;font-family:'Orbitron',monospace;background:#000;color:#fff}
+.bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:url('https://wallpapercave.com/wp/wp11253673.jpg') center/cover no-repeat;filter:brightness(0.35)}
+.container{max-width:900px;margin:20px auto;padding:20px;background:rgba(0,0,0,0.85);border:2px solid #ff0040;border-radius:16px;box-shadow:0 0 25px red}
+h1{text-align:center;color:#ff0040;text-shadow:0 0 12px red}
+.status{padding:14px;border:1px solid #ff0040;border-radius:10px;margin:12px 0;background:rgba(255,0,64,0.12)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+button{padding:12px;background:linear-gradient(45deg,#ff0040,#3a0000);border:1px solid red;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold}
+button:hover{box-shadow:0 0 15px red}
+input,select{width:100%;padding:10px;margin:6px 0;background:#111;color:#fff;border:1px solid #ff0040;border-radius:6px}
+.card{border:1px solid #333;padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);margin-top:12px}
+</style>
+</head>
+<body>
+<div class="bg" id="bg"></div>
+<div class="container">
+<h1>꧁༒☬ BLACK GOKU V118 ☬༒꧂</h1>
+<div class="status" id="status">Chargement...</div>
+<div class="card">
+<h3>🎨 FOND D'ÉCRAN</h3>
+<input type="text" id="wallUrl" placeholder="Lien image https://...">
+<div class="grid"><button onclick="changeBg()">Changer</button><button onclick="localStorage.setItem('goku_bg',document.getElementById('wallUrl').value);alert('Sauvegardé')">💾 Sauver</button></div>
+<select onchange="document.getElementById('bg').style.backgroundImage=`url('${this.value}')`;document.getElementById('wallUrl').value=this.value">
+<option value="">-- Preset --</option>
+<option value="https://wallpapercave.com/wp/wp11253673.jpg">Rose Original</option>
+<option value="https://wallpapercave.com/wp/wp10422055.jpg">DB Super</option>
+<option value="https://images.alphacoders.com/129/1297401.jpg">Scythe</option>
+</select>
+</div>
+<div class="card">
+<h3>⚙️ CONTROLES</h3>
+<div class="grid">
+<button onclick="fetch('/qr').then(r=>r.text()).then(t=>{document.getElementById('qrBox').style.display='block';document.getElementById('qrBox').innerHTML=t})">📱 QR</button>
+<button onclick="fetch('/session').then(r=>r.text()).then(t=>prompt('SESSION:',t))">🔑 SESSION</button>
+<button onclick="if(confirm('Clear?'))fetch('/clear').then(()=>alert('CLEAR OK'))">🗑️ CLEAR</button>
+<button onclick="fetch('/h24').then(r=>r.text()).then(t=>alert(t))">♻️ H24</button>
+</div>
+<div id="qrBox" style="display:none;text-align:center;margin-top:10px;background:#fff;padding:10px;border-radius:10px"></div>
+</div>
+</div>
+<script>
+function changeBg(){let u=document.getElementById('wallUrl').value;if(u)document.getElementById('bg').style.backgroundImage=`url('${u}')`}
+let s=localStorage.getItem('goku_bg');if(s){document.getElementById('bg').style.backgroundImage=`url('${s}')`;document.getElementById('wallUrl').value=s}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}
+setInterval(()=>{fetch('/status').then(r=>r.json()).then(j=>document.getElementById('status').innerText=`${j.status} | UPTIME ${Math.floor(j.uptime/1000)}s`).catch(()=>{})},3000)
+</script>
+</body>
+</html>
