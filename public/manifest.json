@@ -1,0 +1,12 @@
+{
+  "name": "BLACK GOKU V118 PANEL",
+  "short_name": "BLACK GOKU",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ff0040",
+  "icons": [
+    {"src": "https://i.ibb.co/6gX3Y5p/goku-black.jpg","sizes": "192x192","type": "image/jpeg"},
+    {"src": "https://i.ibb.co/6gX3Y5p/goku-black.jpg","sizes": "512x512","type": "image/jpeg"}
+  ]
+}
