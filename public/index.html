@@ -3,55 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLACK GOKU V118</title>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#ff0040">
+<title>BLACK GOKU V118 CONTROL</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-body{margin:0;font-family:'Orbitron',monospace;background:#000;color:#fff}
-.bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:url('https://wallpapercave.com/wp/wp11253673.jpg') center/cover no-repeat;filter:brightness(0.35)}
-.container{max-width:900px;margin:20px auto;padding:20px;background:rgba(0,0,0,0.85);border:2px solid #ff0040;border-radius:16px;box-shadow:0 0 25px red}
-h1{text-align:center;color:#ff0040;text-shadow:0 0 12px red}
-.status{padding:14px;border:1px solid #ff0040;border-radius:10px;margin:12px 0;background:rgba(255,0,64,0.12)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-button{padding:12px;background:linear-gradient(45deg,#ff0040,#3a0000);border:1px solid red;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold}
-button:hover{box-shadow:0 0 15px red}
-input,select{width:100%;padding:10px;margin:6px 0;background:#111;color:#fff;border:1px solid #ff0040;border-radius:6px}
-.card{border:1px solid #333;padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);margin-top:12px}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+*{font-family:Orbitron,monospace;box-sizing:border-box}
+body{margin:0;background:#000;color:#fff;min-height:100vh}
+.bg{position:fixed;inset:0;background:url('https://wallpapercave.com/wp/wp11253673.jpg') center/cover;filter:brightness(0.25);z-index:-1}
+.container{max-width:1100px;margin:auto;padding:12px}
+h1{text-align:center;color:#ff0040;text-shadow:0 0 15px red;font-size:18px;padding:10px;border:2px solid #ff0040;border-radius:12px;background:rgba(0,0,0,0.8)}
+.card{background:rgba(0,0,0,0.9);border:2px solid #ff0040;border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 0 12px rgba(255,0,64,0.4)}
+.status{padding:12px;border-radius:8px;text-align:center;font-weight:bold;font-size:13px}
+.online{background:rgba(0,255,100,0.15);border:1px solid #0f0;color:#0f0}
+.offline{background:rgba(255,0,64,0.25);border:1px solid red;color:red}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px;margin-top:8px}
+button{padding:10px;border:none;border-radius:8px;background:linear-gradient(45deg,#ff0040,#500);color:#fff;font-weight:bold;cursor:pointer;font-size:11px}
+button.on{background:linear-gradient(45deg,#00ff88,#005522);color:#000}
+button.off{background:linear-gradient(45deg,#222,#000);border:1px solid #555;color:#888}
+.switch{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1a1a1a}
+.switch span{font-size:11px}
+.section-title{color:#ff0040;font-size:13px;margin:15px 0 5px 0;border-left:3px solid #ff0040;padding-left:8px}
+.badge{font-size:9px;padding:3px 6px;border-radius:10px;background:#ff0040;margin-left:5px}
+input{width:100%;padding:10px;background:#111;color:#fff;border:1px solid #ff0040;border-radius:6px;margin:5px 0;font-size:12px}
+#qrBox{display:none;background:#fff;padding:10px;border-radius:10px;margin-top:10px;text-align:center;color:#000}
 </style>
 </head>
 <body>
-<div class="bg" id="bg"></div>
+<div class="bg"></div>
 <div class="container">
-<h1>꧁༒☬ BLACK GOKU V118 ☬༒꧂</h1>
-<div class="status" id="status">Chargement...</div>
+<h1>꧁༒☬ BLACK GOKU V118 CONTROL ☬༒꧂</h1>
+<div id="statusBox" class="card status">Chargement...</div>
+
 <div class="card">
-<h3>🎨 FOND D'ÉCRAN</h3>
-<input type="text" id="wallUrl" placeholder="Lien image https://...">
-<div class="grid"><button onclick="changeBg()">Changer</button><button onclick="localStorage.setItem('goku_bg',document.getElementById('wallUrl').value);alert('Sauvegardé')">💾 Sauver</button></div>
-<select onchange="document.getElementById('bg').style.backgroundImage=`url('${this.value}')`;document.getElementById('wallUrl').value=this.value">
-<option value="">-- Preset --</option>
-<option value="https://wallpapercave.com/wp/wp11253673.jpg">Rose Original</option>
-<option value="https://wallpapercave.com/wp/wp10422055.jpg">DB Super</option>
-<option value="https://images.alphacoders.com/129/1297401.jpg">Scythe</option>
-</select>
-</div>
-<div class="card">
-<h3>⚙️ CONTROLES</h3>
+<h3>🔌 BOT POWER</h3>
 <div class="grid">
-<button onclick="fetch('/qr').then(r=>r.text()).then(t=>{document.getElementById('qrBox').style.display='block';document.getElementById('qrBox').innerHTML=t})">📱 QR</button>
-<button onclick="fetch('/session').then(r=>r.text()).then(t=>prompt('SESSION:',t))">🔑 SESSION</button>
-<button onclick="if(confirm('Clear?'))fetch('/clear').then(()=>alert('CLEAR OK'))">🗑️ CLEAR</button>
-<button onclick="fetch('/h24').then(r=>r.text()).then(t=>alert(t))">♻️ H24</button>
+<button id="botBtn" onclick="toggleBot()">...</button>
+<button onclick="loadQR()">📱 QR CODE</button>
+<button onclick="pairCode()">🔢 CODE 8</button>
+<button onclick="getSession()">🔑 SESSION</button>
+<button onclick="if(confirm('Vider auth2 ?')) fetch('/clear').then(()=>alert('CLEAR OK - Bot va redémarrer'))">🗑️ CLEAR AUTH</button>
 </div>
-<div id="qrBox" style="display:none;text-align:center;margin-top:10px;background:#fff;padding:10px;border-radius:10px"></div>
+<div id="qrBox"></div>
+<div style="margin-top:10px">
+<input id="numInput" placeholder="Numéro pour code: 5551982215198" value="5551982215198">
 </div>
 </div>
+
+<div class="card">
+<h3>🛡️ PROTECTIONS GROUPES</h3>
+<div id="protections"></div>
+</div>
+
+<div class="card">
+<h3>📋 COMMANDES - ON / OFF <span class="badge">CLIQUE POUR DESACTIVER</span></h3>
+<div class="section-title">MEMBRES</div><div id="cmds-membres"></div>
+<div class="section-title">DIABOLIQUES</div><div id="cmds-diaboliques"></div>
+<div class="section-title">PUNITIONS / PURGE</div><div id="cmds-punitions"></div>
+<div class="section-title">PROTECTION / WELCOME</div><div id="cmds-protection"></div>
+<div class="section-title">STICKER / FUN</div><div id="cmds-sticker"></div>
+<div class="section-title">OWNER / AUTRE</div><div id="cmds-owner"></div>
+</div>
+
+<div class="card">
+<h3>🤖 AUTOREPLY CONTROL</h3>
+<div class="grid">
+<button onclick="api('/api/autoreplyAll/on')">PV ON ALL</button>
+<button onclick="api('/api/autoreplyAll/off')">PV OFF ALL</button>
+<button onclick="api('/api/autoreplyGroupeAll/on')">GROUP ON ALL</button>
+<button onclick="api('/api/autoreplyGroupeAll/off')">GROUP OFF ALL</button>
+</div>
+</div>
+
+<div class="card" style="text-align:center;font-size:10px;color:#666">
+BLACK GOKU V118 - OWNER 5551982215198<br>
+Panel compatible avec ton menu complet<br>
+<a href="/status" target="_blank" style="color:#ff0040">/status</a> | <a href="/h24" target="_blank" style="color:#ff0040">/h24</a>
+</div>
+</div>
+
 <script>
-function changeBg(){let u=document.getElementById('wallUrl').value;if(u)document.getElementById('bg').style.backgroundImage=`url('${u}')`}
-let s=localStorage.getItem('goku_bg');if(s){document.getElementById('bg').style.backgroundImage=`url('${s}')`;document.getElementById('wallUrl').value=s}
-if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}
-setInterval(()=>{fetch('/status').then(r=>r.json()).then(j=>document.getElementById('status').innerText=`${j.status} | UPTIME ${Math.floor(j.uptime/1000)}s`).catch(()=>{})},3000)
+let DB=null;
+const MENUS = {
+  "membres": ["tagall","hidetag","kick","ban","add","kickall","purgeall","promote","demote","mute","unmute","admin","info","stats","goku","kaio","waifu","iscom","time","rdm","gt","inactifs","trad","act","noact","git","ex"],
+  "diaboliques": ["hijack","matrix","card","abyss","nukeplus"],
+  "punitions": ["chut","unchut","blockadmin","reini","neant","goat","apocalypse","hell","void","soulpurge","nuke"],
+  "protection": ["save","zenkai","nozenkai","boy","antilink","antilock","antidemote","welcome","bye","ghost","autoreply","autoreplygroupe","antidelete","abysssee"],
+  "sticker": ["s","vq","st","pp","ppgod","ppvol","pindieu","tgvol","tradgod","lyrics"],
+  "owner": ["amis","noami","bot","black","menu","b"]
+};
+
+function render(){
+  if(!DB) return;
+  document.getElementById('statusBox').innerHTML = `${DB.status} | Uptime: ${Math.floor(DB.uptime/1000)}s | ${DB.botOff ? '🔴 BOT ÉTEINT' : '🟢 BOT ALLUMÉ'} | Groupes: ${Object.keys(DB.db.activity||{}).length} | Cmd OFF: ${(DB.disabledCmds||[]).length}`;
+  document.getElementById('statusBox').className = 'card status ' + (DB.botOff ? 'offline' : 'online');
+  document.getElementById('botBtn').innerText = DB.botOff ? '🔴 BOT OFF - ALLUMER' : '🟢 BOT ON - ÉTEINDRE';
+  document.getElementById('botBtn').className = DB.botOff ? 'off' : 'on';
+
+  // protections
+  let pList = ["antilink","antilock","antidemote","welcome","bye","ghost","boy","zenkai","antidelete","kaio"];
+  let html='';
+  pList.forEach(p=>{
+    let count = (DB.db[p]||[]).length;
+    let on = count>0;
+    html+=`<div class="switch"><span>🛡️ ${p.toUpperCase()} <span class="badge">${count} groupes</span></span><div><button class="${on?'on':'off'}" onclick="api('/api/protect/${p}/on')">ON ALL</button> <button class="off" onclick="api('/api/protect/${p}/off')">OFF ALL</button></div></div>`;
+  });
+  document.getElementById('protections').innerHTML=html;
+
+  // commands par categorie
+  Object.keys(MENUS).forEach(cat=>{
+    let container = document.getElementById('cmds-'+cat);
+    if(!container) return;
+    let chtml='';
+    MENUS[cat].forEach(c=>{
+      let disabled = (DB.disabledCmds||[]).includes(c);
+      chtml+=`<div class="switch"><span>₩${c}</span><button class="${disabled?'off':'on'}" onclick="api('/api/cmd/${c}/toggle')">${disabled?'❌ OFF':'✅ ON'}</button></div>`;
+    });
+    container.innerHTML=chtml;
+  });
+}
+
+async function api(url){
+  let r = await fetch(url);
+  let j = await r.json();
+  DB=j; render();
+}
+async function toggleBot(){ let r=await fetch('/api/bot/toggle'); DB=await r.json(); render(); }
+async function load(){
+  let r = await fetch('/api/full'); DB=await r.json(); render();
+}
+function loadQR(){
+  fetch('/qr').then(r=>r.text()).then(t=>{
+    document.getElementById('qrBox').innerHTML=t;
+    document.getElementById('qrBox').style.display='block';
+  });
+}
+function pairCode(){
+  let num = document.getElementById('numInput').value || '5551982215198';
+  window.open('/pair?number='+num,'_blank');
+}
+function getSession(){
+  fetch('/session').then(r=>r.text()).then(t=>{ prompt('COPIE TA SESSION:',t); });
+}
+setInterval(load,4000);
+load();
 </script>
 </body>
 </html>
