@@ -1,4 +1,4 @@
-// web.js - BLACK GOKU V118 FINAL - SINGLE OWNER 5551982215198 - CORRIGÉ SANS ERREUR
+// web.js - BLACK GOKU V118 FINAL - SINGLE OWNER 5551982215198 - AVEC CODE 8 CHIFFRES
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
@@ -283,7 +283,23 @@ app.get('/session', async(req,res)=>{ try{ let creds = fs.readFileSync('auth2/cr
 app.get('/clear', (req,res)=>{ try{ if(fs.existsSync('auth2')) fs.rmSync('auth2',{recursive:true,force:true}); res.send("CLEAR OK"); setTimeout(()=>process.exit(0),1000) }catch(e){ res.send(e.message) } })
 app.get('/qr', async(req,res)=>{ if(latestQR){ res.send(`<img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(latestQR)}" style="border:5px solid red"><br><p>Scanne ce QR</p>`) } else { res.send("⏳ QR pas prêt - Attends 10s") } })
 
-app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 V118 SINGLE OWNER LIVE ${PORT}`))
+// NOUVEAU: CODE 8 CHIFFRES
+app.get('/pair', async(req,res)=>{
+  let num = req.query.number || req.query.num
+  if(!num) return res.send(`Utilise: /pair?number=5551982215198<br>Ex France: /pair?number=33701234567`)
+  try{
+    num = num.replace(/[^0-9]/g,'')
+    if(!sock) return res.send("Bot pas démarré, attends 5 sec")
+    if(!fs.existsSync('auth2/creds.json')){
+      let code = await sock.requestPairingCode(num)
+      res.send(`<div style="background:#000;color:#ff0040;font-family:monospace;padding:20px;text-align:center;border:2px solid red;border-radius:15px"><h1>BLACK GOKU CODE</h1><h2 style="font-size:50px;letter-spacing:8px;background:#fff;color:#000;padding:15px;border-radius:10px">${code}</h2><p>WhatsApp > Appareils liés > Lier avec numéro<br>Entre ce code vite (20s)</p><p>${num}</p></div>`)
+    }else{
+      res.send("Déjà connecté. Va sur /clear pour nouveau code.")
+    }
+  }catch(e){ res.send("Erreur: "+e.message) }
+})
+
+app.listen(PORT,'0.0.0.0',()=>console.log(`🔥 V118 SINGLE OWNER LIVE ${PORT} - /pair dispo`))
 
 async function startBot(){
   if(isConnecting) return; isConnecting = true
@@ -307,7 +323,7 @@ async function startBot(){
     sock.ev.on('creds.update', saveCreds)
     sock.ev.on('connection.update', async(u)=>{
       const { connection, lastDisconnect, qr } = u
-      if(qr){ latestQR = qr; status = "QR PRÊT - Va sur /qr"; console.log("QR PRÊT") }
+      if(qr){ latestQR = qr; status = "QR PRÊT - Va sur /qr ou /pair?number=..."; console.log("QR PRÊT") }
       if(connection==='open'){ status="BLACK GOKU ACTIF H24 ✅"; latestQR=null; BOT_START=Date.now(); isConnecting=false; console.log("✅ CONNECTÉ") }
       if(connection==='close'){ isConnecting=false; console.log("❌ CLOSE, retry 5s"); setTimeout(startBot,5000) }
     })
