@@ -10,3 +10,8 @@ creds.json
 .env
 .DS_Store
 public/uploads/
+auth/
+baileys_store/
+store/
+*.webp
+*.mp4
