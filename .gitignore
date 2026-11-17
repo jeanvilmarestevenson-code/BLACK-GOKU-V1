@@ -1,17 +1,45 @@
-node_modules/
+# ===== BLACK GOKU - NE PAS PUSH =====
+# Session WhatsApp - SECRET, si tu push ça quelqu'un vole ton bot
 auth2/
-auth_info_baileys/
-black_db.json
-*.log
-.tmp/
-temp/
-session/
-creds.json
-.env
-.DS_Store
-public/uploads/
 auth/
-baileys_store/
-store/
-*.webp
+creds.json
+*.json
+!package.json
+
+# DB locale
+black_db.json
+black_db.json.bak
+
+# Modules
+node_modules/
+package-lock.json
+
+# Logs / temp
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.ogg
+*.mp3
 *.mp4
+*.webp
+goku_*.mp4
+goku_*.webp
+lyr_*.ogg
+lyr_*.mp3
+
+# Env / secrets
+.env
+.env.local
+SESSION_ID
+.env.example
+
+# OS / editeur
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Render / deploy
+.render/
