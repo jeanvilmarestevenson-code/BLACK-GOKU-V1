@@ -1,5 +1,5 @@
-// web.js - BLACK GOKU V118 FINAL - SINGLE OWNER 5551982215198 - COMPLET CORRIGÉ - LYRICS = TRANSCRIPTION VOCAL
-const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadMediaMessage } = require('@whiskeysockets/baileys')
+// web.js - BLACK GOKU V119 FIX - SINGLE OWNER 5551982215198 - MENU ET REPONSES INTACTS
+const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, downloadContentFromMessage } = require('@whiskeysockets/baileys')
 const P = require('pino')
 const fs = require('fs')
 const os = require('os')
@@ -10,7 +10,7 @@ const cors = require('cors')
 const NodeCache = require('node-cache')
 const https = require('https')
 const http = require('http')
-const fetch = require('node-fetch')
+// FIX 2: pas de require('node-fetch') - fetch global Node 18+
 
 const app = express()
 app.use(cors())
@@ -23,6 +23,7 @@ const PREFIX = process.env.PREFIX || "₩"
 const DB_FILE = './black_db.json'
 const GITHUB_LINK = "https://github.com/jeanvilmarestevenson-code/BLACK-GOKU-V1/"
 const SESSION_ID = process.env.SESSION_ID || ""
+// FIX 3: bien initialise
 const msgRetryCounterCache = new NodeCache()
 
 let ffmpegPath = null
@@ -48,12 +49,14 @@ if(!fs.existsSync('auth2') || fs.readdirSync('auth2').length===0){ if(SESSION_ID
 
 let db = { amis:{}, saved:[], pro:[], protec:[], chut:{}, blockadmin:[], godmode:[], kaio:[], antilink:[], antisticker:[], welcome:[], welcomeTexts:{}, bye:[], byeTexts:{}, ghost:[], ghostCache:{}, antibod:{}, curse:{}, antilock:[], antidemote:[], clans:{}, zenkai:[], zenkaiUsers:[], boy:[], boyUsers:[], ownerLids:[], privateMode:false, botOff:false, activity:{}, groupCache:{}, muted:{}, styles:{}, antidelete:[], antideleteCache:{}, autoreply:[], autoreplyAll:false, autoreplyGroupe:[], autoreplyGroupeAll:false }
 if(fs.existsSync(DB_FILE)){ try{ db={...db,...JSON.parse(fs.readFileSync(DB_FILE))} }catch{} }
-const saveDB = ()=>fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
+// FIX 10: saveDB try/catch
+const saveDB = ()=>{ try{ fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)) }catch(e){ console.log('saveDB ERR:', e.message) } }
 
 let sock, status="Demarrage...", latestQR=null, BOT_START=Date.now()
 let messageStore = {}
 let isConnecting = false
 
+// ===== MENU ORIGINAL - TOUCHE PAS =====
 const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┏━ ✦ 𝑴𝑬𝑴𝑩𝑹𝑬𝑺 ✦ ━┓
 ┃ ₩𝒕𝒂𝒈𝒂𝒍𝒍
@@ -146,11 +149,14 @@ const getMenu = () => `꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂
 ┗━━━━━━━━━━━━━━┛
 *₩𝑪𝑹ÉÉ 𝑷𝑨𝑹 𝑻𝑯𝑬 𝑮𝑶𝑨𝑻 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼₩*`;
 
+// FIX 8: normalisation douce - enlève juste les caractères invisibles qui cassent, garde tes polices stylées
+function cleanText(t){ if(!t) return ""; return String(t).normalize('NFC').replace(/[\u200B-\u200D\uFEFF]/g,'') }
 const S = (t)=>`╔═══꧁༒☬ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 ☬༒꧂═══╗
-║ ${t}
+║ ${cleanText(t)}
 ╚═══════════════════════╝
 ⚡ 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼`
 
+// ===== REPONSES ORIGINALES - TOUCHE PAS =====
 const R = {
 noPerm: S(`😈 𝑻'𝑬𝑺 𝑸𝑼𝑰 𝑻𝑶𝑰 𝑴𝑶𝑹𝑻𝑬𝑳 ?
 ║ 🔒 𝑺𝑬𝑼𝑳 𝑩𝑳𝑨𝑪𝑲 𝑮𝑶𝑲𝑼 𝑷𝑬𝑼𝑻 𝑶𝑹𝑫𝑶𝑵𝑵𝑬𝑹
@@ -256,7 +262,22 @@ gtMsg:(j, g)=>`╔═══꧁༒☬ 𝑷𝑷 𝑽𝑶𝑳𝑬𝑬 ☬༒꧂═�
 }
 
 function normalizeJid(j){ return j?.split(':')[0].split('@')[0].replace(/[^0-9]/g,'')||"" }
-function isCreator(jid){ if(!jid) return false; let n=normalizeJid(jid); if(n===OWNER_NUMBER) return true; if(db.ownerLids.includes(jid)||db.ownerLids.includes(n)) return true; return false }
+// FIX 9: isCreator check complet LID
+function isCreator(jid){
+  if(!jid) return false
+  let n = normalizeJid(jid)
+  if(n === OWNER_NUMBER) return true
+  if(db.ownerLids && db.ownerLids.includes(jid)) return true
+  if(db.ownerLids && db.ownerLids.includes(n)) return true
+  if(jid.includes('@lid')){
+    let lidNum = jid.split('@')[0]
+    if(db.ownerLids.includes(lidNum)) return true
+    if(lidNum === OWNER_NUMBER) return true
+  }
+  if(jid === OWNER_NUMBER + '@s.whatsapp.net') return true
+  if(jid === OWNER_NUMBER + '@lid') return true
+  return false
+}
 function isProtectedForKick(jid){ if(isCreator(jid)) return true; let n=normalizeJid(jid); return db.saved.includes(jid)||db.protec.includes(jid)||db.saved.includes(n)||db.protec.includes(n) }
 async function makeStickerBuffer(b){ try{ const sharp=require('sharp'); return await sharp(b).resize(512,512,{fit:'contain', background:{r:0,g:0,b:0,alpha:0}}).webp({quality:90}).toBuffer() }catch{ return b } }
 async function makeVideoStickerBuffer(videoBuffer){
@@ -275,6 +296,25 @@ async function makeVideoStickerBuffer(videoBuffer){
 }
 function findImg(list){ for(let f of list){ if(fs.existsSync(f)) return f } return null }
 
+// FIX 1: Helper Baileys v6 - downloadContentFromMessage
+async function downloadMediaBuffer(msg, type){
+  let message = msg?.message || msg
+  let stream = await downloadContentFromMessage(message, type)
+  let chunks = []
+  for await (const chunk of stream) chunks.push(chunk)
+  return Buffer.concat(chunks)
+}
+async function downloadQuotedMedia(quotedMsg){
+  if(quotedMsg.imageMessage) return { buf: await downloadMediaBuffer(quotedMsg.imageMessage, 'image'), type:'image' }
+  if(quotedMsg.videoMessage) return { buf: await downloadMediaBuffer(quotedMsg.videoMessage, 'video'), type:'video' }
+  if(quotedMsg.audioMessage) return { buf: await downloadMediaBuffer(quotedMsg.audioMessage, 'audio'), type:'audio' }
+  if(quotedMsg.pttMessage) return { buf: await downloadMediaBuffer(quotedMsg.pttMessage, 'audio'), type:'audio' }
+  if(quotedMsg.stickerMessage) return { buf: await downloadMediaBuffer(quotedMsg.stickerMessage, 'sticker'), type:'sticker' }
+  let vo = quotedMsg.viewOnceMessage?.message || quotedMsg.viewOnceMessageV2?.message || quotedMsg.viewOnceMessageV2Extension?.message
+  if(vo) return await downloadQuotedMedia(vo)
+  throw new Error('Type media inconnu')
+}
+
 async function downloadPinterest(q){
   try{
     let r=await fetch(`https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(q)}`)
@@ -284,34 +324,33 @@ async function downloadPinterest(q){
   return []
 }
 
+// FIX 7: LYRICS transcription fallback propre
 async function transcribeAudio(buffer){
-  return new Promise((resolve, reject)=>{
-    if(!ffmpegPath) return reject(new Error("FFMPEG manquant"))
+  return new Promise((resolve)=>{
+    if(!ffmpegPath) return resolve(null)
     const tmpIn = path.join(os.tmpdir(), `lyr_${Date.now()}_in.ogg`)
     const tmpMp3 = path.join(os.tmpdir(), `lyr_${Date.now()}_out.mp3`)
-    fs.writeFileSync(tmpIn, buffer)
+    try{ fs.writeFileSync(tmpIn, buffer) }catch{ return resolve(null) }
     const cmd = `"${ffmpegPath}" -y -i "${tmpIn}" -ar 16000 -ac 1 -c:a mp3 "${tmpMp3}"`
     exec(cmd, {timeout: 20000}, async (err)=>{
       try{ fs.unlinkSync(tmpIn) }catch{}
-      if(err){ try{ fs.unlinkSync(tmpMp3) }catch{}; return reject(err) }
+      if(err){ try{ fs.unlinkSync(tmpMp3) }catch{}; return resolve(null) }
       try{
-        // API gratuite de transcription
         let data = fs.readFileSync(tmpMp3)
-        // Essai 1: API wit / siputzx
-        let res = await fetch("https://api.siputzx.my.id/api/tools/transcribe", {
-          method: "POST",
-          headers: {"Content-Type":"audio/mpeg"},
-          body: data
-        }).then(r=>r.json()).catch(()=>null)
-        let text = res?.data || res?.text || res?.result
+        let text = null
+        try{
+          let res = await fetch("https://api.siputzx.my.id/api/tools/transcribe", { method:"POST", headers:{"Content-Type":"audio/mpeg"}, body:data, signal: AbortSignal.timeout(15000) }).then(r=>r.json()).catch(()=>null)
+          text = res?.data || res?.text || res?.result || null
+        }catch{}
+        if(!text){
+          try{
+            let res2 = await fetch("https://api.siputzx.my.id/api/tools/transcribe-audio", { method:"POST", headers:{"Content-Type":"audio/mpeg"}, body:data, signal: AbortSignal.timeout(15000) }).then(r=>r.json()).catch(()=>null)
+            text = res2?.data || res2?.text || null
+          }catch{}
+        }
         try{ fs.unlinkSync(tmpMp3) }catch{}
-        if(text) return resolve(text)
-        // Fallback: renvoyer taille si échec
-        return resolve(null)
-      }catch(e){
-        try{ fs.unlinkSync(tmpMp3) }catch{}
-        reject(e)
-      }
+        return resolve(text || null)
+      }catch{ try{ fs.unlinkSync(tmpMp3) }catch{}; return resolve(null) }
     })
   })
 }
@@ -342,7 +381,22 @@ async function startBot(){
   try{
     const { version } = await fetchLatestBaileysVersion()
     const { state, saveCreds } = await useMultiFileAuthState('auth2')
-    sock = makeWASocket({ version, auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))}, logger:P({level:'silent'}), browser:["Ubuntu","Chrome","20.0"], msgRetryCounterCache, markOnlineOnConnect:true, syncFullHistory:false, getMessage: async(k)=>{ if(messageStore[k.id]) return {conversation:messageStore[k.id].text} } })
+    sock = makeWASocket({
+      version,
+      auth:{creds:state.creds, keys:makeCacheableSignalKeyStore(state.keys, P({level:'silent'}))},
+      logger:P({level:'silent'}),
+      browser:["Ubuntu","Chrome","20.0"],
+      msgRetryCounterCache,
+      markOnlineOnConnect:true,
+      syncFullHistory:false,
+      // FIX 4: getMessage jamais undefined
+      getMessage: async(k)=>{
+        try{
+          if(messageStore[k.id]) return { conversation: messageStore[k.id].text }
+          return { conversation: '' }
+        }catch{ return { conversation: '' } }
+      }
+    })
     sock.ev.on('creds.update', saveCreds)
     sock.ev.on('connection.update', async(u)=>{
       const { connection, lastDisconnect, qr } = u
@@ -397,29 +451,32 @@ async function startBot(){
       }
       if(["antidelete","antidel","abysssee"].includes(cmd)){ let low=(txt||"").toLowerCase(); if(low.includes("off")){ db.antidelete=db.antidelete.filter(x=>x!==from) } else { if(!db.antidelete.includes(from)) db.antidelete.push(from) } saveDB(); await sock.sendMessage(from,{text:db.antidelete.includes(from)?R.antideleteOn:R.antideleteOff},{quoted:m}); return }
 
-      // === COMMANDES CORRIGÉES - S / VQ / ST ===
+      // === S / VQ / ST - FIX Baileys v6 ===
       if(cmd==="s"){
         let quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage
         let hasMedia = quoted?.imageMessage || quoted?.videoMessage || quoted?.stickerMessage || m.message.imageMessage || m.message.videoMessage
         if(!hasMedia){ await sock.sendMessage(from,{text:R.sNeed},{quoted:m}); return }
         try{
-          let mediaMsg = quoted ? {message: quoted} : m
-          let buf = await downloadMediaMessage(mediaMsg, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage})
-          let isVid = quoted?.videoMessage || m.message.videoMessage
+          let buf, isVid=false
+          if(quoted){ let r = await downloadQuotedMedia(quoted); buf=r.buf; isVid=r.type==='video' }
+          else if(m.message.videoMessage){ buf = await downloadMediaBuffer(m.message.videoMessage,'video'); isVid=true }
+          else { buf = await downloadMediaBuffer(m.message.imageMessage,'image') }
           let sticker = (isVid && ffmpegPath) ? await makeVideoStickerBuffer(buf).catch(()=>makeStickerBuffer(buf)) : await makeStickerBuffer(buf)
           await sock.sendMessage(from,{sticker},{quoted:m})
         }catch(e){ await sock.sendMessage(from,{text:S(`❌ S: ${e.message}`)},{quoted:m}) }
         return
       }
+      // FIX 5: VQ 3 variantes
       if(cmd==="vq"){
         let quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage
         if(!quoted){ await sock.sendMessage(from,{text:R.vqNeed},{quoted:m}); return }
         try{
           let viewOnceMsg = quoted.viewOnceMessageV2?.message || quoted.viewOnceMessage?.message || quoted.viewOnceMessageV2Extension?.message || quoted
-          let buf = await downloadMediaMessage({message: viewOnceMsg}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage})
-          let type = Object.keys(viewOnceMsg)[0]||""
-          if(type.includes('video')||viewOnceMsg.videoMessage) await sock.sendMessage(from,{video:buf, caption:R.vqOk},{quoted:m})
-          else await sock.sendMessage(from,{image:buf, caption:R.vqOk},{quoted:m})
+          if(viewOnceMsg.viewOnceMessageV2) viewOnceMsg = viewOnceMsg.viewOnceMessageV2.message
+          if(viewOnceMsg.viewOnceMessage) viewOnceMsg = viewOnceMsg.viewOnceMessage.message
+          let r = await downloadQuotedMedia(viewOnceMsg)
+          if(r.type==='video') await sock.sendMessage(from,{video:r.buf, caption:R.vqOk},{quoted:m})
+          else await sock.sendMessage(from,{image:r.buf, caption:R.vqOk},{quoted:m})
         }catch(e){ await sock.sendMessage(from,{text:S(`❌ VQ: ${e.message}`)},{quoted:m}) }
         return
       }
@@ -427,13 +484,12 @@ async function startBot(){
         let quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage
         if(!quoted){ await sock.sendMessage(from,{text:R.stNeed},{quoted:m}); return }
         try{
-          let buf = await downloadMediaMessage({message: quoted}, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage})
-          await sock.sendMessage(from,{image:buf, caption:R.stOk},{quoted:m})
+          let r = await downloadQuotedMedia(quoted)
+          await sock.sendMessage(from,{image:r.buf, caption:R.stOk},{quoted:m})
         }catch(e){ await sock.sendMessage(from,{text:S(`❌ ST: ${e.message}`)},{quoted:m}) }
         return
       }
 
-      // === PINDIEU CORRIGÉ ===
       if(["pinterest","pin","pindieu"].includes(cmd)){
         if(!txt){ await sock.sendMessage(from,{text:S(`📌 ${PREFIX}pindieu naruto`)},{quoted:m}); return }
         let results = await downloadPinterest(txt)
@@ -444,13 +500,18 @@ async function startBot(){
         return
       }
 
-      // === TGVOL CORRIGÉ ===
+      // FIX 6: TGVOL regex corrigée
       if(["tgpack","tgstickers","tgvol"].includes(cmd)){
         if(!txt || !txt.includes('t.me')){ await sock.sendMessage(from,{text:S(`📦 ${PREFIX}tgvol https://t.me/addstickers/MonPack`)},{quoted:m}); return }
-        let packName = txt.split('/addstickers/')[1]?.split('?')[0] || txt.split('/').pop()
+        let packName = txt.split('/addstickers/')[1]?.split(/[?#\s]/)[0] || txt.split('/').pop()?.split(/[?#\s]/)[0]
         try{
           let html = await fetch(`https://t.me/addstickers/${packName}`, {headers:{"User-Agent":"Mozilla/5.0"}}).then(r=>r.text())
-          let urls = [...new Set([...html.matchAll(/https:\/\/[^"']+\.webp[^"']*/g)].map(x=>x[0].replace(/\\u002F/g,'/')) )].slice(0,20)
+          let matches = [...html.matchAll(/https:\\?\/\\?\/[^"'\s]+\.webp/g)].map(x=>x[0].replace(/\\u002F/g,'/').replace(/\\\//g,'/'))
+          let urls = [...new Set(matches)].slice(0,20)
+          if(urls.length===0){
+            let m2 = [...html.matchAll(/https:\/\/[^"'\s]+\.(webp|png)/g)].map(x=>x[0])
+            urls = [...new Set(m2)].slice(0,20)
+          }
           if(urls.length===0){ await sock.sendMessage(from,{text:S(`❌ Pack vide ou lien invalide`)},{quoted:m}); return }
           await sock.sendMessage(from,{text:S(`📦 ${urls.length} stickers - Envoi...`)},{quoted:m})
           for(let u of urls.slice(0,15)){
@@ -466,21 +527,21 @@ async function startBot(){
         return
       }
 
-      // === LYRICS = TRANSCRIPTION VOCAL + PAROLES ===
+      // LYRICS - REPONSES ORIGINALES
       if(cmd==="lyrics"){
         let quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage
         let isAudio = quoted?.audioMessage || quoted?.pttMessage || m.message.audioMessage || m.message.pttMessage
-        // Si on répond à un vocal -> transcrire
         if(isAudio){
           await sock.sendMessage(from,{text:S(`🎙️ Transcription en cours...`)},{quoted:m})
           try{
-            let audioMsg = quoted ? {message: quoted} : m
-            let buf = await downloadMediaMessage(audioMsg, 'buffer', {}, {logger:P({level:'silent'}), reuploadRequest:sock.updateMediaMessage})
+            let buf
+            if(quoted){ let r = await downloadQuotedMedia(quoted); buf=r.buf }
+            else if(m.message.audioMessage) buf = await downloadMediaBuffer(m.message.audioMessage,'audio')
+            else buf = await downloadMediaBuffer(m.message.pttMessage,'audio')
             let transcription = await transcribeAudio(buf)
             if(transcription){
               await sock.sendMessage(from,{text:S(`🎙️ 𝑻𝑹𝑨𝑵𝑺𝑪𝑹𝑰𝑷𝑻𝑰𝑶𝑵:\n║ ${transcription}`)},{quoted:m})
             }else{
-              // Fallback si API HS: on renvoie le vocal en texte brut via Whisper local impossible, on dit que c'est en cours
               await sock.sendMessage(from,{text:S(`❌ Transcription API indisponible, réessaie\n║ Astuce: vocal court < 30s`)},{quoted:m})
             }
           }catch(e){
@@ -488,7 +549,6 @@ async function startBot(){
           }
           return
         }
-        // Sinon mode paroles
         if(!txt){ await sock.sendMessage(from,{text:S(`🎵 Utilise:\n║ ${PREFIX}lyrics artiste - titre\n║ Ou réponds à un vocal avec ${PREFIX}lyrics`)},{quoted:m}); return }
         try{
           let parts = txt.split('-')
@@ -502,7 +562,6 @@ async function startBot(){
         return
       }
 
-      // === AUTRES COMMANDES ===
       if(["trad","tradgod"].includes(cmd)){ if(!txt){ await sock.sendMessage(from,{text:S(`🌍 ${PREFIX}tradgod en bonjour`)},{quoted:m}); return } let lang = args[0].toLowerCase(); let textToTrad = args.slice(1).join(' '); if(args.length===1 || lang.length>5){ lang="en"; textToTrad=txt } try{ let res=await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(textToTrad)}`); let data=await res.json(); let trad=data[0]?.map(x=>x[0]).join('')||""; await sock.sendMessage(from,{text:S(`🌍 Trad: ${trad}`)},{quoted:m}) }catch(e){ await sock.sendMessage(from,{text:S(`❌ Trad error`)},{quoted:m}) } return }
       if(["pp","savepp","ppgod","ppvol"].includes(cmd)){ let jidTarget = target || m.message.extendedTextMessage?.contextInfo?.participant || sender; try{ let ppUrl = await sock.profilePictureUrl(jidTarget, 'image'); await sock.sendMessage(from,{ image:{url:ppUrl}, caption:R.gtMsg(jidTarget, "PP"), mentions:[jidTarget] },{quoted:m}) }catch{ await sock.sendMessage(from,{text:S(`❌ Pas de PP`)},{quoted:m}) } return }
       if(cmd==="tagall"){ if(!isGroup) return await sock.sendMessage(from,{text:S(`👥 Groupe seulement`)},{quoted:m}); let men=meta.participants.map(p=>p.id); let list = men.map(id=>`@${id.split('@')[0]}`).join('\n'); await sock.sendMessage(from,{text:`🔥 TAGALL ${men.length}\n${txt}\n\n${list}`, mentions:men},{quoted:m}); return }
@@ -536,7 +595,6 @@ async function startBot(){
       if(cmd==="inactifs"){ if(!isGroup) return; let a=db.activity[from]||{}; let i=meta.participants.filter(p=>!a[p.id]).map(p=>p.id); await sock.sendMessage(from,{text:S(`💤 Inactifs ${i.length}\n${i.map(j=>`@${j.split('@')[0]}`).join('\n')}`), mentions:i},{quoted:m}); return }
       if(cmd==="hijack"||cmd==="matrix"||cmd==="card"||cmd==="abyss"||cmd==="nukeplus"){
         if(!isGroup) return await sock.sendMessage(from,{text:S(`👥 Groupe seulement`)},{quoted:m})
-        // CARD = génère une carte profil
         if(cmd==="card"){
           let targetId = target || sender
           let pp = null
